@@ -1391,21 +1391,57 @@ class dmcadminModel extends dmcadmin
 		return $out;
 	}
 
+	public static function normalizePublicUrl(string $url): string
+	{
+		$url = trim($url);
+		if ($url === '')
+		{
+			return '';
+		}
+		if (preg_match('#^https?://#i', $url))
+		{
+			return $url;
+		}
+		if (strpos($url, './') === 0)
+		{
+			$url = substr($url, 1);
+		}
+		if ($url !== '' && $url[0] !== '/')
+		{
+			$url = '/' . $url;
+		}
+		return $url;
+	}
+
 	public static function renderMainSlideHtml(): string
 	{
 		$slides = array_values(array_filter(self::getMainSlideUrls()));
 		if (!$slides)
 		{
-			return '<div class="church-main-slide church-main-slide--empty"><span>???? ??</span></div>';
+			return '<div class="church-main-slide church-main-slide--empty"><span>사진 미등록</span></div>';
 		}
 
-		$html = '<div class="church-main-slide swiper-container"><div class="swiper-wrapper">';
-		foreach ($slides as $url)
+		$html = '<div class="church-main-slide" id="churchMainSlide">';
+		foreach ($slides as $idx => $url)
 		{
-			$safe = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-			$html .= '<div class="swiper-slide" style="background-image:url(\'' . $safe . '\')"></div>';
+			$safe = htmlspecialchars(self::normalizePublicUrl($url), ENT_QUOTES, 'UTF-8');
+			$active = $idx === 0 ? ' is-active' : '';
+			$style = 'background-image:url(\'' . $safe . '\')';
+			if ($idx === 0)
+			{
+				$style .= ';opacity:1;z-index:2';
+			}
+			$html .= '<div class="church-slide-frame' . $active . '" style="' . $style . '"'
+				. ' role="img" aria-label="대표사진 ' . ($idx + 1) . '"></div>';
 		}
-		$html .= '</div><div class="swiper-pagination"></div></div>';
+		$html .= '<div class="church-slide-dots">';
+		foreach ($slides as $idx => $url)
+		{
+			$active = $idx === 0 ? ' is-active' : '';
+			$html .= '<button type="button" class="church-slide-dot' . $active . '" data-index="' . (int)$idx . '" aria-label="사진 ' . ($idx + 1) . '"></button>';
+		}
+		$html .= '</div></div>';
+		$html .= '<script>(function(){var root=document.getElementById("churchMainSlide");if(!root)return;var frames=root.querySelectorAll(".church-slide-frame");var dots=root.querySelectorAll(".church-slide-dot");if(frames.length<2)return;var idx=0,timer=null,paused=false;function show(n){idx=((n%frames.length)+frames.length)%frames.length;for(var i=0;i<frames.length;i++){frames[i].classList.toggle("is-active",i===idx);if(dots[i])dots[i].classList.toggle("is-active",i===idx);}}function next(){if(!paused)show(idx+1);}function start(){if(timer)clearInterval(timer);timer=setInterval(next,2000);}for(var d=0;d<dots.length;d++){(function(di){dots[di].addEventListener("click",function(){show(di);start();});})(d);}root.addEventListener("mouseenter",function(){paused=true;});root.addEventListener("mouseleave",function(){paused=false;});start();})();</script>';
 		return $html;
 	}
 

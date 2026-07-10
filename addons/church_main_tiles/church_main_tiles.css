@@ -25,12 +25,11 @@
 .church-main-slide-col {
 	position: relative;
 	min-width: 0;
-	min-height: 0;
+	width: 100%;
 }
 
-/* 구홈피 슬라이드 비율 550×309 — 행 높이 기준 */
 .church-main-slide-col::before {
-	content: '';
+	content: "";
 	display: block;
 	padding-top: 56.1818%;
 }
@@ -40,7 +39,6 @@
 	inset: 0;
 	width: 100%;
 	height: 100%;
-	min-height: 0;
 	border-radius: var(--church-card-radius, 12px);
 	overflow: hidden;
 	background: #1a3a5c;
@@ -48,12 +46,6 @@
 	border: none;
 	outline: 3px solid var(--church-forest-mid, #2d6a4f);
 	outline-offset: -3px;
-}
-
-.church-main-slide.swiper-container,
-.church-main-slide .swiper-wrapper,
-.church-main-slide .swiper-slide {
-	height: 100% !important;
 }
 
 .church-main-slide--empty {
@@ -64,25 +56,46 @@
 	font-size: 14px;
 }
 
-.church-main-slide .swiper-wrapper {
-	position: relative;
-	height: 100% !important;
-}
-
-.church-main-slide .swiper-slide {
+.church-slide-frame {
+	position: absolute;
+	inset: 0;
+	background-color: transparent;
 	background-size: cover;
-	background-repeat: no-repeat;
 	background-position: center center;
+	background-repeat: no-repeat;
 	opacity: 0;
-	transition: opacity 0.6s ease;
+	z-index: 1;
+	transition: opacity 0.35s ease;
 }
 
-.church-main-slide .swiper-slide.swiper-slide-active {
+.church-slide-frame.is-active {
 	opacity: 1;
+	z-index: 2;
 }
 
-.church-main-slide .swiper-pagination {
-	bottom: 8px !important;
+.church-slide-dots {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 8px;
+	z-index: 5;
+	display: flex;
+	justify-content: center;
+	gap: 6px;
+}
+
+.church-slide-dot {
+	width: 8px;
+	height: 8px;
+	border: 0;
+	border-radius: 50%;
+	padding: 0;
+	background: rgba(255, 255, 255, 0.45);
+	cursor: pointer;
+}
+
+.church-slide-dot.is-active {
+	background: #fff;
 }
 
 .church-main-quicklinks {
@@ -273,10 +286,6 @@
 
 	.church-main-slide-col {
 		grid-column: span 2;
-	}
-
-	.church-main-slide-col::before {
-		padding-top: 56.1818%;
 	}
 
 	.church-main-tiles-grid {
