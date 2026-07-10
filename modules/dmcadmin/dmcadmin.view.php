@@ -130,7 +130,7 @@ class dmcadminView extends dmcadmin
 		{
 			$o = new stdClass;
 			$o->key = $key;
-			$o->label = $meta['label'];
+			$o->label = dmcadminModel::getSubTopMenuLabel($key);
 			$o->url = $urls[$key] ?? '';
 			$items[] = $o;
 		}
@@ -150,7 +150,7 @@ class dmcadminView extends dmcadmin
 			$row = $data[$key] ?? ['image_url' => '', 'link_url' => ''];
 			$o = new stdClass;
 			$o->key = $key;
-			$o->label = $meta['label'];
+			$o->label = dmcadminModel::getMainTileLabel($key);
 			$o->image_url = $row['image_url'];
 			$o->link_url = $row['link_url'];
 			$o->default_link = dmcadminModel::buildMainTargetUrl($meta['target'], $meta['id']);

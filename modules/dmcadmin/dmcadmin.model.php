@@ -30,6 +30,39 @@ class dmcadminModel extends dmcadmin
 		return self::$uiLabels;
 	}
 
+	public static function getMainTileLabel(string $key): string
+	{
+		$labels = self::uiLabels()['main_tiles'] ?? [];
+		if (!empty($labels[$key]))
+		{
+			return (string)$labels[$key];
+		}
+		return (string)(self::MAIN_TILES[$key]['label'] ?? $key);
+	}
+
+	public static function getMainQuickLinkLabel(array $link): string
+	{
+		$id = (string)($link['id'] ?? '');
+		foreach (self::uiLabels()['main_quick_links'] ?? [] as $row)
+		{
+			if (is_array($row) && ($row['id'] ?? '') === $id && !empty($row['label']))
+			{
+				return (string)$row['label'];
+			}
+		}
+		return (string)($link['label'] ?? $id);
+	}
+
+	public static function getSubTopMenuLabel(string $key): string
+	{
+		$labels = self::uiLabels()['sub_top_menus'] ?? [];
+		if (!empty($labels[$key]))
+		{
+			return (string)$labels[$key];
+		}
+		return (string)(self::SUB_TOP_MENUS[$key]['label'] ?? $key);
+	}
+
 	/** @return array<string,string> */
 	public static function getDomesticMissionCategories(): array
 	{
@@ -1459,6 +1492,7 @@ class dmcadminModel extends dmcadmin
 			$i++;
 			$url = self::buildMainTargetUrl($link['target'], $link['id']);
 			$safe_url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+			$link_label = self::getMainQuickLinkLabel($link);
 			$img_key = 'quick_' . $i;
 			$img_url = $hero[$img_key] ?? '';
 			$img_path = self::urlToLocalPath($img_url);
@@ -1466,12 +1500,12 @@ class dmcadminModel extends dmcadmin
 			{
 				$img = htmlspecialchars($img_url, ENT_QUOTES, 'UTF-8');
 				$html .= '<a class="church-main-quicklink church-main-quicklink--img" href="' . $safe_url . '">'
-					. '<img src="' . $img . '" alt="' . htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8') . '" /></a>';
+					. '<img src="' . $img . '" alt="' . htmlspecialchars($link_label, ENT_QUOTES, 'UTF-8') . '" /></a>';
 			}
 			else
 			{
 				$html .= '<a class="church-main-quicklink" href="' . $safe_url . '">'
-					. htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8') . '</a>';
+					. htmlspecialchars($link_label, ENT_QUOTES, 'UTF-8') . '</a>';
 			}
 		}
 		$html .= '</div>';
@@ -1492,7 +1526,7 @@ class dmcadminModel extends dmcadmin
 		{
 			$row = $tiles[$key] ?? ['image_url' => '', 'link_url' => ''];
 			$url = self::resolveMainTileLink($key, $meta, $row);
-			$label = htmlspecialchars($meta['label'], ENT_QUOTES, 'UTF-8');
+			$label = htmlspecialchars(self::getMainTileLabel($key), ENT_QUOTES, 'UTF-8');
 			$safe_url = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
 			$html .= '<a class="church-main-tile church-main-tile--' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . '" href="' . $safe_url . '">';
 			if (!empty($row['image_url']))

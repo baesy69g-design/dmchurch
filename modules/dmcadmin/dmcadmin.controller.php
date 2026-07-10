@@ -355,7 +355,7 @@ class dmcadminController extends dmcadmin
 				}
 				if (!@getimagesize($_FILES[$field]['tmp_name']))
 				{
-					return new BaseObject(-1, $meta['label'] . ': 이미지 파일만 업로드할 수 있습니다.');
+					return new BaseObject(-1, dmcadminModel::getSubTopMenuLabel($key) . ': 이미지 파일만 업로드할 수 있습니다.');
 				}
 				$stitch_paths[] = $_FILES[$field]['tmp_name'];
 			}
@@ -377,7 +377,7 @@ class dmcadminController extends dmcadmin
 					$info = @getimagesize($_FILES[$banner_field]['tmp_name']);
 					if (!$info)
 					{
-						return new BaseObject(-1, $meta['label'] . ': 이미지 파일만 업로드할 수 있습니다.');
+						return new BaseObject(-1, dmcadminModel::getSubTopMenuLabel($key) . ': 이미지 파일만 업로드할 수 있습니다.');
 					}
 					$ext_map = [
 						'image/jpeg' => 'jpg',
@@ -394,7 +394,7 @@ class dmcadminController extends dmcadmin
 			}
 			catch (Rhymix\Framework\Exception $e)
 			{
-				return new BaseObject(-1, $meta['label'] . ': ' . $e->getMessage());
+				return new BaseObject(-1, dmcadminModel::getSubTopMenuLabel($key) . ': ' . $e->getMessage());
 			}
 		}
 
@@ -444,7 +444,7 @@ class dmcadminController extends dmcadmin
 			}
 			catch (Rhymix\Framework\Exception $e)
 			{
-				return new BaseObject(-1, $meta['label'] . ': ' . $e->getMessage());
+				return new BaseObject(-1, dmcadminModel::getMainTileLabel($key) . ': ' . $e->getMessage());
 			}
 
 			if ($new_url)
