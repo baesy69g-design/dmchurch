@@ -5,7 +5,7 @@
 			return;
 		}
 		new Swiper(el, {
-			autoplay: 6000,
+			autoplay: 2000,
 			loop: true,
 			pagination: '.church-main-slide .swiper-pagination',
 			paginationClickable: true
