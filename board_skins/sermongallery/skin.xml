@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin version="0.2">
+    <title xml:lang="ko">설교 갤러리</title>
+    <description xml:lang="ko">유튜브 설교 영상 썸네일을 2열 카드로 보여주는 갤러리형 게시판 스킨.</description>
+    <version>1.0</version>
+    <date>2026-06-26</date>
+    <author email_address="admin@dmcc.kr" link="">
+        <name xml:lang="ko">동명교회</name>
+    </author>
+    <license>LGPL v2</license>
+    <extra_vars>
+        <var name="title_image" type="image">
+            <title xml:lang="ko">게시판 제목 이미지</title>
+            <description xml:lang="ko">작성하면 화면에 표시 됨</description>
+        </var>
+        <var name="title_alt" type="text">
+            <title xml:lang="ko">게시판 제목 이미지 alt</title>
+            <description xml:lang="ko">게시판 제목 이미지 대체 텍스트</description>
+        </var>
+    </extra_vars>
+</skin>

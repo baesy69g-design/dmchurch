@@ -1,0 +1,53 @@
+/* 동명교회 푸터 — 슬림 */
+.footer.church-footer {
+	border-bottom: none;
+	padding: 0;
+}
+
+.church-footer-body {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 10px 16px 12px;
+	text-align: center;
+	box-sizing: border-box;
+}
+
+.church-footer-address,
+.church-footer-copy {
+	margin: 0;
+	font-size: 11px;
+	line-height: 1.5;
+	letter-spacing: -0.01em;
+}
+
+.church-footer-copy {
+	margin-top: 4px;
+}
+
+.church-footer-address .church-footer-sep {
+	margin: 0 5px;
+	color: #b0bdb5;
+}
+
+.church-footer-privacy {
+	color: var(--church-forest-mid, #2d6a4f);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.church-footer-privacy:hover,
+.church-footer-privacy:focus {
+	text-decoration: underline;
+	color: var(--church-forest, #1b4332);
+}
+
+@media (max-width: 640px) {
+	.church-footer-address .church-footer-sep {
+		display: none;
+	}
+
+	.church-footer-privacy {
+		display: block;
+		margin-top: 4px;
+	}
+}

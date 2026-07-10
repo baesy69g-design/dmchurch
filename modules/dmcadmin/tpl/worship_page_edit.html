@@ -1,0 +1,108 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$page->label} — 예배시간 등록</h2>
+<p class="dmc-help">
+	한 줄에 <strong>구분(예배/기도회/주일학교/모임) · 집회명 · 집회시간 · 장소</strong>를 입력합니다. 화면에서는 구분별 소제목과 표로 표시되며, 같은 장소가 연속되면 자동으로 한 칸으로 합쳐집니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveWorshipPage')}" class="dmc-form dmc-form-wide" id="dmc-worship-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+	<input type="hidden" name="item_count" id="dmc-item-count" value="{$item_count}" />
+
+	<h3 class="dmc-section-title">집회 목록 <button type="button" class="dmc-btn dmc-btn-sm" id="dmc-add-item">+ 줄 추가</button></h3>
+	<p class="dmc-help">같은 장소를 연속으로 입력하면 화면에서 장소 칸이 합쳐집니다. 빈 줄은 저장 시 제외됩니다.</p>
+
+	<table class="dmc-worship-edit-table">
+		<thead>
+			<tr><th style="width:140px">구분</th><th>집회명</th><th>집회시간</th><th>장소</th><th style="width:60px"></th></tr>
+		</thead>
+		<tbody id="dmc-item-list">
+			<!--@foreach($item_slots as $slot)-->
+			<tr class="dmc-item-row" data-index="{$slot->index}">
+				<td>
+					<select name="item_category_{$slot->index}" class="dmc-input-wide">
+						<!--@foreach($categories as $cat)-->
+						<option value="{$cat}"<!--@if($cat==$slot->category)--> selected="selected"<!--@end-->>{$cat}</option>
+						<!--@end-->
+					</select>
+				</td>
+				<td><input type="text" name="item_name_{$slot->index}" value="{$slot->name}" class="dmc-input-wide" placeholder="예: 주일 1부 예배" /></td>
+				<td><input type="text" name="item_time_{$slot->index}" value="{$slot->time}" class="dmc-input-wide" placeholder="예: 주일 오전 08:50" /></td>
+				<td><input type="text" name="item_place_{$slot->index}" value="{$slot->place}" class="dmc-input-wide" placeholder="예: 본당" /></td>
+				<td><button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-item">삭제</button></td>
+			</tr>
+			<!--@end-->
+		</tbody>
+	</table>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<template id="dmc-item-template">
+	<tr class="dmc-item-row" data-index="__INDEX__">
+		<td>
+			<select name="item_category___INDEX__" class="dmc-input-wide">
+				<option value="예배">예배</option>
+				<option value="기도회">기도회</option>
+				<option value="주일학교">주일학교</option>
+				<option value="모임">모임</option>
+			</select>
+		</td>
+		<td><input type="text" name="item_name___INDEX__" value="" class="dmc-input-wide" placeholder="예: 주일 1부 예배" /></td>
+		<td><input type="text" name="item_time___INDEX__" value="" class="dmc-input-wide" placeholder="예: 주일 오전 08:50" /></td>
+		<td><input type="text" name="item_place___INDEX__" value="" class="dmc-input-wide" placeholder="예: 본당" /></td>
+		<td><button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-item">삭제</button></td>
+	</tr>
+</template>
+
+<script>
+(function () {
+	var list = document.getElementById('dmc-item-list');
+	var countInput = document.getElementById('dmc-item-count');
+	var tpl = document.getElementById('dmc-item-template');
+	var max = 200;
+
+	function reindex() {
+		var rows = list.querySelectorAll('.dmc-item-row');
+		rows.forEach(function (row, i) {
+			row.dataset.index = String(i);
+			row.querySelectorAll('[name]').forEach(function (el) {
+				el.name = el.name.replace(/_\d+$/, '_' + i);
+			});
+		});
+		countInput.value = String(rows.length);
+	}
+
+	document.getElementById('dmc-add-item').addEventListener('click', function () {
+		var rows = list.querySelectorAll('.dmc-item-row');
+		if (rows.length >= max) {
+			alert('최대 ' + max + '줄까지 등록할 수 있습니다.');
+			return;
+		}
+		var i = rows.length;
+		var html = tpl.innerHTML.replace(/__INDEX__/g, String(i));
+		list.insertAdjacentHTML('beforeend', html);
+		reindex();
+	});
+
+	list.addEventListener('click', function (e) {
+		if (!e.target.classList.contains('dmc-remove-item')) {
+			return;
+		}
+		var rows = list.querySelectorAll('.dmc-item-row');
+		if (rows.length <= 1) {
+			alert('최소 1줄은 남겨 두세요.');
+			return;
+		}
+		e.target.closest('.dmc-item-row').remove();
+		reindex();
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<grants />
+	<actions>
+		<action name="procChurchWriteInsertDocument" type="controller" permission="member" standalone="true" method="POST" />
+		<action name="procChurchWriteHitDocument" type="controller" permission="guest" standalone="true" method="GET|POST" check_csrf="false" />
+		<action name="procChurchWriteDeleteDocuments" type="controller" permission="member" standalone="true" method="POST" />
+		<action name="dispChurchWriteFormConfig" type="model" permission="member" standalone="true" />
+	</actions>
+</module>

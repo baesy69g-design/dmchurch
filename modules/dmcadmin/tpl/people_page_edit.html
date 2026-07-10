@@ -1,0 +1,245 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$page->label} — 인물 등록</h2>
+<p class="dmc-help">
+	한 명씩 <strong>사진 · 구분(교역자/은퇴장로/장로) · 이름 · 직분 · 메모</strong>를 입력합니다. 화면에서는 구분별로 나뉘어 한 줄에 4명씩 카드로 표시됩니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSavePeoplePage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-people-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+	<input type="hidden" name="person_count" id="dmc-person-count" value="{$person_count}" />
+
+	<h3 class="dmc-section-title">인물 목록 <button type="button" class="dmc-btn dmc-btn-sm" id="dmc-add-person">+ 인물 추가</button></h3>
+	<p class="dmc-help">메모는 한 줄에 한 항목씩 입력하세요. 빈 인물은 저장 시 제외됩니다. <strong>순서</strong>는 구분(교역자·은퇴장로·시무장로)별로 작은 번호가 앞에 표시됩니다. 비워 두면 맨 뒤로 갑니다.</p>
+
+	<div id="dmc-person-list">
+		<!--@foreach($person_slots as $slot)-->
+		<div class="dmc-guide-section dmc-person-row" data-index="{$slot->index}">
+			<div class="dmc-guide-section-head">
+				<strong>{$slot->num}</strong>
+				<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-person">삭제</button>
+			</div>
+			<div class="dmc-person-grid">
+				<div class="dmc-field dmc-person-photo">
+					<label>사진</label>
+					<input type="hidden" name="existing_person_photo_{$slot->index}" value="{$slot->photo}" />
+					<!--@if($slot->photo)-->
+					<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->photo}');"></div>
+					<label class="dmc-check"><input type="checkbox" name="remove_person_photo_{$slot->index}" value="Y" /> 사진 삭제</label>
+					<!--@else-->
+					<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+					<!--@end-->
+					<input type="file" name="person_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+				</div>
+				<div class="dmc-person-fields">
+					<div class="dmc-field">
+						<label>순서</label>
+						<input type="number" name="person_order_{$slot->index}" value="{$slot->order}" class="dmc-input-wide" min="1" step="1" placeholder="구분 내 표시 순서" />
+					</div>
+					<div class="dmc-field">
+						<label>구분</label>
+						<select name="person_category_{$slot->index}" class="dmc-input-wide">
+							<!--@foreach($categories as $cat)-->
+							<option value="{$cat}"<!--@if($cat==$slot->category)--> selected="selected"<!--@end-->>{$cat}</option>
+							<!--@end-->
+						</select>
+					</div>
+					<div class="dmc-field">
+						<label>이름</label>
+						<input type="text" name="person_name_{$slot->index}" value="{$slot->name}" class="dmc-input-wide" placeholder="예: 최학식" />
+					</div>
+					<div class="dmc-field">
+						<label>직분</label>
+						<input type="text" name="person_title_{$slot->index}" value="{$slot->title}" class="dmc-input-wide" placeholder="예: 목사 / 장로" />
+					</div>
+					<div class="dmc-field">
+						<label>메모</label>
+						<textarea name="person_memo_{$slot->index}" rows="3" class="dmc-para-input" placeholder="예: 교구&#10;선임행정">{$slot->memo}</textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<template id="dmc-person-template">
+	<div class="dmc-guide-section dmc-person-row" data-index="__INDEX__">
+		<div class="dmc-guide-section-head">
+			<strong>__NUM__</strong>
+			<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-person">삭제</button>
+		</div>
+		<div class="dmc-person-grid">
+			<div class="dmc-field dmc-person-photo">
+				<label>사진</label>
+				<input type="hidden" name="existing_person_photo___INDEX__" value="" />
+				<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+				<input type="file" name="person_photo___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" />
+			</div>
+			<div class="dmc-person-fields">
+				<div class="dmc-field">
+					<label>순서</label>
+					<input type="number" name="person_order___INDEX__" value="" class="dmc-input-wide" min="1" step="1" placeholder="구분 내 표시 순서" />
+				</div>
+				<div class="dmc-field">
+					<label>구분</label>
+					<select name="person_category___INDEX__" class="dmc-input-wide">
+						<option value="교역자">교역자</option>
+						<option value="은퇴장로">은퇴장로</option>
+						<option value="시무장로">시무장로</option>
+					</select>
+				</div>
+				<div class="dmc-field">
+					<label>이름</label>
+					<input type="text" name="person_name___INDEX__" value="" class="dmc-input-wide" placeholder="예: 최학식" />
+				</div>
+				<div class="dmc-field">
+					<label>직분</label>
+					<input type="text" name="person_title___INDEX__" value="" class="dmc-input-wide" placeholder="예: 목사 / 장로" />
+				</div>
+				<div class="dmc-field">
+					<label>메모</label>
+					<textarea name="person_memo___INDEX__" rows="3" class="dmc-para-input" placeholder="메모"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+(function () {
+	var list = document.getElementById('dmc-person-list');
+	var countInput = document.getElementById('dmc-person-count');
+	var tpl = document.getElementById('dmc-person-template');
+	var max = 300;
+
+	function reindex() {
+		var rows = list.querySelectorAll('.dmc-person-row');
+		rows.forEach(function (row, i) {
+			row.dataset.index = String(i);
+			row.querySelector('strong').textContent = String(i + 1);
+			row.querySelectorAll('[name]').forEach(function (el) {
+				el.name = el.name.replace(/_\d+$/, '_' + i);
+			});
+		});
+		countInput.value = String(rows.length);
+	}
+
+	document.getElementById('dmc-add-person').addEventListener('click', function () {
+		var rows = list.querySelectorAll('.dmc-person-row');
+		if (rows.length >= max) {
+			alert('최대 ' + max + '명까지 등록할 수 있습니다.');
+			return;
+		}
+		var i = rows.length;
+		var html = tpl.innerHTML.replace(/__INDEX__/g, String(i)).replace(/__NUM__/g, String(i + 1));
+		list.insertAdjacentHTML('beforeend', html);
+		reindex();
+		// 인물이 많을 때 새 행이 화면 밖에 추가되어 안 보이는 문제 방지: 새 행으로 스크롤 + 이름 포커스
+		var added = list.querySelector('.dmc-person-row:last-child');
+		if (added) {
+			added.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			var nameInput = added.querySelector('input[name^="person_name_"]');
+			if (nameInput) { nameInput.focus(); }
+		}
+	});
+
+	list.addEventListener('click', function (e) {
+		if (!e.target.classList.contains('dmc-remove-person')) {
+			return;
+		}
+		var rows = list.querySelectorAll('.dmc-person-row');
+		if (rows.length <= 1) {
+			alert('최소 1명은 남겨 두세요.');
+			return;
+		}
+		e.target.closest('.dmc-person-row').remove();
+		reindex();
+	});
+
+	/* ===== 업로드 전 브라우저에서 사진 축소 (서버 2MB 제한 우회) ===== */
+	var form = document.getElementById('dmc-people-form');
+
+	function resizeImage(file, maxDim, maxBytes) {
+		return new Promise(function (resolve) {
+			if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+				resolve(file);
+				return;
+			}
+			var url = URL.createObjectURL(file);
+			var img = new Image();
+			img.onload = function () {
+				URL.revokeObjectURL(url);
+				var w = img.naturalWidth, h = img.naturalHeight;
+				if (!w || !h) { resolve(file); return; }
+				var ratio = Math.min(1, maxDim / Math.max(w, h));
+				if (ratio === 1 && file.size <= maxBytes) { resolve(file); return; }
+				var tw = Math.max(1, Math.round(w * ratio));
+				var th = Math.max(1, Math.round(h * ratio));
+				var canvas = document.createElement('canvas');
+				canvas.width = tw; canvas.height = th;
+				var ctx = canvas.getContext('2d');
+				// 투명 PNG는 흰 배경으로 채워 검게 나오지 않도록 처리
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(0, 0, tw, th);
+				ctx.drawImage(img, 0, 0, tw, th);
+				var q = 0.88;
+				(function attempt() {
+					canvas.toBlob(function (blob) {
+						if (!blob) { resolve(file); return; }
+						if (blob.size <= maxBytes || q <= 0.5) {
+							var name = (file.name || 'photo').replace(/\.(png|webp|bmp|gif|jpeg|jpg)$/i, '') + '.jpg';
+							resolve(new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() }));
+						} else {
+							q -= 0.1; attempt();
+						}
+					}, 'image/jpeg', q);
+				})();
+			};
+			img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+			img.src = url;
+		});
+	}
+
+	if (form) {
+		form.addEventListener('submit', function (e) {
+			if (form.dataset.resized === '1') { return; }
+			var fileInputs = Array.prototype.slice.call(form.querySelectorAll('input[type=file]'));
+			var pending = fileInputs.filter(function (inp) { return inp.files && inp.files.length; });
+			if (!pending.length) { return; }
+
+			e.preventDefault();
+			var submitBtn = form.querySelector('button[type=submit]');
+			if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '사진 처리 중...'; }
+
+			var tasks = pending.map(function (inp) {
+				var f = inp.files[0];
+				return resizeImage(f, 900, 700 * 1024).then(function (nf) {
+					try {
+						var dt = new DataTransfer();
+						dt.items.add(nf);
+						inp.files = dt.files;
+					} catch (err) { /* DataTransfer 미지원 시 원본 사용 */ }
+				});
+			});
+
+			Promise.all(tasks).then(function () {
+				form.dataset.resized = '1';
+				form.submit();
+			}).catch(function () {
+				form.dataset.resized = '1';
+				form.submit();
+			});
+		});
+	}
+})();
+</script>
+<!--#include("_footer.html")-->

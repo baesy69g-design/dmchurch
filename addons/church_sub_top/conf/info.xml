@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+	<title xml:lang="ko">교회 서브 TOP 배너</title>
+	<description xml:lang="ko">dmcadmin에서 등록한 대메뉴별 서브페이지 TOP 배너를 레이아웃에 반영합니다.</description>
+	<version>1.0.0</version>
+	<date>2026-06-13</date>
+	<author email="admin@dmchurch.local">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+</addon>

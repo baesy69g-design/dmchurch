@@ -1,0 +1,26 @@
+/* 게시판 유효 폭 축소 + 가운데 정렬
+   (제목은 왼쪽 정렬을 유지하되, 표 자체를 좁혀 가운데로 모아 오른쪽 빈 공간을 줄임) */
+.board_list,
+.list_footer,
+.cTab,
+.board_read {
+	max-width: 760px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.board_list table {
+	width: 100%;
+}
+
+/* 제목 칸이 지나치게 넓어 보이지 않도록 작성자/날짜/조회 칸 폭 고정 */
+.board_list th,
+.board_list td {
+	white-space: nowrap;
+}
+
+.board_list td.title,
+.board_list th.title {
+	white-space: normal;
+	padding-left: 64px;
+}

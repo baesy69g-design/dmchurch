@@ -1,0 +1,46 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">국내선교 — 상세 페이지 편집</h2>
+<p class="dmc-help">
+	<strong>{$page->name}</strong> ({$page->category_label}) 전용 sub 페이지입니다. 대표 사진과 설명을 입력하면 <a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>에 반영됩니다.
+	<a href="{$page->list_edit_url}">← 목록 편집</a>
+</p>
+
+<!--@if(count($sub_options) > 1)-->
+<div class="dmc-field" style="max-width:420px;">
+	<label for="dmc-dm-sub-select">편집할 상세 페이지</label>
+	<select id="dmc-dm-sub-select" onchange="if(this.value){location.href=this.value;}">
+		<!--@foreach($sub_options as $opt)-->
+		<option value="{$opt->edit_url}"<!--@if($opt->sub_mid==$page->sub_mid)--> selected="selected"<!--@end-->>{$opt->name}</option>
+		<!--@end-->
+	</select>
+</div>
+<!--@end-->
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveDomesticMissionSub')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-dm-sub-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="sub_mid" value="{$page->sub_mid}" />
+
+	<div class="dmc-field dmc-person-photo" style="max-width:360px;">
+		<label>대표 사진</label>
+		<input type="hidden" name="existing_sub_photo" value="{$page->sub_photo}" />
+		<!--@if($page->sub_photo)-->
+		<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$page->sub_photo}'); height:240px;"></div>
+		<label class="dmc-check"><input type="checkbox" name="remove_sub_photo" value="Y" /> 사진 삭제</label>
+		<!--@else-->
+		<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+		<!--@end-->
+		<input type="file" name="sub_photo" accept="image/jpeg,image/png,image/webp,image/gif" />
+	</div>
+
+	<div class="dmc-field">
+		<label for="dmc-sub-body">설명</label>
+		<textarea id="dmc-sub-body" name="sub_body" rows="14" class="dmc-para-input" placeholder="소개 글을 입력하세요. 빈 줄로 문단을 구분할 수 있습니다.">{$page->sub_body}</textarea>
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{$page->list_edit_url}" class="dmc-btn">목록 편집</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+<!--#include("_footer.html")-->

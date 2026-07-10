@@ -1,0 +1,31 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">설정</h2>
+
+<section class="dmc-section">
+	<h3>1. 동명지킴이 비밀번호 변경</h3>
+	<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrChangePassword')}" class="dmc-form">
+		<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+		<div class="dmc-field"><label>현재 비밀번호</label><input type="password" name="current_password" required /></div>
+		<div class="dmc-field"><label>새 비밀번호</label><input type="password" name="new_password" required /></div>
+		<div class="dmc-field"><label>새 비밀번호 확인</label><input type="password" name="confirm_password" required /></div>
+		<button type="submit" class="dmc-btn dmc-btn-primary">비밀번호 변경</button>
+	</form>
+</section>
+
+<section class="dmc-section">
+	<h3>2. 기도요청 수신 메일</h3>
+	<p class="dmc-help">기도요청 등록 시 발송할 메일 주소 (발송 기능은 추후 구현)</p>
+	<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveSettings')}" class="dmc-form">
+		<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+		<div class="dmc-field">
+			<label>수신 메일</label>
+			<input type="email" name="prayer_notify_email" value="{$prayer_notify_email}" placeholder="admin@example.com" />
+		</div>
+		<h3>3. 기도요청 조회 ID (최대 2명)</h3>
+		<p class="dmc-help">등록된 회원 아이디만 입력. dmc2241은 등록 불가. 본인 글 외 전체 열람 가능.</p>
+		<div class="dmc-field"><label>조회자 1</label><input type="text" name="prayer_reader_1" value="{$prayer_reader_1}" placeholder="회원 아이디" /></div>
+		<div class="dmc-field"><label>조회자 2</label><input type="text" name="prayer_reader_2" value="{$prayer_reader_2}" placeholder="회원 아이디" /></div>
+		<button type="submit" class="dmc-btn dmc-btn-primary">설정 저장</button>
+	</form>
+</section>
+<!--#include("_footer.html")-->

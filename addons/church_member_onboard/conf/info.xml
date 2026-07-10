@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+	<title>동명교회 회원 안내 배너</title>
+	<description>새 홈피 1회 로그인·이메일 확인 안내</description>
+	<version>1.0.0</version>
+	<date>2026-06-13</date>
+	<author email="office@dmchurch.local">
+		<name>동명교회</name>
+	</author>
+</addon>

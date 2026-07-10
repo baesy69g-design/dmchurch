@@ -1,0 +1,110 @@
+.church-login-guide {
+	max-width: 520px;
+	margin: 0 auto 16px;
+}
+		.church-login-guide--modal {
+	max-width: none;
+	margin: 0 0 14px;
+	padding: 0;
+}
+.login_widget .church-login-guide--modal {
+	border: 1px solid #d9dee8;
+	border-radius: 6px;
+	padding: 12px 14px;
+	background: #f8fbff;
+	text-align: left;
+}
+.login_widget .signin {
+	max-height: 90vh;
+	overflow-y: auto;
+	position: relative;
+}
+.login_widget .church-login-close {
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	z-index: 5;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: #eef2f7;
+	color: #333;
+	font-size: 22px;
+	line-height: 30px;
+	text-align: center;
+	cursor: pointer;
+}
+.login_widget .church-login-close:hover,
+.login_widget .church-login-close:focus {
+	background: #dde4ee;
+	color: #000;
+}
+.church-login-guide-title {
+	margin: 0 0 8px;
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: #1a3a6b;
+	line-height: 1.4;
+}
+.church-login-guide-lead {
+	margin: 0 0 8px;
+	line-height: 1.55;
+	color: #333;
+	font-size: 0.85rem;
+}
+.church-login-guide-steps {
+	margin: 0;
+	padding-left: 18px;
+	line-height: 1.55;
+	font-size: 0.82rem;
+	color: #444;
+}
+.church-login-guide-steps a {
+	color: #1a3a6b;
+	font-weight: 700;
+	text-decoration: underline;
+}
+.church-recover-guide {
+	margin-bottom: 18px;
+}
+.login_widget .group-password {
+	position: relative;
+}
+.login_widget .group-password input[type="password"],
+.login_widget .group-password input[type="text"] {
+	padding-right: 38px;
+}
+.login_widget .pw-toggle-btn {
+	position: absolute;
+	right: 0;
+	bottom: 6px;
+	z-index: 2;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #888;
+	font-size: 18px;
+	line-height: 30px;
+	text-align: center;
+	cursor: pointer;
+}
+.login_widget .pw-toggle-btn:hover,
+.login_widget .pw-toggle-btn:focus {
+	color: #cda25a;
+	outline: none;
+}
+.login_widget .login-error-msg {
+	display: block;
+	margin: 8px 0 0;
+	padding: 10px 12px;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #b42318;
+	background: #fef3f2;
+	border: 1px solid #fecdca;
+	border-radius: 4px;
+}

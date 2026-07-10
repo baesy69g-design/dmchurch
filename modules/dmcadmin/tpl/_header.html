@@ -1,0 +1,36 @@
+<header class="dmc-header">
+	<div class="dmc-header-inner">
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDashboard')}" class="dmc-logo">dmcadmin</a>
+		<nav class="dmc-nav">
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDashboard')}">홈</a>
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSettings')}">설정</a>
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMainSlides')}">메인사진</a>
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMainTiles')}">메인타일</a>
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSubTops')}">서브TOP</a>
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}">정보페이지</a>
+			<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMembers')}">회원관리</a>
+		</nav>
+		<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrLogout')}" class="dmc-logout-form">
+			<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+			<button type="submit" class="dmc-btn dmc-btn-sm">로그아웃</button>
+		</form>
+	</div>
+</header>
+<main class="dmc-main">
+	<!--@if($dmcadmin_msg == 'password_changed')-->
+	<p class="dmc-notice ok">비밀번호가 변경되었습니다.</p>
+	<!--@elseif($dmcadmin_msg == 'settings_saved')-->
+	<p class="dmc-notice ok">설정이 저장되었습니다.</p>
+	<!--@elseif($dmcadmin_msg == 'member_saved')-->
+	<p class="dmc-notice ok">회원 정보가 저장되었습니다.</p>
+	<!--@elseif($dmcadmin_msg == 'main_slides_saved')-->
+	<p class="dmc-notice ok">메인 대표사진이 저장되었습니다.</p>
+	<!--@elseif($dmcadmin_msg == 'sub_tops_saved')-->
+	<p class="dmc-notice ok">서브페이지 TOP 사진이 저장되었습니다.</p>
+	<!--@elseif($dmcadmin_msg == 'main_tiles_saved')-->
+	<p class="dmc-notice ok">메인 타일이 저장되었습니다.</p>
+	<!--@elseif($dmcadmin_msg == 'info_page_saved')-->
+	<p class="dmc-notice ok">정보페이지 본문이 저장되었습니다. 홈페이지에서 새로고침 후 확인하세요.</p>
+	<!--@elseif($dmcadmin_msg)-->
+	<p class="dmc-notice">{$dmcadmin_msg}</p>
+	<!--@end-->

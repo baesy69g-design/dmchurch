@@ -1,0 +1,37 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">서브페이지 TOP 사진 생성 및 등록</h2>
+<p class="dmc-help">대메뉴별 서브페이지 상단 긴 배너(구홈피 TOP 사진)를 등록합니다. 완성된 긴 사진 1장을 올리거나, 사진 2~4장을 가로로 이어 붙여 자동 생성할 수 있습니다.</p>
+<p class="dmc-help">권장 크기: 가로 {$sub_top_width}px × 세로 {$sub_top_height}px</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveSubTops')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<!--@foreach($sub_top_items as $item)-->
+	<div class="dmc-subtop-slot">
+		<h3>{$item->label}</h3>
+		<!--@if($item->url)-->
+		<div class="dmc-subtop-preview" style="background-image:url('{$item->url}');"></div>
+		<label class="dmc-check"><input type="checkbox" name="remove_sub_top_{$item->key}" value="Y" /> 등록 해제</label>
+		<!--@else-->
+		<div class="dmc-subtop-preview dmc-slide-empty">미등록</div>
+		<!--@end-->
+		<div class="dmc-field">
+			<label>완성된 긴 사진 1장</label>
+			<input type="file" name="banner_{$item->key}" accept="image/jpeg,image/png,image/webp,image/gif" />
+		</div>
+		<p class="dmc-help">또는 아래 2~4장 업로드 시 자동 합성 (합성 파일이 있으면 우선 적용)</p>
+		<div class="dmc-stitch-grid">
+			<!--@for($i=1;$i<=4;$i++)-->
+			<div class="dmc-field">
+				<label>합성 {$i}</label>
+				<input type="file" name="stitch_{$item->key}_{$i}" accept="image/jpeg,image/png,image/webp,image/gif" />
+			</div>
+			<!--@end-->
+		</div>
+	</div>
+	<!--@end-->
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDashboard')}" class="dmc-btn">홈</a>
+	</div>
+</form>
+<!--#include("_footer.html")-->

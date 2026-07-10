@@ -1,0 +1,135 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$page->label} — 본문 수정</h2>
+<p class="dmc-help">
+	<strong>페이지 제목·대표 사진</strong>을 입력하고, 아래에서 <strong>문단 블록</strong>(소제목 · 개요 · 상세)을 반복 추가하세요.
+	저장하면 교회 테마 디자인으로 홈페이지에 반영됩니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveInfoPage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-guide-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="section_count" id="dmc-section-count" value="{$section_count}" />
+
+	<h3 class="dmc-section-title">1. 페이지 제목 · 사진</h3>
+	<div class="dmc-field">
+		<label>페이지 제목</label>
+		<input type="text" name="page_title" value="{$page->page_title}" class="dmc-input-wide" placeholder="예: 담임목사 인사" />
+	</div>
+	<div class="dmc-field">
+		<label>대표 사진</label>
+		<!--@if($page->hero_photo)-->
+		<div class="dmc-info-preview" style="background-image:url('{$page->hero_photo}');"></div>
+		<label class="dmc-check"><input type="checkbox" name="remove_hero_photo" value="Y" /> 사진 삭제</label>
+		<!--@else-->
+		<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+		<!--@end-->
+		<input type="file" name="hero_photo" accept="image/jpeg,image/png,image/webp,image/gif" />
+	</div>
+
+	<h3 class="dmc-section-title">2. 문단 블록 <button type="button" class="dmc-btn dmc-btn-sm" id="dmc-add-section">+ 블록 추가</button></h3>
+	<p class="dmc-help">소제목 · 문단 개요(한두 줄) · 상세 내용 순입니다. 빈 블록은 저장 시 제외됩니다.</p>
+
+	<div id="dmc-section-list">
+		<!--@foreach($section_slots as $slot)-->
+		<div class="dmc-guide-section" data-index="{$slot->index}">
+			<div class="dmc-guide-section-head">
+				<strong>블록 {$slot->num}</strong>
+				<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-section">삭제</button>
+			</div>
+			<div class="dmc-field">
+				<label>문단 소제목</label>
+				<input type="text" name="section_subtitle_{$slot->index}" value="{$slot->subtitle}" class="dmc-input-wide" placeholder="예: 목회비전" />
+			</div>
+			<div class="dmc-field">
+				<label>문단 개요</label>
+				<textarea name="section_summary_{$slot->index}" rows="2" class="dmc-para-input" placeholder="짧은 요약 (1~2문장)">{$slot->summary}</textarea>
+			</div>
+			<div class="dmc-field">
+				<label>문단 상세 내용</label>
+				<textarea name="section_body_{$slot->index}" rows="8" class="dmc-para-input" placeholder="본문 (빈 줄로 문단 구분)">{$slot->body}</textarea>
+			</div>
+		</div>
+		<!--@end-->
+	</div>
+
+	<h3 class="dmc-section-title">3. 캐치프레이즈</h3>
+	<p class="dmc-help">페이지 맨 아래, 마지막 블록 바로 밑에 진한 이탤릭체로 가운데 강조 표시됩니다. (선택)</p>
+	<div class="dmc-field">
+		<label>캐치프레이즈</label>
+		<textarea name="catchphrase" rows="2" class="dmc-para-input" placeholder="예: 사람을 세우는 행복한 목회">{$page->catchphrase}</textarea>
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<template id="dmc-section-template">
+	<div class="dmc-guide-section" data-index="__INDEX__">
+		<div class="dmc-guide-section-head">
+			<strong>블록 __NUM__</strong>
+			<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-section">삭제</button>
+		</div>
+		<div class="dmc-field">
+			<label>문단 소제목</label>
+			<input type="text" name="section_subtitle___INDEX__" value="" class="dmc-input-wide" placeholder="예: 목회비전" />
+		</div>
+		<div class="dmc-field">
+			<label>문단 개요</label>
+			<textarea name="section_summary___INDEX__" rows="2" class="dmc-para-input" placeholder="짧은 요약 (1~2문장)"></textarea>
+		</div>
+		<div class="dmc-field">
+			<label>문단 상세 내용</label>
+			<textarea name="section_body___INDEX__" rows="8" class="dmc-para-input" placeholder="본문 (빈 줄로 문단 구분)"></textarea>
+		</div>
+	</div>
+</template>
+
+<script>
+(function () {
+	var list = document.getElementById('dmc-section-list');
+	var countInput = document.getElementById('dmc-section-count');
+	var tpl = document.getElementById('dmc-section-template');
+	var max = 24;
+
+	function reindex() {
+		var blocks = list.querySelectorAll('.dmc-guide-section');
+		blocks.forEach(function (block, i) {
+			block.dataset.index = String(i);
+			block.querySelector('strong').textContent = '블록 ' + (i + 1);
+			block.querySelector('[name^="section_subtitle_"]').name = 'section_subtitle_' + i;
+			block.querySelector('[name^="section_summary_"]').name = 'section_summary_' + i;
+			block.querySelector('[name^="section_body_"]').name = 'section_body_' + i;
+		});
+		countInput.value = String(blocks.length);
+	}
+
+	document.getElementById('dmc-add-section').addEventListener('click', function () {
+		if (list.querySelectorAll('.dmc-guide-section').length >= max) {
+			alert('블록은 최대 ' + max + '개까지 추가할 수 있습니다.');
+			return;
+		}
+		var i = list.querySelectorAll('.dmc-guide-section').length;
+		var html = tpl.innerHTML.replace(/__INDEX__/g, String(i)).replace(/__NUM__/g, String(i + 1));
+		list.insertAdjacentHTML('beforeend', html);
+		reindex();
+	});
+
+	list.addEventListener('click', function (e) {
+		if (!e.target.classList.contains('dmc-remove-section')) {
+			return;
+		}
+		var blocks = list.querySelectorAll('.dmc-guide-section');
+		if (blocks.length <= 1) {
+			alert('최소 1개 블록은 남겨 두세요.');
+			return;
+		}
+		e.target.closest('.dmc-guide-section').remove();
+		reindex();
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

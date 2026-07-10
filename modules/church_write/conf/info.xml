@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title xml:lang="ko">교회 간편등록</title>
+	<description xml:lang="ko">게시판별 팝업 등록 API</description>
+	<version>1.0.0</version>
+	<date>2026-06-13</date>
+	<category>service</category>
+	<author link="https://dmchurch.kr">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+</module>

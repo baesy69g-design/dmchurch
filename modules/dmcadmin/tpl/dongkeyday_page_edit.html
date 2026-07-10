@@ -1,0 +1,122 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">동키데이 — 페이지 편집</h2>
+<p class="dmc-help">
+	사진 <strong>최대 {$photo_max}장</strong>을 한 화면 콜라주로 배치하고, 가운데에 소개글을 표시합니다.
+	맨 아래에 구글 폼 참가 신청 링크가 노출됩니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveDongkeydayPage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-dongkeyday-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="p93" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+
+	<div class="dmc-field">
+		<label for="dmc-dkd-intro">소개글 (화면 가운데 표시)</label>
+		<textarea id="dmc-dkd-intro" name="intro" rows="10" class="dmc-para-input" placeholder="동키데이 행사 소개를 입력하세요. 빈 줄로 문단을 구분할 수 있습니다.">{$page->intro}</textarea>
+	</div>
+
+	<div class="dmc-field">
+		<label for="dmc-dkd-form">참가 신청 구글 폼 주소</label>
+		<input type="url" id="dmc-dkd-form" name="google_form_url" value="{$page->google_form_url}" class="dmc-input-wide" placeholder="https://docs.google.com/forms/..." />
+		<p class="dmc-help">저장하면 페이지 하단에 「동키데이 참가 신청」 버튼으로 연결됩니다.</p>
+	</div>
+
+	<h3 class="dmc-section-title">사진 ({$photo_max}칸)</h3>
+	<p class="dmc-help">등록한 사진만 콜라주에 표시됩니다. 저장 시 브라우저에서 자동으로 축소·최적화됩니다.</p>
+	<div class="dmc-person-grid">
+		<!--@foreach($photo_slots as $slot)-->
+		<div class="dmc-field dmc-person-photo">
+			<label>사진 {$slot->num}</label>
+			<input type="hidden" name="existing_dkd_photo_{$slot->index}" value="{$slot->photo}" />
+			<!--@if($slot->photo)-->
+			<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->photo}');"></div>
+			<label class="dmc-check"><input type="checkbox" name="remove_dkd_photo_{$slot->index}" value="Y" /> 사진 삭제</label>
+			<!--@else-->
+			<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+			<!--@end-->
+			<input type="file" name="dkd_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<script>
+(function () {
+	var form = document.getElementById('dmc-dongkeyday-form');
+	if (!form) { return; }
+
+	function resizeImage(file, maxDim, maxBytes) {
+		return new Promise(function (resolve) {
+			if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+				resolve(file); return;
+			}
+			var url = URL.createObjectURL(file);
+			var img = new Image();
+			img.onload = function () {
+				URL.revokeObjectURL(url);
+				var w = img.naturalWidth, h = img.naturalHeight;
+				if (!w || !h) { resolve(file); return; }
+				var ratio = Math.min(1, maxDim / Math.max(w, h));
+				if (ratio === 1 && file.size <= maxBytes) { resolve(file); return; }
+				var tw = Math.max(1, Math.round(w * ratio));
+				var th = Math.max(1, Math.round(h * ratio));
+				var canvas = document.createElement('canvas');
+				canvas.width = tw; canvas.height = th;
+				var ctx = canvas.getContext('2d');
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(0, 0, tw, th);
+				ctx.drawImage(img, 0, 0, tw, th);
+				var q = 0.82;
+				(function attempt() {
+					canvas.toBlob(function (blob) {
+						if (!blob) { resolve(file); return; }
+						if (blob.size <= maxBytes || q <= 0.45) {
+							var name = (file.name || 'photo').replace(/\.(png|webp|bmp|gif|jpeg|jpg)$/i, '') + '.jpg';
+							resolve(new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() }));
+						} else { q -= 0.08; attempt(); }
+					}, 'image/jpeg', q);
+				})();
+			};
+			img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+			img.src = url;
+		});
+	}
+
+	form.addEventListener('submit', function (e) {
+		if (form.dataset.resized === '1') { return; }
+		var fileInputs = Array.prototype.slice.call(form.querySelectorAll('input[type=file]'));
+		var pending = fileInputs.filter(function (inp) { return inp.files && inp.files.length; });
+		if (!pending.length) { return; }
+
+		e.preventDefault();
+		var submitBtn = form.querySelector('button[type=submit]');
+		if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '사진 처리 중...'; }
+
+		var tasks = pending.map(function (inp) {
+			return resizeImage(inp.files[0], 1200, 500 * 1024).then(function (nf) {
+				try {
+					var dt = new DataTransfer();
+					dt.items.add(nf);
+					inp.files = dt.files;
+				} catch (err) { /* 원본 사용 */ }
+			});
+		});
+
+		Promise.all(tasks).then(function () {
+			form.dataset.resized = '1';
+			form.submit();
+		}).catch(function () {
+			form.dataset.resized = '1';
+			form.submit();
+		});
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

@@ -1,0 +1,21 @@
+<?php if (!defined('__XE__')) exit; ?>
+<div class="church-member-wrap">
+	<div class="church-member-box">
+		<h1 class="church-member-heading">{$church_member_title}</h1>
+		<!--@if($church_member_msg)-->
+		<div class="church-member-msg">{$church_member_msg}</div>
+		<!--@end-->
+		<p class="church-member-lead">동명교회 새 홈페이지를 이용하려면 <strong>한 번 이상 로그인</strong>하고 개인 이메일을 확인해 주세요.</p>
+		<ol class="church-member-steps">
+			<li><strong>구 비밀번호를 기억하는 경우</strong> — 아이디와 구 비밀번호로 로그인한 뒤, 본인 이메일을 입력하고 확인 메일 링크를 클릭합니다.</li>
+			<li><strong>구 비밀번호를 잊은 경우</strong> — 아래 「비밀번호 재설정」에서 아이디와 개인 이메일을 입력합니다. 메일 링크에서 새 비밀번호를 두 번 입력해 저장합니다.</li>
+		</ol>
+		<div class="church-member-actions">
+			<a class="church-member-btn" href="{$login_url}">로그인</a>
+			<a class="church-member-btn church-member-btn-secondary" href="{$recover_url}">비밀번호 재설정</a>
+			<!--@if($is_logged)-->
+			<a class="church-member-btn church-member-btn-secondary" href="{$verify_url}">이메일 확인</a>
+			<!--@end-->
+		</div>
+	</div>
+</div>

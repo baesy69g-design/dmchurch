@@ -1,0 +1,541 @@
+.church-sermon {
+	margin: 0 0 8px;
+}
+
+.church-sermon-empty {
+	text-align: center;
+	padding: 48px 0;
+	color: #6b7280;
+}
+
+.church-sermon-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 18px;
+}
+
+@media (max-width: 860px) {
+	.church-sermon-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 560px) {
+	.church-sermon-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* 상단 등록 버튼 영역 */
+.church-sermon-topbar {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin: 0 0 14px;
+}
+
+/* 관리자 전용: 카드별 삭제 버튼 */
+.church-sermon-card-wrap {
+	position: relative;
+}
+
+.church-sermon-del {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 5;
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: rgba(230, 57, 70, 0.92);
+	color: #fff;
+	font-size: 1.25rem;
+	line-height: 1;
+	text-decoration: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	opacity: 0;
+	transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.church-sermon-card-wrap:hover .church-sermon-del {
+	opacity: 1;
+}
+
+.church-sermon-del:hover {
+	transform: scale(1.12);
+	background: #e63946;
+	color: #fff;
+}
+
+.church-sermon-card {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	background: #fff;
+	border: 1px solid rgba(27, 67, 50, 0.12);
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 8px 20px rgba(27, 67, 50, 0.10);
+	transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.church-sermon-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 16px 30px rgba(27, 67, 50, 0.18);
+}
+
+.church-sermon-thumb {
+	position: relative;
+	display: block;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	background: #0c1f17;
+}
+
+.church-sermon-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.4s ease;
+}
+
+.church-sermon-card:hover .church-sermon-thumb img {
+	transform: scale(1.06);
+}
+
+.church-sermon-noimg {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	background: linear-gradient(135deg, #3a4750, #5b6b78);
+	color: rgba(255, 255, 255, 0.92);
+}
+
+/* 빗금 친 재생 불가 아이콘 */
+.church-sermon-noimg-icon {
+	position: relative;
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.church-sermon-noimg-icon::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 54%;
+	transform: translate(-50%, -50%);
+	border-style: solid;
+	border-width: 8px 0 8px 13px;
+	border-color: transparent transparent transparent rgba(255, 255, 255, 0.7);
+}
+
+.church-sermon-noimg-icon::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 58px;
+	height: 2px;
+	background: rgba(255, 255, 255, 0.85);
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.church-sermon-noimg-label {
+	font-size: 0.82rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+/* 접근 불가 카드: 호버 효과/커서 제거 */
+.church-sermon-card.no-video {
+	cursor: default;
+}
+
+.church-sermon-card.no-video:hover {
+	transform: none;
+	box-shadow: 0 8px 20px rgba(27, 67, 50, 0.10);
+}
+
+.church-sermon-card.no-video:hover .church-sermon-thumb img {
+	transform: none;
+}
+
+.church-sermon-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 54px;
+	height: 54px;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.55);
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.church-sermon-play::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 54%;
+	transform: translate(-50%, -50%);
+	border-style: solid;
+	border-width: 10px 0 10px 17px;
+	border-color: transparent transparent transparent #fff;
+}
+
+.church-sermon-card:hover .church-sermon-play {
+	background: #e63946;
+	transform: translate(-50%, -50%) scale(1.08);
+}
+
+.church-sermon-badge {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 2;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: #fff;
+	background: #e63946;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.church-sermon-meta {
+	display: block;
+	padding: 14px 16px 16px;
+}
+
+.church-sermon-title {
+	display: block;
+	font-size: 1.02rem;
+	font-weight: 700;
+	line-height: 1.45;
+	color: #1b3a2b;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.church-sermon-info {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-top: 12px;
+}
+
+.church-sermon-date {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 4px 12px 4px 10px;
+	font-size: 1.12rem;
+	font-weight: 800;
+	letter-spacing: 0.01em;
+	color: #1b4332;
+	background: rgba(64, 145, 108, 0.12);
+	border-radius: 999px;
+}
+
+.church-sermon-date::before {
+	content: '';
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: #e63946;
+}
+
+.church-sermon-views {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: #6b8377;
+}
+
+.church-sermon-views em {
+	display: inline-block;
+	width: 16px;
+	height: 11px;
+	border: 2px solid #6b8377;
+	border-radius: 10px / 8px;
+	position: relative;
+	font-style: normal;
+}
+
+.church-sermon-views em::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 4px;
+	height: 4px;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	background: #6b8377;
+}
+
+@media (max-width: 640px) {
+	.church-sermon-grid {
+		grid-template-columns: 1fr;
+		gap: 16px;
+	}
+}
+
+/* ===== 설교 영상 팝업(모달) ===== */
+.church-sermon-modal {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+}
+
+.church-sermon-modal.is-open {
+	display: block;
+}
+
+.church-sermon-modal-backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.82);
+	backdrop-filter: blur(3px);
+	animation: church-sermon-fade 0.25s ease;
+}
+
+.church-sermon-modal-box {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: min(94vw, 1280px);
+	animation: church-sermon-pop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.church-sermon-modal-title {
+	margin: 0 0 12px;
+	padding-right: 48px;
+	color: #fff;
+	font-size: 1.15rem;
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+.church-sermon-modal-body {
+	display: flex;
+	gap: 16px;
+	align-items: stretch;
+}
+
+.church-sermon-modal-video {
+	flex: 1 1 70%;
+	min-width: 0;
+}
+
+.church-sermon-modal-frame {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	background: #000;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.church-sermon-modal-frame iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+
+/* 말씀창: 내부 콘텐츠를 absolute로 채워 영상 높이에 맞춰 스크롤 */
+.church-sermon-modal-script-wrap {
+	flex: 0 0 30%;
+	max-width: 30%;
+	position: relative;
+}
+
+.church-sermon-modal-script {
+	position: absolute;
+	inset: 0;
+	overflow-y: auto;
+	border-radius: 14px;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(64, 145, 108, 0.18);
+	color: #2b3f35;
+	font-size: 0.96rem;
+	line-height: 1.85;
+	word-break: keep-all;
+	background:
+		linear-gradient(180deg, #fbfdf9 0%, #f3f7ef 100%);
+}
+
+/* 상단 고정 "말씀" 헤더 */
+.church-sermon-script-head {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 18px 12px;
+	background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 55%, #40916c 100%);
+	color: #fff;
+	border-radius: 14px 14px 0 0;
+	box-shadow: 0 6px 14px rgba(27, 67, 50, 0.25);
+}
+
+.church-sermon-script-quote {
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 1.9rem;
+	line-height: 0.6;
+	color: rgba(255, 255, 255, 0.7);
+	transform: translateY(4px);
+}
+
+.church-sermon-script-label {
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	font-size: 1.02rem;
+}
+
+/* 본문 */
+.church-sermon-script-body {
+	position: relative;
+	padding: 18px 20px 26px;
+}
+
+/* 은은한 따옴표 워터마크 */
+.church-sermon-script-body::before {
+	content: "\201D";
+	position: absolute;
+	top: 2px;
+	right: 12px;
+	font-family: Georgia, 'Times New Roman', serif;
+	font-size: 5.5rem;
+	line-height: 1;
+	color: rgba(64, 145, 108, 0.10);
+	pointer-events: none;
+}
+
+.church-sermon-script-body p {
+	margin: 0 0 12px;
+	position: relative;
+	padding-left: 14px;
+}
+
+.church-sermon-script-body p::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.45em;
+	bottom: 0.2em;
+	width: 3px;
+	border-radius: 3px;
+	background: linear-gradient(180deg, #40916c, rgba(64, 145, 108, 0.25));
+}
+
+.church-sermon-script-body strong {
+	color: #1b4332;
+}
+
+.church-sermon-modal-script::-webkit-scrollbar {
+	width: 8px;
+}
+
+.church-sermon-modal-script::-webkit-scrollbar-thumb {
+	background: rgba(64, 145, 108, 0.5);
+	border-radius: 4px;
+}
+
+.church-sermon-modal-script::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* 말씀 본문이 없으면 영상만 꽉 차게 */
+.church-sermon-modal.no-script .church-sermon-modal-script-wrap {
+	display: none;
+}
+
+.church-sermon-modal.no-script .church-sermon-modal-video {
+	flex-basis: 100%;
+}
+
+.church-sermon-modal-close {
+	position: absolute;
+	top: -6px;
+	right: 0;
+	transform: translateY(-100%);
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.15);
+	color: #fff;
+	font-size: 1.6rem;
+	line-height: 1;
+	cursor: pointer;
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.church-sermon-modal-close:hover {
+	background: #e63946;
+}
+
+@keyframes church-sermon-fade {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes church-sermon-pop {
+	from { opacity: 0; transform: translate(-50%, -46%) scale(0.95); }
+	to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (max-width: 900px) {
+	.church-sermon-modal-body {
+		flex-direction: column;
+	}
+
+	.church-sermon-modal-video,
+	.church-sermon-modal-script-wrap {
+		flex: 1 1 auto;
+		max-width: 100%;
+	}
+
+	.church-sermon-modal-script-wrap {
+		height: 32vh;
+	}
+}
+
+@media (max-width: 640px) {
+	.church-sermon-modal-box {
+		width: 94vw;
+	}
+
+	.church-sermon-modal-title {
+		font-size: 1rem;
+	}
+
+	.church-sermon-modal-close {
+		top: -4px;
+		right: 0;
+		transform: translateY(-100%);
+	}
+}

@@ -1,0 +1,34 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">메인 타일</h2>
+<p class="dmc-help">홈페이지 메인의 타일 그리드(8칸) 이미지와 링크를 관리합니다. 링크를 비우면 기본 게시판·안내 페이지로 연결됩니다.</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveMainTiles')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<div class="dmc-tile-grid">
+		<!--@foreach($tile_slots as $slot)-->
+		<div class="dmc-tile-slot">
+			<h3>{$slot->label}</h3>
+			<p class="dmc-help">기본 링크: {$slot->default_link}</p>
+			<!--@if($slot->image_url)-->
+			<div class="dmc-tile-preview" style="background-image:url('{$slot->image_url}');"></div>
+			<label class="dmc-check"><input type="checkbox" name="remove_tile_{$slot->key}" value="Y" /> 이미지 등록 해제</label>
+			<!--@else-->
+			<div class="dmc-tile-preview dmc-slide-empty">미등록 (기본 배경색)</div>
+			<!--@end-->
+			<div class="dmc-field">
+				<label>타일 이미지</label>
+				<input type="file" name="tile_{$slot->key}" accept="image/jpeg,image/png,image/webp,image/gif" />
+			</div>
+			<div class="dmc-field">
+				<label>링크 URL (선택)</label>
+				<input type="text" name="link_url_{$slot->key}" value="{$slot->link_url}" placeholder="비우면 기본 링크 사용" />
+			</div>
+		</div>
+		<!--@end-->
+	</div>
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDashboard')}" class="dmc-btn">홈</a>
+	</div>
+</form>
+<!--#include("_footer.html")-->

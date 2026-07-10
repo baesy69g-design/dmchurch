@@ -1,0 +1,148 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">교회학교 — 부서 소개 편집</h2>
+<p class="dmc-help">
+	<strong>구분</strong>에서 편집할 부서를 선택하세요. 부서별로 교육주제 · 주제말씀 · 교육목표 및 방향 · 예배안내 · 담당교역자 및 교사와 대표 사진 4장을 등록할 수 있습니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<div class="dmc-field" style="max-width:360px;">
+	<label for="dmc-school-dept">구분 (편집할 부서)</label>
+	<select id="dmc-school-dept" onchange="if(this.value){location.href=this.value;}">
+		<!--@foreach($departments as $dept)-->
+		<option value="{$dept->edit_url}"<!--@if($dept->selected)--> selected="selected"<!--@end-->>{$dept->label}</option>
+		<!--@end-->
+	</select>
+	<p class="dmc-help">부서를 바꾸면 저장하지 않은 내용은 사라집니다. 먼저 저장하세요.</p>
+</div>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveSchoolPage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-school-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+
+	<h3 class="dmc-section-title">소개 내용 — {$page->label}</h3>
+
+	<div class="dmc-field">
+		<label for="dmc-theme">교육주제</label>
+		<input type="text" id="dmc-theme" name="theme" value="{$page->theme}" placeholder="예) 예수님을 닮아가는 어린이" />
+	</div>
+
+	<div class="dmc-field">
+		<label for="dmc-verse">주제말씀</label>
+		<input type="text" id="dmc-verse" name="verse" value="{$page->verse}" placeholder="예) 마음을 다하고 뜻을 다하여 (신명기 6:5)" />
+	</div>
+
+	<div class="dmc-field">
+		<label for="dmc-goal">교육목표 및 방향</label>
+		<textarea id="dmc-goal" name="goal" rows="10" class="dmc-para-input" placeholder="여러 줄로 입력할 수 있습니다.">{$page->goal}</textarea>
+	</div>
+
+	<div class="dmc-field">
+		<label for="dmc-worship">예배 안내</label>
+		<textarea id="dmc-worship" name="worship" rows="6" class="dmc-para-input" placeholder="예) 주일 오전 9:30 / 본당 2층 유년부실">{$page->worship}</textarea>
+	</div>
+
+	<div class="dmc-field">
+		<label for="dmc-staff">담당 교역자 및 교사</label>
+		<textarea id="dmc-staff" name="staff" rows="8" class="dmc-para-input" placeholder="예) 담당 교역자: 홍길동 전도사 / 교사: 김…, 이…">{$page->staff}</textarea>
+	</div>
+
+	<h3 class="dmc-section-title">대표 사진 (최대 4장)</h3>
+	<p class="dmc-help">사진은 저장 시 자동으로 최적화됩니다. JPG·PNG 모두 가능합니다.</p>
+	<div class="dmc-person-grid">
+		<!--@foreach($photo_slots as $slot)-->
+		<div class="dmc-field dmc-person-photo">
+			<label>사진 {$slot->num}</label>
+			<input type="hidden" name="existing_school_photo_{$slot->index}" value="{$slot->photo}" />
+			<!--@if($slot->photo)-->
+			<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->photo}');"></div>
+			<label class="dmc-check"><input type="checkbox" name="remove_school_photo_{$slot->index}" value="Y" /> 사진 삭제</label>
+			<!--@else-->
+			<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+			<!--@end-->
+			<input type="file" name="school_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+			<p class="dmc-help">새 파일을 선택하면 기존 사진이 교체됩니다.</p>
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<script>
+(function () {
+	var form = document.getElementById('dmc-school-form');
+	if (!form) { return; }
+
+	function resizeImage(file, maxDim, maxBytes) {
+		return new Promise(function (resolve) {
+			if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+				resolve(file); return;
+			}
+			var url = URL.createObjectURL(file);
+			var img = new Image();
+			img.onload = function () {
+				URL.revokeObjectURL(url);
+				var w = img.naturalWidth, h = img.naturalHeight;
+				if (!w || !h) { resolve(file); return; }
+				var ratio = Math.min(1, maxDim / Math.max(w, h));
+				if (ratio === 1 && file.size <= maxBytes) { resolve(file); return; }
+				var tw = Math.max(1, Math.round(w * ratio));
+				var th = Math.max(1, Math.round(h * ratio));
+				var canvas = document.createElement('canvas');
+				canvas.width = tw; canvas.height = th;
+				var ctx = canvas.getContext('2d');
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(0, 0, tw, th);
+				ctx.drawImage(img, 0, 0, tw, th);
+				var q = 0.88;
+				(function attempt() {
+					canvas.toBlob(function (blob) {
+						if (!blob) { resolve(file); return; }
+						if (blob.size <= maxBytes || q <= 0.5) {
+							var name = (file.name || 'photo').replace(/\.(png|webp|bmp|gif|jpeg|jpg)$/i, '') + '.jpg';
+							resolve(new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() }));
+						} else { q -= 0.1; attempt(); }
+					}, 'image/jpeg', q);
+				})();
+			};
+			img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+			img.src = url;
+		});
+	}
+
+	form.addEventListener('submit', function (e) {
+		if (form.dataset.resized === '1') { return; }
+		var fileInputs = Array.prototype.slice.call(form.querySelectorAll('input[type=file]'));
+		var pending = fileInputs.filter(function (inp) { return inp.files && inp.files.length; });
+		if (!pending.length) { return; }
+
+		e.preventDefault();
+		var submitBtn = form.querySelector('button[type=submit]');
+		if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '사진 처리 중...'; }
+
+		var tasks = pending.map(function (inp) {
+			return resizeImage(inp.files[0], 1400, 700 * 1024).then(function (nf) {
+				try {
+					var dt = new DataTransfer();
+					dt.items.add(nf);
+					inp.files = dt.files;
+				} catch (err) { /* 원본 사용 */ }
+			});
+		});
+
+		Promise.all(tasks).then(function () {
+			form.dataset.resized = '1';
+			form.submit();
+		}).catch(function () {
+			form.dataset.resized = '1';
+			form.submit();
+		});
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

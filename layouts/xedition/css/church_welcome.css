@@ -1,0 +1,35 @@
+.header .side .church-welcome-li {
+	display: table-cell;
+	vertical-align: middle;
+	padding-right: 12px;
+	min-width: 130px;
+	text-align: right;
+}
+.header .side .church-welcome-msg {
+	font-size: 13px;
+	color: #1a3a6b;
+	font-weight: 600;
+	white-space: nowrap;
+}
+.header .side .church-welcome-msg--empty {
+	visibility: hidden;
+	display: inline-block;
+	width: 118px;
+}
+@media (max-width: 768px) {
+	.header .side .church-welcome-li {
+		min-width: 92px;
+		padding-right: 6px;
+	}
+	.header .side .church-welcome-msg {
+		font-size: 11px;
+		max-width: 88px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: inline-block;
+		vertical-align: middle;
+	}
+	.header .side .church-welcome-msg--empty {
+		width: 88px;
+	}
+}

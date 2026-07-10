@@ -1,0 +1,57 @@
+<!--#include("_header.html")-->
+<div class="dmc-toolbar">
+	<h2 class="dmc-page-title">회원 관리</h2>
+	<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMemberForm')}" class="dmc-btn dmc-btn-primary">+ 회원 추가</a>
+</div>
+<form method="get" class="dmc-search">
+	<input type="hidden" name="mid" value="dmcadmin" />
+	<input type="hidden" name="act" value="dispDmcMgrMembers" />
+	<input type="text" name="search" value="{$search}" placeholder="아이디, 이름, 메일, 전화 검색" />
+	<button type="submit" class="dmc-btn">검색</button>
+</form>
+<div class="dmc-table-wrap">
+	<table class="dmc-table">
+		<thead>
+			<tr>
+				<th>아이디</th>
+				<th>이름</th>
+				<th>이메일</th>
+				<th>이메일인증</th>
+				<th>휴대폰</th>
+				<th>전화</th>
+				<th>성별</th>
+				<th>나이</th>
+				<th>주소</th>
+				<th>상태</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<!--@foreach($member_list as $m)-->
+			<tr>
+				<td>{$m->user_id}</td>
+				<td>{$m->user_name}</td>
+				<td class="dmc-email">{$m->email_address}</td>
+				<td class="dmc-email-verify">
+					<!--@if($m->email_verify_code=='done')-->
+					<span class="dmc-badge ok">완료</span>
+					<!--@elseif($m->email_verify_code=='pending')-->
+					<span class="dmc-badge warn">미완료</span>
+					<!--@if($m->pending_email)--><span class="dmc-email-pending" title="인증 대기 이메일">{$m->pending_email}</span><!--@end-->
+					<!--@else-->
+					<span class="dmc-badge muted">해당없음</span>
+					<!--@end-->
+				</td>
+				<td>{$m->phone_number}</td>
+				<td>{$m->phone}</td>
+				<td>{$m->gender}</td>
+				<td>{$m->age}</td>
+				<td class="dmc-addr">{$m->zipcode} {$m->address1} {$m->address2}</td>
+				<td><!--@if($m->denied=='Y')--><span class="dmc-badge warn">승인대기/거부</span><!--@else--><span class="dmc-badge ok">사용</span><!--@end--></td>
+				<td><a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMemberForm', 'member_srl', $m->member_srl)}">수정</a></td>
+			</tr>
+			<!--@end-->
+		</tbody>
+	</table>
+</div>
+<!--#include("_footer.html")-->

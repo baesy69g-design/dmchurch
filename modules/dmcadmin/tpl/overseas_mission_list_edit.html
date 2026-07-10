@@ -1,0 +1,474 @@
+<!--#include("_header.html")-->
+
+<h2 class="dmc-page-title">해외선교 — 목록 편집</h2>
+
+<p class="dmc-help">
+
+	<strong>구분</strong>·<strong>이름</strong>·<strong>순서</strong>는 필수입니다.
+
+	상세 페이지가 <strong>없는</strong> 항목은 <strong>선교 이미지</strong>를 올리면 목록에 표시됩니다.
+
+	상세 페이지가 <strong>있는</strong> 항목은 <strong>사진</strong>과 <strong>사진설명</strong>(필수)을 입력합니다.
+
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+
+</p>
+
+
+
+<!--@if(count($sub_options))-->
+
+<div class="dmc-field">
+
+	<label>상세 페이지 미리보기</label>
+
+	<p class="dmc-help">
+
+		<!--@foreach($sub_options as $opt)-->
+
+		<a href="{getUrl('', 'mid', $opt->sub_mid)}" target="_blank" rel="noopener" class="dmc-btn dmc-btn-sm">{$opt->name}</a>
+
+		<!--@end-->
+
+	</p>
+
+</div>
+
+<!--@end-->
+
+
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveOverseasMissionList')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-dm-list-form">
+
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+
+	<input type="hidden" name="item_count" id="dmc-dm-item-count" value="{$item_count}" />
+
+
+
+	<h3 class="dmc-section-title">후원 대상 목록 <button type="button" class="dmc-btn dmc-btn-sm" id="dmc-add-dm-item">+ 항목 추가</button></h3>
+
+
+
+	<div id="dmc-dm-item-list">
+
+		<!--@foreach($item_slots as $slot)-->
+
+		<div class="dmc-guide-section dmc-dm-row" data-index="{$slot->index}">
+
+			<div class="dmc-guide-section-head">
+
+				<strong>{$slot->num}</strong>
+
+				<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-dm-item">삭제</button>
+
+			</div>
+
+			<input type="hidden" name="item_id_{$slot->index}" value="{$slot->id}" />
+
+			<input type="hidden" name="item_sub_mid_{$slot->index}" value="{$slot->sub_mid}" />
+
+			<div class="dmc-person-grid">
+
+				<div class="dmc-field dmc-person-photo dmc-dm-photo-simple"<!--@if($slot->has_sub)--> style="display:none"<!--@end-->>
+
+					<label>선교 이미지</label>
+
+					<input type="hidden" name="existing_item_thumb_{$slot->index}" value="{$slot->thumb}" />
+
+					<!--@if($slot->thumb)-->
+
+					<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->thumb}');"></div>
+
+					<label class="dmc-check"><input type="checkbox" name="remove_item_thumb_{$slot->index}" value="Y" /> 사진 삭제</label>
+
+					<!--@else-->
+
+					<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+
+					<!--@end-->
+
+					<input type="file" name="item_thumb_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+
+				</div>
+
+				<div class="dmc-field dmc-person-photo dmc-dm-photo-sub"<!--@if(!$slot->has_sub)--> style="display:none"<!--@end-->>
+
+					<label>사진 <span class="dmc-req">*</span></label>
+
+					<input type="hidden" name="existing_item_sub_photo_{$slot->index}" value="{$slot->sub_photo}" />
+
+					<!--@if($slot->sub_photo)-->
+
+					<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->sub_photo}');"></div>
+
+					<label class="dmc-check"><input type="checkbox" name="remove_item_sub_photo_{$slot->index}" value="Y" /> 사진 삭제</label>
+
+					<!--@else-->
+
+					<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+
+					<!--@end-->
+
+					<input type="file" name="item_sub_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+
+				</div>
+
+				<div class="dmc-person-fields">
+
+					<div class="dmc-field">
+
+						<label>구분 <span class="dmc-req">*</span></label>
+
+						<select name="item_category_{$slot->index}" class="dmc-input-wide" required="required">
+
+							<!--@foreach($categories as $ckey => $clabel)-->
+
+							<option value="{$ckey}"<!--@if($ckey==$slot->category)--> selected="selected"<!--@end-->>{$clabel}</option>
+
+							<!--@end-->
+
+						</select>
+
+					</div>
+
+					<div class="dmc-field">
+
+						<label>국가 <span class="dmc-req">*</span></label>
+
+						<input type="text" name="item_country_{$slot->index}" value="{$slot->country}" class="dmc-input-wide" required="required" placeholder="예: 태국 / 일본 / 필리핀" />
+
+					</div>
+
+					<div class="dmc-field">
+
+						<label>선교사 이름</label>
+
+						<input type="text" name="item_missionary_name_{$slot->index}" value="{$slot->missionary_name}" class="dmc-input-wide" placeholder="예: 박미경 선교사" />
+
+					</div>
+
+					<div class="dmc-field">
+
+						<label>선교지·기관명</label>
+
+						<input type="text" name="item_name_{$slot->index}" value="{$slot->name}" class="dmc-input-wide" placeholder="예: 뉴임마누엘교회 (선교사만 있으면 비움)" />
+
+					</div>
+
+					<div class="dmc-field">
+
+						<label>순서 <span class="dmc-req">*</span></label>
+
+						<input type="number" name="item_order_{$slot->index}" value="{$slot->order}" class="dmc-input-wide" min="1" step="1" required="required" placeholder="작을수록 앞" />
+
+					</div>
+
+					<div class="dmc-field">
+
+						<label class="dmc-check"><input type="checkbox" class="dmc-dm-has-sub" name="item_has_sub_{$slot->index}" value="Y"<!--@if($slot->has_sub)--> checked="checked"<!--@end--> /> 상세 페이지 있음 (sub 메뉴·전용 페이지)</label>
+
+					</div>
+
+					<div class="dmc-field dmc-dm-sub-body-wrap"<!--@if(!$slot->has_sub)--> style="display:none"<!--@end-->>
+
+						<label>사진설명 <span class="dmc-req">*</span></label>
+
+						<textarea name="item_sub_body_{$slot->index}" rows="6" class="dmc-para-input dmc-dm-sub-body" placeholder="소개 글을 입력하세요. 빈 줄로 문단을 구분할 수 있습니다.">{$slot->sub_body}</textarea>
+
+						<!--@if($slot->has_sub && $slot->sub_mid)-->
+
+						<p class="dmc-help"><a href="{getUrl('', 'mid', $slot->sub_mid)}" target="_blank" rel="noopener">상세 페이지 미리보기 ↗</a></p>
+
+						<!--@end-->
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<!--@end-->
+
+	</div>
+
+
+
+	<div class="dmc-form-actions">
+
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+
+	</div>
+
+</form>
+
+
+
+<template id="dmc-dm-item-template">
+
+	<div class="dmc-guide-section dmc-dm-row" data-index="__INDEX__">
+
+		<div class="dmc-guide-section-head">
+
+			<strong>__NUM__</strong>
+
+			<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-dm-item">삭제</button>
+
+		</div>
+
+		<input type="hidden" name="item_id___INDEX__" value="" />
+
+		<input type="hidden" name="item_sub_mid___INDEX__" value="" />
+
+		<div class="dmc-person-grid">
+
+			<div class="dmc-field dmc-person-photo dmc-dm-photo-simple">
+
+				<label>선교 이미지</label>
+
+				<input type="hidden" name="existing_item_thumb___INDEX__" value="" />
+
+				<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+
+				<input type="file" name="item_thumb___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" />
+
+			</div>
+
+			<div class="dmc-field dmc-person-photo dmc-dm-photo-sub" style="display:none">
+
+				<label>사진 <span class="dmc-req">*</span></label>
+
+				<input type="hidden" name="existing_item_sub_photo___INDEX__" value="" />
+
+				<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+
+				<input type="file" name="item_sub_photo___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" />
+
+			</div>
+
+			<div class="dmc-person-fields">
+
+				<div class="dmc-field">
+
+					<label>구분 <span class="dmc-req">*</span></label>
+
+					<select name="item_category___INDEX__" class="dmc-input-wide" required="required">
+
+						<option value="dispatch">우리교회 파송선교사</option>
+
+						<option value="support">우리교회가 돕는 선교지</option>
+
+					</select>
+
+				</div>
+
+				<div class="dmc-field">
+
+					<label>국가 <span class="dmc-req">*</span></label>
+
+					<input type="text" name="item_country___INDEX__" value="" class="dmc-input-wide" required="required" placeholder="국가" />
+
+				</div>
+
+				<div class="dmc-field">
+
+					<label>선교사 이름</label>
+
+					<input type="text" name="item_missionary_name___INDEX__" value="" class="dmc-input-wide" placeholder="선교사 이름" />
+
+				</div>
+
+				<div class="dmc-field">
+
+					<label>선교지·기관명</label>
+
+					<input type="text" name="item_name___INDEX__" value="" class="dmc-input-wide" placeholder="선교지·기관명" />
+
+				</div>
+
+				<div class="dmc-field">
+
+					<label>순서 <span class="dmc-req">*</span></label>
+
+					<input type="number" name="item_order___INDEX__" value="" class="dmc-input-wide" min="1" step="1" required="required" />
+
+				</div>
+
+				<div class="dmc-field">
+
+					<label class="dmc-check"><input type="checkbox" class="dmc-dm-has-sub" name="item_has_sub___INDEX__" value="Y" /> 상세 페이지 있음</label>
+
+				</div>
+
+				<div class="dmc-field dmc-dm-sub-body-wrap" style="display:none">
+
+					<label>사진설명 <span class="dmc-req">*</span></label>
+
+					<textarea name="item_sub_body___INDEX__" rows="6" class="dmc-para-input dmc-dm-sub-body" placeholder="소개 글을 입력하세요."></textarea>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</template>
+
+
+
+<script>
+
+(function () {
+
+	var list = document.getElementById('dmc-dm-item-list');
+
+	var countInput = document.getElementById('dmc-dm-item-count');
+
+	var tpl = document.getElementById('dmc-dm-item-template');
+
+	if (!list || !countInput || !tpl) { return; }
+
+
+
+	function toggleRow(row) {
+
+		var hasSub = row.querySelector('.dmc-dm-has-sub');
+
+		var on = hasSub && hasSub.checked;
+
+		var simple = row.querySelector('.dmc-dm-photo-simple');
+
+		var subPhoto = row.querySelector('.dmc-dm-photo-sub');
+
+		var subBody = row.querySelector('.dmc-dm-sub-body-wrap');
+
+		var bodyTa = row.querySelector('.dmc-dm-sub-body');
+
+		if (simple) { simple.style.display = on ? 'none' : ''; }
+
+		if (subPhoto) { subPhoto.style.display = on ? '' : 'none'; }
+
+		if (subBody) { subBody.style.display = on ? '' : 'none'; }
+
+		if (bodyTa) { bodyTa.required = !!on; }
+
+	}
+
+
+
+	function bindRow(row) {
+
+		var cb = row.querySelector('.dmc-dm-has-sub');
+
+		if (cb) {
+
+			cb.addEventListener('change', function () { toggleRow(row); });
+
+		}
+
+		toggleRow(row);
+
+	}
+
+
+
+	function reindexRows() {
+
+		list.querySelectorAll('.dmc-dm-row').forEach(function (row, i) {
+
+			var strong = row.querySelector('.dmc-guide-section-head strong');
+
+			if (strong) { strong.textContent = String(i + 1); }
+
+			row.setAttribute('data-index', String(i));
+
+			row.querySelectorAll('[name]').forEach(function (el) {
+
+				if (!el.name) { return; }
+
+				el.name = el.name.replace(/_(\d+)$/, '_' + i);
+
+			});
+
+		});
+
+		countInput.value = String(list.querySelectorAll('.dmc-dm-row').length || 1);
+
+	}
+
+
+
+	list.querySelectorAll('.dmc-dm-row').forEach(bindRow);
+
+
+
+	document.getElementById('dmc-add-dm-item').addEventListener('click', function () {
+
+		var idx = parseInt(countInput.value, 10) || 0;
+
+		var html = tpl.innerHTML.replace(/__INDEX__/g, String(idx)).replace(/__NUM__/g, String(list.querySelectorAll('.dmc-dm-row').length + 1));
+
+		var wrap = document.createElement('div');
+
+		wrap.innerHTML = html;
+
+		var row = wrap.firstElementChild;
+
+		list.appendChild(row);
+
+		countInput.value = String(idx + 1);
+
+		bindRow(row);
+
+		row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+		var nameInput = row.querySelector('input[name^="item_name_"]');
+
+		if (nameInput) { nameInput.focus(); }
+
+	});
+
+
+
+	list.addEventListener('click', function (e) {
+
+		if (!e.target.classList.contains('dmc-remove-dm-item')) { return; }
+
+		var row = e.target.closest('.dmc-dm-row');
+
+		if (row && list.querySelectorAll('.dmc-dm-row').length > 1) {
+
+			row.remove();
+
+			reindexRows();
+
+		}
+
+	});
+
+
+
+	var form = document.getElementById('dmc-dm-list-form');
+
+	if (form) {
+
+		form.addEventListener('submit', function () { reindexRows(); });
+
+	}
+
+})();
+
+</script>
+
+<!--#include("_footer.html")-->
+

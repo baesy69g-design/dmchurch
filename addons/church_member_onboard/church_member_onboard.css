@@ -1,0 +1,30 @@
+.church-onboard-banner a {
+	margin: 0 4px;
+}
+
+.church-modify-email {
+	margin-top: 28px;
+	padding-top: 22px;
+	border-top: 2px solid #d9dee8;
+}
+.church-modify-email-title {
+	margin: 0 0 10px;
+	font-size: 1.15rem;
+	color: #1a3a6b;
+}
+.church-modify-email-lead {
+	line-height: 1.7;
+	color: #444;
+	margin-bottom: 14px;
+}
+.church-modify-email-pending {
+	padding: 10px 12px;
+	margin-bottom: 14px;
+	border-radius: 6px;
+	background: #eef5ff;
+	color: #1a3a6b;
+}
+.church-modify-email .controls input[type="email"],
+.church-modify-email .controls input[readonly] {
+	max-width: 420px;
+}

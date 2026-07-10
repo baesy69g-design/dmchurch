@@ -1,0 +1,107 @@
+body.dmcadmin-page { margin: 0; font-family: "Malgun Gothic", sans-serif; background: #eef1f5; color: #222; }
+.dmc-header { background: #1a3a5c; color: #fff; }
+.dmc-header-inner { max-width: 1100px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 24px; }
+.dmc-logo { color: #fff; font-weight: bold; font-size: 1.2rem; text-decoration: none; }
+.dmc-nav a { color: #c8d9ea; margin-right: 16px; text-decoration: none; }
+.dmc-nav a:hover { color: #fff; }
+.dmc-logout-form { margin-left: auto; }
+.dmc-main { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
+.dmc-footer { text-align: center; color: #888; font-size: 12px; padding: 24px; }
+.dmc-login-wrap { min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+.dmc-login-box { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.08); width: 360px; }
+.dmc-login-box h1 { margin: 0 0 8px; font-size: 1.4rem; }
+.dmc-sub { color: #666; margin: 0 0 24px; font-size: 13px; }
+.dmc-field { margin-bottom: 14px; }
+.dmc-field label { display: block; font-size: 13px; margin-bottom: 4px; color: #444; }
+.dmc-field input, .dmc-field select, .dmc-field textarea { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.dmc-btn { display: inline-block; padding: 8px 16px; border: 1px solid #bbb; background: #fff; border-radius: 4px; cursor: pointer; text-decoration: none; color: #333; font-size: 14px; }
+.dmc-btn-primary { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+.dmc-btn-sm { padding: 4px 12px; font-size: 12px; }
+.dmc-page-title { margin: 0 0 20px; }
+.dmc-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.dmc-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.dmc-card h3 { margin: 0 0 12px; font-size: 14px; color: #666; }
+.dmc-stat { font-size: 2rem; margin: 0; font-weight: bold; }
+.dmc-stat span { font-size: 1rem; font-weight: normal; color: #888; }
+.dmc-stat-sm { font-size: 14px; word-break: break-all; }
+.dmc-link { font-size: 13px; color: #1a3a5c; }
+.dmc-section { background: #fff; padding: 24px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.dmc-section h3 { margin: 20px 0 12px; font-size: 15px; }
+.dmc-section h3:first-child { margin-top: 0; }
+.dmc-help { font-size: 13px; color: #666; margin: 0 0 12px; }
+.dmc-req { color: #c0392b; font-weight: 700; }
+.dmc-form { max-width: 480px; }
+.dmc-form-wide { max-width: 720px; }
+.dmc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.dmc-span2 { grid-column: span 2; }
+.dmc-form-actions { margin-top: 20px; display: flex; gap: 8px; }
+.dmc-notice { padding: 10px 14px; border-radius: 4px; background: #fff3cd; margin-bottom: 16px; }
+.dmc-notice.ok { background: #d4edda; }
+.dmc-alert { color: #c00; font-size: 13px; }
+.dmc-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.dmc-search { display: flex; gap: 8px; margin-bottom: 16px; }
+.dmc-search input { flex: 1; max-width: 320px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+.dmc-table-wrap { overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.dmc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dmc-table th, .dmc-table td { padding: 10px 12px; border-bottom: 1px solid #eee; text-align: left; }
+.dmc-table th { background: #f7f9fb; font-weight: 600; }
+.dmc-addr { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmc-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.dmc-badge.ok { background: #d4edda; color: #155724; }
+.dmc-badge.warn { background: #fff3cd; color: #856404; }
+.dmc-badge.muted { background: #e9ecef; color: #6c757d; }
+.dmc-email { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmc-email-verify { min-width: 88px; }
+.dmc-email-pending { display: block; margin-top: 4px; font-size: 11px; color: #666; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dmc-field-readonly { margin: 8px 0 0; }
+
+.dmc-slide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.dmc-slide-slot { background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.dmc-slide-slot h3 { margin: 0 0 12px; font-size: 15px; }
+.dmc-slide-preview { width: 100%; height: 140px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px; }
+.dmc-slide-empty { display: flex; align-items: center; justify-content: center; background: #f0f2f5; color: #888; font-size: 13px; }
+.dmc-check { display: block; font-size: 13px; margin-bottom: 10px; color: #666; }
+.dmc-inline-form { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.dmc-inline-check { margin: 0; }
+
+.dmc-subtop-slot { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); margin-bottom: 20px; }
+.dmc-subtop-slot h3 { margin: 0 0 12px; font-size: 16px; color: #1a3a5c; }
+.dmc-subtop-preview { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px; }
+.dmc-stitch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
+
+.dmc-tile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.dmc-tile-slot { background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.dmc-tile-slot h3 { margin: 0 0 8px; font-size: 15px; color: #1a3a5c; }
+.dmc-tile-preview { width: 100%; height: 120px; background-size: cover; background-position: center; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 10px; }
+.dmc-textarea-tall { width: 100%; min-height: 480px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: Consolas, "Malgun Gothic", monospace; font-size: 13px; line-height: 1.6; box-sizing: border-box; }
+.dmc-table-actions { white-space: nowrap; }
+.dmc-table-actions .dmc-btn { margin-left: 6px; }
+.dmc-stat-sm { font-size: 14px; color: #555; margin: 8px 0 12px; }
+.dmc-input-wide { width: 100%; max-width: 640px; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.dmc-para-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: "Malgun Gothic", sans-serif; font-size: 15px; line-height: 1.7; box-sizing: border-box; resize: vertical; }
+.dmc-info-photo-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
+.dmc-info-preview { width: 100%; height: 180px; background-size: cover; background-position: center top; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 8px; }
+.dmc-section-title { margin: 24px 0 12px; font-size: 16px; color: #1a3a5c; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dmc-guide-section { margin-bottom: 20px; padding: 16px; border: 1px solid #dde3ea; border-radius: 8px; background: #fafbfc; }
+.dmc-guide-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.dmc-btn-danger { background: #c0392b; color: #fff; border-color: #a93226; }
+.dmc-btn-danger:hover { background: #a93226; }
+
+.dmc-form-note { margin: 0 0 16px; color: #555; font-size: 14px; }
+.dmc-field-note { margin: 6px 0 0; font-size: 12px; color: #666; line-height: 1.5; }
+.dmc-mono { font-family: Consolas, "Courier New", monospace; font-size: 12px; word-break: break-all; }
+
+/* 섬기는 분 편집 */
+.dmc-person-grid { display: grid; grid-template-columns: 180px 1fr; gap: 18px; align-items: start; }
+.dmc-person-photo .dmc-info-preview { height: 200px; }
+/* 인물 사진 미리보기는 잘리지 않고 전체가 보이도록 contain 처리 */
+.dmc-person-preview { background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #f0f2f5; }
+.dmc-person-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+.dmc-person-fields .dmc-field:last-child { grid-column: 1 / -1; }
+@media (max-width: 640px) { .dmc-person-grid { grid-template-columns: 1fr; } .dmc-person-fields { grid-template-columns: 1fr; } }
+
+/* 예배시간 편집 */
+.dmc-worship-edit-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.dmc-worship-edit-table th { text-align: left; padding: 8px 6px; font-size: 13px; color: #1a3a5c; border-bottom: 2px solid #dde3ea; }
+.dmc-worship-edit-table td { padding: 6px; vertical-align: middle; border-bottom: 1px solid #eef1f5; }
+.dmc-worship-edit-table .dmc-input-wide { width: 100%; }

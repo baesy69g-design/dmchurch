@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+	<title xml:lang="ko">교회 게시판 등록 UI</title>
+	<description xml:lang="ko">dmc2241 간편등록 팝업 및 글쓰기 버튼 제어</description>
+	<version>1.0.0</version>
+	<date>2026-06-13</date>
+	<author link="https://dmchurch.kr">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+	<extra_vars />
+</addon>

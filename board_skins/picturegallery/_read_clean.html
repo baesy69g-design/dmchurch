@@ -1,0 +1,7 @@
+<div class="church-pic-read">
+	<header class="church-pic-read-head">
+		<h2 class="church-pic-read-title">{$oDocument->getTitle()}</h2>
+		<span class="church-pic-read-date">{$oDocument->getRegdate('Y년 m월 d일')}</span>
+	</header>
+	<div class="church-pic-read-body xe_content">{@ echo $oDocument->get('content'); }</div>
+</div>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<grants />
+	<actions>
+		<action name="dispChurchMemberGuide" type="view" standalone="true" index="true" />
+		<action name="dispChurchMemberProfile" type="view" standalone="true" permission="member" />
+		<action name="procChurchSaveProfile" type="controller" standalone="true" permission="member" method="POST" />
+		<action name="dispChurchVerifyEmail" type="view" standalone="true" permission="member" />
+		<action name="procChurchSendVerifyEmail" type="controller" standalone="true" permission="member" method="POST" />
+		<action name="procChurchConfirmEmail" type="controller" standalone="true" method="GET|POST" />
+		<action name="dispChurchCheckOnboard" type="view" standalone="true" method="GET" />
+		<action name="dispChurchChangeEmail" type="view" standalone="true" permission="member" />
+		<action name="procChurchChangeEmailRequest" type="controller" standalone="true" permission="member" method="POST" />
+		<action name="procChurchConfirmChangeEmail" type="controller" standalone="true" method="GET|POST" />
+		<action name="dispChurchRecoverAccount" type="view" standalone="true" />
+		<action name="procChurchRecoverRequest" type="controller" standalone="true" method="POST" />
+		<action name="dispChurchRecoverReset" type="view" standalone="true" />
+		<action name="procChurchRecoverSave" type="controller" standalone="true" method="POST" />
+	</actions>
+</module>

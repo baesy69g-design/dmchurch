@@ -1,0 +1,35 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$page->label} — 사진 등록</h2>
+<p class="dmc-help">
+	상단 <strong>사진 1 · 사진 2</strong>만 교체할 수 있습니다. 아래 환영 안내(3번)는 고정되어 있어 수정할 수 없습니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveNewfamilyPage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-newfamily-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+
+	<div class="dmc-person-grid">
+		<!--@foreach($photo_slots as $slot)-->
+		<div class="dmc-field dmc-person-photo">
+			<label>사진 {$slot->num}</label>
+			<input type="hidden" name="existing_nf_photo_{$slot->index}" value="{$slot->photo}" />
+			<!--@if($slot->photo)-->
+			<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->photo}');"></div>
+			<!--@else-->
+			<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+			<!--@end-->
+			<input type="file" name="nf_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+			<p class="dmc-help">새 파일을 선택하면 기존 사진이 교체됩니다.</p>
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+<!--#include("_footer.html")-->

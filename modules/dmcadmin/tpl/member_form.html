@@ -1,0 +1,77 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$dmcadmin_title}</h2>
+<p class="dmc-form-note">회원 목록의 <strong>수정</strong>에서 비밀번호·연락처·주소·성별 등 모든 정보를 직접 변경할 수 있습니다.</p>
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveMember')}" class="dmc-form dmc-form-wide">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="member_srl" value="{$form->member_srl}" />
+	<div class="dmc-grid">
+		<div class="dmc-field">
+			<label>아이디 *</label>
+			<!--@if($form->member_srl)-->
+			<input type="text" value="{$form->user_id}" disabled />
+			<input type="hidden" name="user_id" value="{$form->user_id}" />
+			<!--@else-->
+			<input type="text" name="user_id" value="{$form->user_id}" required />
+			<!--@end-->
+		</div>
+		<div class="dmc-field">
+			<label>비밀번호 <!--@if($form->member_srl)-->(변경 시만 입력)<!--@else-->*<!--@end--></label>
+			<input type="password" name="password" />
+			<!--@if($form->member_srl)-->
+			<p class="dmc-field-note">새 비밀번호를 입력하면 즉시 변경됩니다.</p>
+			<!--@end-->
+		</div>
+		<div class="dmc-field"><label>이름 *</label><input type="text" name="user_name" value="{$form->user_name}" required /></div>
+		<div class="dmc-field"><label>닉네임</label><input type="text" name="nick_name" value="{$form->nick_name}" /></div>
+		<div class="dmc-field"><label>이메일</label><input type="email" name="email_address" value="{$form->email_address}" /></div>
+		<!--@if($form->member_srl)-->
+		<div class="dmc-field">
+			<label>이메일 인증</label>
+			<p class="dmc-field-readonly">
+				<!--@if($form->email_verify_code=='done')-->
+				<span class="dmc-badge ok">완료</span>
+				<!--@elseif($form->email_verify_code=='pending')-->
+				<span class="dmc-badge warn">미완료</span>
+				<!--@if($form->pending_email)--> · 인증 대기: {$form->pending_email}<!--@end-->
+				<!--@else-->
+				<span class="dmc-badge muted">해당없음</span>
+				<!--@end-->
+			</p>
+		</div>
+		<!--@end-->
+		<div class="dmc-field"><label>휴대폰</label><input type="text" name="phone_number" value="{$form->phone_number}" /></div>
+		<div class="dmc-field"><label>전화</label><input type="text" name="phone" value="{$form->phone}" /></div>
+		<div class="dmc-field"><label>생년월일 (YYYYMMDD)</label><input type="text" name="birthday" value="{$form->birthday}" maxlength="8" /></div>
+		<div class="dmc-field">
+			<label>성별</label>
+			<select name="gender">
+				<option value="">-</option>
+				<!--@if($form->gender=='1')--><option value="1" selected="selected">남</option><!--@else--><option value="1">남</option><!--@end-->
+				<!--@if($form->gender=='2')--><option value="2" selected="selected">여</option><!--@else--><option value="2">여</option><!--@end-->
+			</select>
+		</div>
+		<div class="dmc-field"><label>우편번호</label><input type="text" name="zipcode" value="{$form->zipcode}" /></div>
+		<div class="dmc-field dmc-span2"><label>주소</label><input type="text" name="address1" value="{$form->address1}" /></div>
+		<div class="dmc-field dmc-span2"><label>상세주소</label><input type="text" name="address2" value="{$form->address2}" /></div>
+		<div class="dmc-field">
+			<label>회원그룹</label>
+			<select name="group_srl">
+				<!--@if($form->group_srl==4)--><option value="4" selected="selected">정회원</option><!--@else--><option value="4">정회원</option><!--@end-->
+				<!--@if($form->group_srl==3)--><option value="3" selected="selected">준회원</option><!--@else--><option value="3">준회원</option><!--@end-->
+				<!--@if($form->group_srl==2)--><option value="2" selected="selected">관리그룹</option><!--@else--><option value="2">관리그룹</option><!--@end-->
+			</select>
+		</div>
+		<div class="dmc-field">
+			<label>승인</label>
+			<select name="denied">
+				<!--@if($form->denied=='N')--><option value="N" selected="selected">승인(사용)</option><!--@else--><option value="N">승인(사용)</option><!--@end-->
+				<!--@if($form->denied=='Y')--><option value="Y" selected="selected">대기/거부</option><!--@else--><option value="Y">대기/거부</option><!--@end-->
+			</select>
+		</div>
+	</div>
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMembers')}" class="dmc-btn">목록</a>
+	</div>
+</form>
+<!--#include("_footer.html")-->

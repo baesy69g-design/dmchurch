@@ -1,0 +1,102 @@
+/* 동명교회 게시판 간편등록 팝업 */
+.cbu-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+	z-index: 99990;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+.cbu-modal {
+	background: #fff;
+	border-radius: 8px;
+	width: 100%;
+	max-width: 520px;
+	max-height: 90vh;
+	overflow: auto;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.cbu-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	border-bottom: 1px solid #e5e5e5;
+}
+.cbu-head h2 {
+	margin: 0;
+	font-size: 18px;
+}
+.cbu-close {
+	border: none;
+	background: none;
+	font-size: 24px;
+	cursor: pointer;
+	line-height: 1;
+	color: #666;
+}
+.cbu-body {
+	padding: 16px 20px 8px;
+}
+.cbu-field {
+	margin-bottom: 14px;
+}
+.cbu-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 6px;
+	font-size: 14px;
+}
+.cbu-field label .req {
+	color: #c0392b;
+	margin-left: 2px;
+}
+.cbu-field input[type="text"],
+.cbu-field input[type="url"],
+.cbu-field input[type="date"],
+.cbu-field textarea {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 8px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+}
+.cbu-field textarea {
+	min-height: 80px;
+	resize: vertical;
+}
+.cbu-help {
+	font-size: 12px;
+	color: #777;
+	margin-top: 4px;
+}
+.cbu-foot {
+	padding: 12px 20px 18px;
+	text-align: right;
+}
+.cbu-foot .cbu-btn-submit {
+	background: #2c5282;
+	color: #fff;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+}
+.cbu-foot .cbu-btn-submit:disabled {
+	opacity: 0.6;
+	cursor: wait;
+}
+.cbu-msg {
+	padding: 8px 20px;
+	color: #c0392b;
+	font-size: 13px;
+}
+.btn.cbu-write-btn {
+	background: #2c5282;
+	color: #fff !important;
+	border-color: #2c5282;
+}

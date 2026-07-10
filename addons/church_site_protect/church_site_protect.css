@@ -1,0 +1,28 @@
+/* 공개 페이지 콘텐츠 보호 — 입력란·관리 화면은 제외 */
+html.church-protected,
+html.church-protected body {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
+html.church-protected img,
+html.church-protected video,
+html.church-protected picture,
+html.church-protected svg image {
+	-webkit-user-drag: none;
+	user-drag: none;
+	-webkit-touch-callout: none;
+}
+
+html.church-protected input,
+html.church-protected textarea,
+html.church-protected select,
+html.church-protected [contenteditable="true"],
+html.church-protected .church-protect-allow {
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	user-select: text;
+	-webkit-touch-callout: default;
+}

@@ -1,0 +1,32 @@
+.church-pw-field {
+	position: relative;
+	display: block;
+	margin-bottom: 12px;
+}
+.church-pw-field input[type="password"],
+.church-pw-field input[type="text"] {
+	width: 100%;
+	box-sizing: border-box;
+	padding-right: 38px;
+}
+.church-pw-toggle {
+	position: absolute;
+	right: 4px;
+	top: 50%;
+	margin-top: -15px;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #888;
+	font-size: 18px;
+	line-height: 30px;
+	text-align: center;
+	cursor: pointer;
+}
+.church-pw-toggle:hover,
+.church-pw-toggle:focus {
+	color: #333;
+	outline: none;
+}

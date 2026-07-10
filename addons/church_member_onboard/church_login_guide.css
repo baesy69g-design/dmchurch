@@ -1,0 +1,43 @@
+.church-login-guide {
+	max-width: 520px;
+	margin: 0 auto 20px;
+	padding: 0 12px;
+}
+.church-login-guide-box {
+	border: 1px solid #d9dee8;
+	border-radius: 8px;
+	padding: 18px 20px;
+	background: #f8fbff;
+}
+.church-login-guide-title {
+	margin: 0 0 10px;
+	font-size: 1.15rem;
+	color: #1a3a6b;
+	line-height: 1.4;
+}
+.church-login-guide-lead {
+	margin: 0 0 12px;
+	line-height: 1.65;
+	color: #333;
+	font-size: 0.95rem;
+}
+.church-login-guide-steps {
+	margin: 0;
+	padding-left: 18px;
+	line-height: 1.7;
+	font-size: 0.9rem;
+	color: #444;
+}
+.church-login-guide-steps a {
+	color: #1a3a6b;
+	font-weight: 600;
+}
+
+@media (max-width: 480px) {
+	.church-login-guide {
+		padding: 0 8px;
+	}
+	.church-login-guide-box {
+		padding: 14px 14px;
+	}
+}

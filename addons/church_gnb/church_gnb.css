@@ -1,0 +1,205 @@
+/* 여백·프레임 색상은 church_theme.css 에서 통합 관리 */
+html,
+body,
+.container {
+	/* church_theme overrides */
+}
+
+.header_wrap {
+	background: transparent;
+	position: relative;
+	overflow: visible;
+	z-index: 50;
+}
+
+/* XEDITION 기본 헤더 100px → 약 1/4 수준으로 축소, 서브바 바로 밑에 붙임 */
+.container.fixed_header {
+	padding-top: 58px;
+	transition: padding-top 0.12s ease;
+}
+
+.header > h1 {
+	padding: 6px 0 !important;
+	line-height: 55px !important;
+}
+
+body .header .gnb > ul > li > a {
+	line-height: 55px !important;
+}
+
+.fixed_header .header_wrap.shrink .gnb > ul > li > a {
+	line-height: 48px !important;
+}
+
+body.church-gnb-open .fixed_header .header_wrap.shrink .gnb > ul > li > a {
+	line-height: 48px !important;
+}
+
+.header > .side {
+	margin-top: 18px !important;
+}
+
+.fixed_header .header_wrap.shrink .header > .side {
+	margin-top: 10px !important;
+}
+
+.body.fixed-width {
+	background: transparent;
+}
+
+/* XEDITION 검은 세로 펼침메뉴 숨김 → 가로 서브바 사용 */
+.gnb.church-gnb > ul > li > .depth2,
+.gnb.church-gnb > ul > li > .depth3 {
+	display: none !important;
+}
+
+.gnb.church-gnb > ul > li > a {
+	position: relative;
+	transition: color 0.18s ease, transform 0.2s ease, text-shadow 0.2s ease;
+	transform-origin: center bottom;
+}
+
+.gnb.church-gnb > ul > li > a::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	bottom: 8px;
+	width: 0;
+	height: 2px;
+	background: linear-gradient(90deg, #3ead5e, #7fd99a);
+	border-radius: 2px;
+	transform: translateX(-50%);
+	transition: width 0.24s ease;
+}
+
+.gnb.church-gnb > ul > li > a:hover,
+.gnb.church-gnb > ul > li > a:focus,
+.gnb.church-gnb > ul > li.church-gnb-on > a {
+	color: #2f9b50;
+	transform: translateY(-2px) scale(1.06);
+	text-shadow: 0 5px 12px rgba(62, 173, 94, 0.35);
+}
+
+.gnb.church-gnb > ul > li > a:hover::after,
+.gnb.church-gnb > ul > li > a:focus::after,
+.gnb.church-gnb > ul > li.church-gnb-on > a::after {
+	width: 62%;
+}
+
+/* 대메뉴 바로 아래에 붙는 드롭다운 — 위치는 JS가 호버 메뉴 기준으로 계산 */
+.church-gnb-subbar {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1000;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, -6px);
+	transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.church-gnb-subbar.is-open {
+	display: block;
+	opacity: 1;
+	pointer-events: auto;
+	transform: translate(-50%, 0);
+}
+
+.church-gnb-subbar-inner {
+	margin: 0;
+	padding: 0;
+}
+
+.church-gnb-subbar .depth2 {
+	display: flex !important;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+	list-style: none;
+	margin: 0;
+	padding: 6px 0;
+	min-width: 138px;
+	background: #3ead5e;
+	border-radius: 0 0 12px 12px;
+	box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+	position: static;
+}
+
+.church-gnb-subbar .depth2::after {
+	display: none;
+}
+
+.church-gnb-subbar .depth2 > li {
+	position: relative;
+	float: none;
+}
+
+.church-gnb-subbar .depth2 > li + li {
+	border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.church-gnb-subbar .depth2 a {
+	display: block;
+	height: auto;
+	padding: 9px 20px;
+	line-height: 1.4;
+	font-size: 13px;
+	font-weight: 600;
+	color: #fff !important;
+	white-space: nowrap;
+	text-align: center;
+	transition: background 0.12s ease, color 0.12s ease;
+}
+
+.church-gnb-subbar .depth2 a:hover,
+.church-gnb-subbar .depth2 a:focus,
+.church-gnb-subbar .depth2 > li.on > a {
+	background: rgba(255, 255, 255, 0.16);
+	color: #ffff00 !important;
+}
+
+.church-gnb-subbar .depth2 > li.more > a::after {
+	content: ' ▸';
+	font-size: 10px;
+}
+
+/* 3단 메뉴는 옆으로 펼침 */
+.church-gnb-subbar .depth3 {
+	display: none;
+	position: absolute;
+	top: -6px;
+	left: 100%;
+	z-index: 20;
+	min-width: 138px;
+	margin: 0;
+	padding: 6px 0;
+	list-style: none;
+	background: #359e54;
+	border-radius: 0 10px 10px 0;
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
+.church-gnb-subbar .depth2 > li.more.on .depth3 {
+	display: block;
+}
+
+.church-gnb-subbar .depth3 a {
+	padding: 8px 16px;
+	font-weight: 500;
+	text-align: left;
+}
+
+.church-gnb-subbar .depth3 a:hover,
+.church-gnb-subbar .depth3 a:focus {
+	background: rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 960px) {
+	html {
+		background-size: 1400px auto;
+	}
+}

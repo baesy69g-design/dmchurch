@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<grants />
+	<actions>
+		<action name="dispDmcMgrIndex" type="view" standalone="true" index="true" />
+		<action name="dispDmcMgrLogin" type="view" standalone="true" />
+		<action name="dispDmcMgrDashboard" type="view" standalone="true" />
+		<action name="dispDmcMgrSettings" type="view" standalone="true" />
+		<action name="dispDmcMgrMembers" type="view" standalone="true" />
+		<action name="dispDmcMgrMainSlides" type="view" standalone="true" />
+		<action name="dispDmcMgrSubTops" type="view" standalone="true" />
+		<action name="dispDmcMgrMainTiles" type="view" standalone="true" />
+		<action name="dispDmcMgrInfoPages" type="view" standalone="true" />
+		<action name="dispDmcMgrInfoPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrHistoryPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrPeoplePageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrWorshipPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrNewfamilyPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrTourPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrSchoolPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrDongkeydayPageEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrDomesticMissionListEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrDomesticMissionSubEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrOverseasMissionListEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrMemberForm" type="view" standalone="true" />
+		<action name="procDmcMgrLogin" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrLogout" type="controller" standalone="true" method="POST|GET" />
+		<action name="procDmcMgrChangePassword" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveSettings" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveMainSlides" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveSubTops" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveMainTiles" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveInfoPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveHistoryPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSavePeoplePage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveWorshipPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveNewfamilyPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveTourPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveSchoolPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveDongkeydayPage" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveDomesticMissionList" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveDomesticMissionSub" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveOverseasMissionList" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveMember" type="controller" standalone="true" method="POST" />
+	</actions>
+</module>

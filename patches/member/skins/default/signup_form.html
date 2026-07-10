@@ -1,0 +1,170 @@
+<load target="../../tpl/js/signup_check.js" />
+<!--// datepicker javascript plugin load -->
+<!--%load_js_plugin("ui")-->
+<!--%load_js_plugin("ui.datepicker")-->
+<include target="./common_header.html" />
+<style>
+.church-signup-wrap { max-width: 860px; margin: 18px auto 0; padding: 0 12px 24px; }
+.church-signup-card { background: #fff; border: 1px solid #dbe3ef; border-radius: 10px; box-shadow: 0 4px 16px rgba(12,37,73,.06); overflow: hidden; }
+.church-signup-head { background: linear-gradient(135deg, #214c88 0%, #17345f 100%); color: #fff; padding: 22px 26px; }
+.church-signup-head h1 { margin: 0; font-size: 1.55rem; }
+.church-signup-head p { margin: 8px 0 0; opacity: .9; font-size: .95rem; }
+.church-signup-body { padding: 20px 22px 16px; }
+.church-signup-body .control-group { border-bottom: 1px dashed #e7ecf4; padding-bottom: 12px; margin-bottom: 12px; }
+.church-signup-body .control-group:last-of-type { border-bottom: 0; margin-bottom: 0; }
+.church-signup-body .control-label { color: #233b61; font-weight: 700; }
+.church-signup-body .controls input[type="text"],
+.church-signup-body .controls input[type="email"],
+.church-signup-body .controls input[type="password"] { max-width: 420px; }
+.church-signup-body .help-inline { color: #5b6780; font-size: 12px; }
+.church-pw-wrap { position: relative; max-width: 420px; }
+.church-pw-wrap input[type="password"],
+.church-pw-wrap input[type="text"] { width: 100%; padding-right: 42px; box-sizing: border-box; }
+.church-pw-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: #557; cursor: pointer; font-size: 18px; padding: 0; }
+.church-signup-actions { border-top: 1px solid #d5deeb; margin-top: 18px; padding-top: 16px; text-align: center; }
+.church-signup-actions .btn { min-width: 120px; margin: 0 6px; float: none !important; display: inline-block; }
+@media (max-width: 768px) {
+	.church-signup-head { padding: 16px 18px; }
+	.church-signup-head h1 { font-size: 1.3rem; }
+	.church-signup-body { padding: 14px 12px 10px; }
+	.church-signup-actions .btn { min-width: 100px; margin: 4px; }
+}
+</style>
+<div class="church-signup-wrap">
+<div class="church-signup-card">
+	<div class="church-signup-head">
+		<h1>{$lang->cmd_signup}</h1>
+		<p>동명교회 새 홈페이지 회원가입</p>
+	</div>
+	<div class="church-signup-body">
+	<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/member/skins'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+		<p>{$XE_VALIDATOR_MESSAGE}</p>
+	</div>
+	<form ruleset="@insertMember" id="fo_insert_member" action="./" method="post" enctype="multipart/form-data" class="form-horizontal rx_ajax" autocomplete="off">
+		<input type="hidden" name="act" value="procMemberInsert" />
+		<input type="hidden" name="xe_validator_id" value="modules/member/skins" />
+		<input type="hidden" name="success_return_url" value="" />
+		<div class="agreement" loop="$member_config->agreements => $i, $agreement" cond="$agreement->type !== 'disabled'">
+			<div class="title">
+				{$agreement->title}
+				<block cond="$agreement->type === 'required'">({$lang->cmd_required})</block>
+				<block cond="$agreement->type === 'optional'">({$lang->cmd_optional})</block>
+			</div>
+			<div class="text">
+				{$agreement->content}
+			</div>
+			<div class="confirm">
+				<label for="accept_agreement_{$i}">
+					<input type="checkbox" name="accept_agreement[{$i}]" value="Y" id="accept_agreement_{$i}" required="required"|cond="$agreement->type === 'required'" />
+					{$lang->about_accept_agreement}
+				</label>
+			</div>
+		</div>
+		<div class="control-group" cond="$identifierForm->name !== 'phone_number'">
+			<label for="{$identifierForm->name}" class="control-label"><em style="color:red">*</em> {$identifierForm->title}</label>
+			<div class="controls">
+				<input type="text"|cond="$identifierForm->name!='email_address'" type="email"|cond="$identifierForm->name=='email_address'" name="{$identifierForm->name}" id="{$identifierForm->name}" value="" required autocomplete="off" autocapitalize="off" spellcheck="false" />
+				<p class="help-inline" cond="$identifierForm->name == 'email_address' && $email_confirmation_required == 'Y'">
+					{$lang->msg_email_confirmation_required}
+				</p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label for="password" class="control-label"><em style="color:red">*</em> {$lang->password}</label>
+			<div class="controls">
+				<div class="church-pw-wrap">
+					<input type="password" name="password" id="password" value="" required autocomplete="new-password" />
+					<button type="button" class="church-pw-toggle" data-target="password" aria-label="비밀번호 보기" title="비밀번호 보기"><i class="xi-eye"></i></button>
+				</div>
+				<p class="help-inline">{$lang->about_password_strength[$member_config->password_strength]}</p>
+			</div>
+		</div>
+		<div class="control-group">
+			<label for="password2" class="control-label"><em style="color:red">*</em> {$lang->password3}</label>
+			<div class="controls">
+				<div class="church-pw-wrap">
+					<input type="password" name="password2" id="password2" value="" required autocomplete="new-password" />
+					<button type="button" class="church-pw-toggle" data-target="password2" aria-label="비밀번호 보기" title="비밀번호 보기"><i class="xi-eye"></i></button>
+				</div>
+			</div>
+		</div>
+		<div class="control-group" loop="$formTags=>$formTag">
+			<label for="{$formTag->name}" class="control-label">{$formTag->title}</label>
+			<div class="controls" cond="$formTag->name != 'signature'">
+				{$formTag->inputTag}
+				<p class="help-inline" cond="$formTag->name == 'email_address' && $email_confirmation_required == 'Y'">
+					{$lang->msg_email_confirmation_required}
+				</p>
+			</div>
+			<div class="controls" cond="$formTag->name == 'signature'">
+				<input type="hidden" name="signature" value="" />
+				{$editor|noescape}
+				<style scoped>
+				.xpress-editor>#smart_content,
+				.xpress-editor>#smart_content>.tool{clear:none}
+				</style>
+			</div>
+		</div>
+		<input type="hidden" name="allow_mailing" value="N" />
+		<input type="hidden" name="allow_message" value="N" />
+		<div class="control-group captcha" cond="isset($captcha) && $captcha && $captcha->isTargetAction('signup')">
+			<div class="control-label">{$lang->captcha}</div>
+			<div class="controls">{$captcha}</div>
+		</div>
+		<div class="btnArea church-signup-actions">
+			<a href="{getUrl('act','','member_srl','')}" class="btn">{$lang->cmd_cancel}</a>
+			<input type="submit" value="{$lang->cmd_registration}" class="btn btn-inverse" />
+		</div>
+	</form>
+	</div>
+</div>
+</div>
+<script>
+(function($){
+	// label for setup
+	$('.control-label[for]').each(function(){
+		var $this = $(this);
+		if($this.attr('for') == ''){
+			$this.attr('for', $this.next().children(':visible:first').attr('id'));
+		}
+	});
+
+	$(function(){
+		$('.church-pw-toggle').on('click', function(){
+			var target = $(this).data('target');
+			var $input = $('#' + target);
+			if (!$input.length) return;
+			var is_pw = $input.attr('type') === 'password';
+			$input.attr('type', is_pw ? 'text' : 'password');
+			$(this).find('i').attr('class', is_pw ? 'xi-eye-off' : 'xi-eye');
+		});
+
+		// check if the browser support type date.
+		if ( $(".inputDate").prop('type') != 'date' ) {
+			var option = {
+				changeMonth: true,
+				changeYear: true,
+				gotoCurrent: false,
+				yearRange:'-200:+10',
+				dateFormat:'yy-mm-dd',
+				defaultDate: new Date("{date('Y-m-d',time())}"),
+				minDate: new Date("{date('Y-m-d',strtotime('-200 years'))}"),
+
+				onSelect:function(){
+					$(this).prev('input[type="hidden"]').val(this.value.replace(/-/g,""))
+				}
+			};
+			$.extend($.datepicker.regional['{$lang_type}'],option);
+
+			//if the browser does not support type date input, start datepicker. If it does, brower's UI will show their datepicker.
+			$(".inputDate").datepicker(option);
+		} else {
+			$(".inputDate").prop('readonly', false);
+		}
+		$(".dateRemover").click(function() {
+			$(this).prevAll('input').val('');
+			return false;});
+	});
+})(jQuery);
+</script>
+<include target="./common_footer.html" />

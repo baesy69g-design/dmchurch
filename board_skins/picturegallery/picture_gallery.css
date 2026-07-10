@@ -1,0 +1,268 @@
+.church-pic {
+	margin: 0 0 8px;
+}
+
+/* 주보 상세(읽기) — 댓글/목록/버튼 없이 본문만 깔끔하게 */
+.church-pic-read {
+	max-width: 840px;
+	margin: 0 auto;
+	padding: 4px 0 28px;
+}
+
+.church-pic-read-head {
+	text-align: center;
+	margin: 0 0 20px;
+	padding-bottom: 14px;
+	border-bottom: 2px solid rgba(27, 67, 50, 0.12);
+}
+
+.church-pic-read-title {
+	margin: 0;
+	font-size: 1.45rem;
+	font-weight: 800;
+	color: #1b3a2b;
+}
+
+.church-pic-read-date {
+	display: block;
+	margin-top: 8px;
+	font-size: 0.88rem;
+	color: #6b7280;
+}
+
+.church-pic-read-body img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 6px;
+	box-shadow: 0 6px 18px rgba(27, 67, 50, 0.12);
+}
+
+.church-pic-read-body .jubo-nav {
+	margin: 4px 0 24px;
+	font-size: 0.95rem;
+}
+
+.church-pic-read-body .jubo-nav a {
+	color: #2f9b50;
+	font-weight: 600;
+	text-decoration: none;
+	padding: 0 6px;
+}
+
+.church-pic-read-body .jubo-nav a:hover {
+	text-decoration: underline;
+}
+
+.church-pic-empty {
+	text-align: center;
+	padding: 48px 0;
+	color: #6b7280;
+}
+
+.church-pic-topbar {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin: 0 0 14px;
+}
+
+.church-pic-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 18px;
+}
+
+.church-pic-card-wrap {
+	position: relative;
+}
+
+.church-pic-card {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	background: #fff;
+	border: 1px solid rgba(27, 67, 50, 0.12);
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 8px 20px rgba(27, 67, 50, 0.10);
+	transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.church-pic-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 16px 30px rgba(27, 67, 50, 0.18);
+}
+
+.church-pic-thumb {
+	position: relative;
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	background: #0c1f17;
+}
+
+.church-pic-slides {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+.church-pic-slides .pg-img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+}
+
+.church-pic-slides .pg-img.is-active {
+	opacity: 1;
+}
+
+/* 사진이 1장뿐이면 항상 보이게 */
+.church-pic-slides .pg-img:only-child {
+	opacity: 1;
+}
+
+/* 로드 실패한 이미지는 숨겨서 뒤의 기본 이미지가 보이도록 */
+.church-pic-slides .pg-img.pg-broken {
+	opacity: 0 !important;
+	display: none;
+}
+
+/* 기본(디폴트) 이미지: 사진이 없거나 로드 실패 시 노출 */
+.church-pic-default {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background: linear-gradient(135deg, #eef2f5, #d3dce3);
+}
+
+.church-pic-default::before {
+	content: '';
+	position: absolute;
+	top: 26%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: #b3bec7;
+}
+
+.church-pic-default::after {
+	content: '';
+	position: absolute;
+	top: 52%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 66px;
+	height: 40px;
+	border-radius: 34px 34px 0 0;
+	background: #b3bec7;
+}
+
+/* 여러 장일 때 우측 하단 장수 인디케이터 */
+.church-pic-count {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 9px;
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.55);
+	color: #fff;
+	font-size: 0.72rem;
+	font-weight: 600;
+}
+
+.church-pic-count::before {
+	content: '';
+	width: 11px;
+	height: 9px;
+	border: 1.5px solid #fff;
+	border-radius: 2px;
+	box-shadow: 3px 3px 0 -1.5px rgba(0, 0, 0, 0.55), 3px 3px 0 0 #fff;
+}
+
+.church-pic-badge {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index: 3;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: #fff;
+	background: #e63946;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.church-pic-meta {
+	display: block;
+	padding: 12px 14px 14px;
+	text-align: center;
+}
+
+.church-pic-title {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	font-size: 0.98rem;
+	font-weight: 700;
+	line-height: 1.4;
+	color: #1b3a2b;
+}
+
+.church-pic-date {
+	display: block;
+	margin-top: 6px;
+	font-size: 0.82rem;
+	color: #6b7280;
+}
+
+@media (max-width: 480px) {
+	.church-pic-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 12px;
+	}
+}
+
+/* 관리자 전용 카드별 삭제 버튼 */
+.church-pic-del {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 5;
+	width: 28px;
+	height: 28px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: rgba(230, 57, 70, 0.92);
+	color: #fff;
+	font-size: 1.25rem;
+	line-height: 1;
+	text-decoration: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	opacity: 0;
+	transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.church-pic-card-wrap:hover .church-pic-del {
+	opacity: 1;
+}
+
+.church-pic-del:hover {
+	transform: scale(1.12);
+	background: #e63946;
+}

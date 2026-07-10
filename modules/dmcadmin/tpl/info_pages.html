@@ -1,0 +1,23 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">안내 페이지</h2>
+<p class="dmc-help">교회안내 등 고정 안내 글을 입력합니다. 페이지 유형에 맞는 편집 화면이 열립니다.</p>
+
+<table class="dmc-table">
+	<thead>
+		<tr><th>페이지</th><th>유형</th><th>주소</th><th></th></tr>
+	</thead>
+	<tbody>
+		<!--@foreach($info_pages as $p)-->
+		<tr>
+			<td>{$p->label}</td>
+			<td>{$p->kind}</td>
+			<td><code>{$p->mid}</code></td>
+			<td class="dmc-table-actions">
+				<a href="{$p->view_url}" target="_blank" rel="noopener" class="dmc-btn dmc-btn-sm">미리보기</a>
+				<a href="{$p->edit_url}" class="dmc-btn dmc-btn-sm dmc-btn-primary">글 수정</a>
+			</td>
+		</tr>
+		<!--@end-->
+	</tbody>
+</table>
+<!--#include("_footer.html")-->

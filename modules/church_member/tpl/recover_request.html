@@ -1,0 +1,35 @@
+<div class="church-member-wrap">
+	<div class="church-member-box church-recover-guide">
+		<h2 class="church-member-heading" style="font-size:1.2rem;margin-bottom:10px;">동명교회 새 홈페이지 회원 안내</h2>
+		<p class="church-member-lead">기존 동명교회 홈페이지 회원이 새 사이트를 처음 이용하실 때 아래 순서대로 진행해 주세요.</p>
+		<ol class="church-member-steps">
+			<li><strong>구 비밀번호를 기억하는 경우</strong> — 사이트 상단 「로그인」에서 구 아이디·비밀번호로 로그인합니다. 로그인 후 개인 이메일을 입력하고 확인 메일 링크를 클릭합니다.</li>
+			<li><strong>구 비밀번호를 잊은 경우 (지금 이 화면)</strong> — 아래에 아이디와 개인 이메일을 입력합니다. 메일로 받은 링크에서 새 비밀번호를 두 번 입력해 저장합니다.</li>
+		</ol>
+	</div>
+	<div class="church-member-box">
+		<h1 class="church-member-heading">{$church_member_title}</h1>
+		<!--@if($church_member_msg)-->
+		<div class="church-member-msg<!--@if($church_member_msg_is_error)--> church-member-msg-error<!--@end-->">{$church_member_msg}</div>
+		<!--@end-->
+		<p class="church-member-lead">아이디와 본인 개인 이메일을 입력하세요. 해당 메일로 재설정 링크가 발송됩니다.</p>
+		<form action="./" method="post">
+			<input type="hidden" name="module" value="church_member" />
+			<input type="hidden" name="act" value="procChurchRecoverRequest" />
+			<input type="hidden" name="xe_validator_id" value="modules/church_member/tpl/recover_request/1" />
+			<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+			<div class="church-member-field">
+				<label for="recover_user_id">아이디</label>
+				<input type="text" id="recover_user_id" name="user_id" required="required" />
+			</div>
+			<div class="church-member-field">
+				<label for="recover_email">개인 이메일</label>
+				<input type="email" id="recover_email" name="email_address" required="required" placeholder="example@gmail.com" />
+			</div>
+			<div class="church-member-actions">
+				<button type="submit" class="church-member-btn">재설정 메일 보내기</button>
+				<a class="church-member-btn church-member-btn-secondary" href="{$login_url}">로그인</a>
+			</div>
+		</form>
+	</div>
+</div>

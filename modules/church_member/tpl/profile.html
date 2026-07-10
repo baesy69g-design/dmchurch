@@ -1,0 +1,101 @@
+<div class="church-member-wrap">
+	<div class="church-member-box">
+		<div class="church-profile-topbar">
+			<a href="{getUrl('')}" class="church-profile-back">← 홈으로</a>
+		</div>
+
+		<h1 class="church-member-heading">사용자정보변경</h1>
+		<!--@if($church_member_msg)-->
+		<div class="church-member-msg<!--@if($church_member_msg_is_error)--> church-member-msg-error<!--@end-->">
+			{$church_member_msg}
+		</div>
+		<!--@end-->
+		<p class="church-member-lead">이름, 연락처, 주소, 성별, 이메일, 비밀번호를 변경할 수 있습니다.</p>
+
+		<form id="church_profile_form" method="post" action="{getNotEncodedUrl('', 'module', 'church_member', 'act', 'procChurchSaveProfile')}" class="church-profile-form">
+			<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+
+			<h2 class="church-profile-section">기본 정보</h2>
+			<div class="church-member-field">
+				<label>아이디</label>
+				<input type="text" value="{$profile->user_id}" disabled="disabled" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_user_name">이름</label>
+				<input type="text" name="user_name" id="church_user_name" value="{$profile->user_name}" required="required" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_nick_name">닉네임</label>
+				<input type="text" name="nick_name" id="church_nick_name" value="{$profile->nick_name}" />
+			</div>
+			<div class="church-member-field" id="church-email">
+				<label for="church_email_address">이메일</label>
+				<input type="email" name="email_address" id="church_email_address" value="{$profile->email_address}" />
+				<p class="church-profile-help">비밀번호 찾기에 사용합니다.</p>
+			</div>
+			<div class="church-member-field">
+				<label for="church_phone_number">휴대폰</label>
+				<input type="text" name="phone_number" id="church_phone_number" value="{$profile->phone_number}" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_phone">전화</label>
+				<input type="text" name="phone" id="church_phone" value="{$profile->phone}" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_birthday">생년월일 (YYYYMMDD)</label>
+				<input type="text" name="birthday" id="church_birthday" value="{$profile->birthday}" maxlength="8" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_gender">성별</label>
+				<select name="gender" id="church_gender">
+					<option value="">-</option>
+					<!--@if($profile->gender=='1')--><option value="1" selected="selected">남</option><!--@else--><option value="1">남</option><!--@end-->
+					<!--@if($profile->gender=='2')--><option value="2" selected="selected">여</option><!--@else--><option value="2">여</option><!--@end-->
+				</select>
+			</div>
+			<div class="church-member-field">
+				<label for="church_zipcode">우편번호</label>
+				<input type="text" name="zipcode" id="church_zipcode" value="{$profile->zipcode}" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_address1">주소</label>
+				<input type="text" name="address1" id="church_address1" value="{$profile->address1}" />
+			</div>
+			<div class="church-member-field">
+				<label for="church_address2">상세주소</label>
+				<input type="text" name="address2" id="church_address2" value="{$profile->address2}" />
+			</div>
+
+			<details class="church-profile-password">
+				<summary>비밀번호 변경 (선택)</summary>
+				<p class="church-profile-help">비밀번호를 바꾸지 않으려면 이 영역을 열지 않거나 칸을 비워 두세요.</p>
+				<div class="church-member-field church-pw-field">
+					<label for="church_current_password">현재 비밀번호</label>
+					<div class="church-pw-input-wrap">
+						<input type="password" name="current_password" id="church_current_password" autocomplete="current-password" />
+						<button type="button" class="church-pw-toggle" data-target="church_current_password" aria-label="비밀번호 보기" title="비밀번호 보기"><i class="xi-eye" aria-hidden="true"></i></button>
+					</div>
+				</div>
+				<div class="church-member-field church-pw-field">
+					<label for="church_password1">새 비밀번호</label>
+					<div class="church-pw-input-wrap">
+						<input type="password" name="password1" id="church_password1" autocomplete="new-password" />
+						<button type="button" class="church-pw-toggle" data-target="church_password1" aria-label="비밀번호 보기" title="비밀번호 보기"><i class="xi-eye" aria-hidden="true"></i></button>
+					</div>
+				</div>
+				<div class="church-member-field church-pw-field">
+					<label for="church_password2">새 비밀번호 확인</label>
+					<div class="church-pw-input-wrap">
+						<input type="password" name="password2" id="church_password2" autocomplete="new-password" />
+						<button type="button" class="church-pw-toggle" data-target="church_password2" aria-label="비밀번호 보기" title="비밀번호 보기"><i class="xi-eye" aria-hidden="true"></i></button>
+					</div>
+				</div>
+			</details>
+
+			<div class="church-member-actions">
+				<button type="submit" class="church-member-btn">저장</button>
+				<a href="{getUrl('')}" class="church-member-btn-secondary">홈으로</a>
+			</div>
+		</form>
+	</div>
+</div>

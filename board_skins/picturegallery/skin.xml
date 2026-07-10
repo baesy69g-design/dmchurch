@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<skin version="0.2">
+	<title xml:lang="ko">행사사진 갤러리</title>
+	<description xml:lang="ko">행사사진 게시판용 갤러리 스킨. 게시물 내부 사진을 자동 슬라이드로 보여줍니다.</description>
+	<version>1.0</version>
+	<date>2026-06-29</date>
+	<author email_address="admin@dmchurch.kr">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+	<colorset>
+		<color name="default" title="기본" />
+	</colorset>
+</skin>

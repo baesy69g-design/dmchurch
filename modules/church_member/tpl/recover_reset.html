@@ -1,0 +1,25 @@
+<div class="church-member-wrap">
+	<div class="church-member-box">
+		<h1 class="church-member-heading">{$church_member_title}</h1>
+		<p class="church-member-lead">아이디 <strong>{$user_id}</strong> / 이메일 <strong>{$pending_email}</strong> 로 새 비밀번호를 설정합니다.</p>
+		<form action="./" method="post">
+			<input type="hidden" name="module" value="church_member" />
+			<input type="hidden" name="act" value="procChurchRecoverSave" />
+			<input type="hidden" name="member_srl" value="{$member_srl}" />
+			<input type="hidden" name="auth_key" value="{$auth_key}" />
+			<input type="hidden" name="xe_validator_id" value="modules/church_member/tpl/recover_reset/1" />
+			<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+			<div class="church-member-field">
+				<label for="new_password">새 비밀번호</label>
+				<input type="password" id="new_password" name="password" required="required" minlength="4" />
+			</div>
+			<div class="church-member-field">
+				<label for="new_password2">새 비밀번호 확인</label>
+				<input type="password" id="new_password2" name="password2" required="required" minlength="4" />
+			</div>
+			<div class="church-member-actions">
+				<button type="submit" class="church-member-btn">저장</button>
+			</div>
+		</form>
+	</div>
+</div>

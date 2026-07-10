@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title>동명교회 회원 안내</title>
+	<description>새 홈피 이메일 확인 및 비밀번호 재설정</description>
+	<version>1.0.0</version>
+	<date>2026-06-13</date>
+	<category>service</category>
+	<author email="office@dmchurch.local">
+		<name>동명교회</name>
+	</author>
+</module>

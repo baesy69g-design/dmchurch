@@ -1,0 +1,40 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">관리 홈</h2>
+<div class="dmc-cards">
+	<div class="dmc-card">
+		<h3>회원</h3>
+		<p class="dmc-stat">{$member_count}<span>명</span></p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMembers')}" class="dmc-link">회원 관리 →</a>
+	</div>
+	<div class="dmc-card">
+		<h3>기도요청 수신 메일</h3>
+		<p class="dmc-stat-sm">{$prayer_notify_email ?: '(미설정)'}</p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSettings')}" class="dmc-link">설정 →</a>
+	</div>
+	<div class="dmc-card">
+		<h3>기도요청 조회자</h3>
+		<p class="dmc-stat">{$prayer_reader_count}<span>/2명</span></p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSettings')}" class="dmc-link">설정 →</a>
+	</div>
+	<div class="dmc-card">
+		<h3>메인 대표사진</h3>
+		<p class="dmc-stat">{$main_slide_set_count}<span>/4장</span></p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMainSlides')}" class="dmc-link">등록/수정 →</a>
+	</div>
+	<div class="dmc-card">
+		<h3>서브 TOP 사진</h3>
+		<p class="dmc-stat">{$sub_top_set_count}<span>/6개</span></p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSubTops')}" class="dmc-link">생성/등록 →</a>
+	</div>
+	<div class="dmc-card">
+		<h3>메인 타일</h3>
+		<p class="dmc-stat">{$main_tile_set_count}<span>/8개</span></p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMainTiles')}" class="dmc-link">등록/수정 →</a>
+	</div>
+	<div class="dmc-card">
+		<h3>정보페이지 글</h3>
+		<p class="dmc-stat-sm">담임목사·예배시간 등</p>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-link">본문 수정 →</a>
+	</div>
+</div>
+<!--#include("_footer.html")-->

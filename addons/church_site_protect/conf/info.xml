@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+	<title xml:lang="ko">교회 사이트 콘텐츠 보호</title>
+	<description xml:lang="ko">우클릭·드래그·복사·소스보기 단축키 등 공개 페이지 콘텐츠 보호</description>
+	<version>1.0.0</version>
+	<date>2026-07-07</date>
+	<author email="admin@dmchurch.local">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+</addon>

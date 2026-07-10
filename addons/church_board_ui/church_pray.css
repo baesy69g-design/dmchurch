@@ -1,0 +1,34 @@
+/* 기도요청(pray) — 목록: 날짜·제목만 */
+body.church-pray-board .board_list thead th:not(.title):not(.time),
+body.church-pray-board .board_list tbody td:not(.title):not(.time) {
+	display: none;
+}
+
+body.church-pray-board .board_list .author,
+body.church-pray-board .board_list .nick_name,
+body.church-pray-board .board_list .readed_count,
+body.church-pray-board .board_list .vote,
+body.church-pray-board .board_list .no {
+	display: none !important;
+}
+
+body.church-pray-board .pray-private-notice {
+	margin: 24px 0;
+	padding: 20px 24px;
+	background: #f5f7fa;
+	border: 1px solid #dde3ea;
+	border-radius: 6px;
+	color: #444;
+	text-align: center;
+}
+
+body.church-pray-board.church-pray-hidden-read .document_header .author,
+body.church-pray-board.church-pray-hidden-read .document_header .nick_name,
+body.church-pray-board.church-pray-hidden-read .document .files,
+body.church-pray-board.church-pray-hidden-read .document .tags,
+body.church-pray-board.church-pray-hidden-read #comment,
+body.church-pray-board.church-pray-hidden-read .comment,
+body.church-pray-board.church-pray-hidden-read .bd_btn,
+body.church-pray-board.church-pray-hidden-read .document .xe_content img {
+	display: none !important;
+}

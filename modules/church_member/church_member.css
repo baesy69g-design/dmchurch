@@ -1,0 +1,182 @@
+.church-member-page .church-member-wrap {
+	max-width: 720px;
+	margin: 24px auto 80px;
+	padding: 0 16px 24px;
+}
+.church-member-page .church-member-box {
+	border: 1px solid #d9dee8;
+	border-radius: 8px;
+	padding: 24px 28px;
+	background: #fff;
+}
+.church-member-page h1.church-member-heading {
+	margin: 0 0 16px;
+	font-size: 1.5rem;
+	color: #1a3a6b;
+}
+.church-member-page .church-member-lead {
+	line-height: 1.7;
+	color: #333;
+	margin-bottom: 20px;
+}
+.church-member-page .church-member-steps {
+	margin: 0 0 20px;
+	padding-left: 20px;
+	line-height: 1.8;
+}
+.church-member-page .church-member-msg {
+	padding: 12px 14px;
+	margin-bottom: 16px;
+	border-radius: 6px;
+	background: #eef5ff;
+	color: #1a3a6b;
+}
+.church-member-page .church-member-msg-error {
+	background: #fff0f0;
+	color: #a11;
+	border: 1px solid #f0b0b0;
+}
+.church-member-page .church-member-field {
+	margin-bottom: 14px;
+}
+.church-member-page .church-member-field label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 600;
+}
+.church-member-page .church-member-field input[type="text"],
+.church-member-page .church-member-field input[type="email"],
+.church-member-page .church-member-field input[type="password"] {
+	width: 100%;
+	max-width: 420px;
+	padding: 8px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+.church-member-page .church-member-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 28px;
+	padding-top: 20px;
+	border-top: 1px solid #e5e9f0;
+}
+.church-member-page .church-member-btn,
+.church-member-page .church-member-btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 120px;
+	padding: 12px 28px;
+	border-radius: 6px;
+	font-size: 1rem;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	box-sizing: border-box;
+	transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.church-member-page .church-member-btn {
+	background: #1a3a6b;
+	color: #fff;
+	border: 1px solid #1a3a6b;
+	cursor: pointer;
+}
+.church-member-page .church-member-btn:hover {
+	background: #14305a;
+	border-color: #14305a;
+}
+.church-member-page .church-member-btn-secondary {
+	background: #fff;
+	color: #444;
+	border: 1px solid #c5cdd8;
+}
+.church-member-page .church-member-btn-secondary:hover {
+	background: #f7f9fc;
+	border-color: #9aa8bc;
+	color: #222;
+}
+
+.church-onboard-banner {
+	background: #fff8e6;
+	border-bottom: 1px solid #f0d58a;
+	color: #5c4a00;
+	padding: 10px 16px;
+	text-align: center;
+	font-size: 0.95rem;
+	line-height: 1.6;
+}
+.church-onboard-banner a {
+	color: #1a3a6b;
+	font-weight: 600;
+}
+
+.church-member-page .church-profile-section {
+	margin: 28px 0 12px;
+	padding-top: 8px;
+	border-top: 1px solid #e5e9f0;
+	font-size: 1.1rem;
+	color: #1a3a6b;
+}
+.church-member-page .church-profile-section:first-of-type {
+	margin-top: 0;
+	border-top: 0;
+	padding-top: 0;
+}
+.church-member-page .church-profile-help {
+	margin: 4px 0 0;
+	font-size: 0.9rem;
+	color: #666;
+}
+.church-member-page .church-member-field select {
+	width: 100%;
+	max-width: 420px;
+	padding: 8px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+.church-member-page .church-pw-field {
+	max-width: 420px;
+}
+.church-member-page .church-pw-input-wrap {
+	position: relative;
+}
+.church-member-page .church-pw-input-wrap input {
+	width: 100%;
+	padding-right: 42px;
+}
+.church-member-page .church-pw-input-wrap .church-pw-toggle {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.church-member-page .church-profile-topbar {
+	margin-bottom: 12px;
+}
+.church-member-page .church-profile-back {
+	display: inline-block;
+	color: #1a3a6b;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+.church-member-page .church-profile-back:hover {
+	text-decoration: underline;
+}
+.church-member-page .church-profile-password {
+	margin-top: 8px;
+	padding: 12px 14px;
+	border: 1px solid #e5e9f0;
+	border-radius: 6px;
+	background: #fafbfc;
+}
+.church-member-page .church-profile-password summary {
+	cursor: pointer;
+	font-weight: 600;
+	color: #1a3a6b;
+}
+.church-member-page .church-profile-password[open] {
+	margin-bottom: 8px;
+}

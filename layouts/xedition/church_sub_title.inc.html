@@ -1,0 +1,3 @@
+{@ getModel('dmcadmin')}
+{@ $_church_sub_title = dmcadminModel::getSubPageTitleForMid(Context::get('mid'))}
+<block cond="$_church_sub_title">{@ $sub_header_title = $_church_sub_title}</block>

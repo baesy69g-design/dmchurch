@@ -1,0 +1,452 @@
+/*
+ * 서브 TOP 배너
+ * - fixed_header(100px 여백) 해제 → 로고·대메뉴 상단 정렬
+ * - 로고만 배너 상단에 살짝 겹침
+ * - 소메뉴명은 배너 사진 위에 올리지 않음 (본문 LNB/서브바)
+ */
+
+/* 서브 페이지: XEDITION fixed_header 여백·absolute 헤더 해제 */
+.container.fixed_header:has(.visual.sub) {
+	padding-top: 0 !important;
+}
+
+.container.fixed_header:has(.visual.sub) .header_wrap {
+	position: relative !important;
+	top: auto !important;
+	left: auto !important;
+	right: auto !important;
+	width: auto !important;
+	z-index: 30;
+	margin-bottom: -18px;
+	border-bottom: none;
+	overflow: visible;
+}
+
+.container.fixed_header:has(.visual.sub) .header > h1.logo-item {
+	position: relative;
+	z-index: 35;
+}
+
+/* 서브 TOP 배너 — 사진 영역 + 바로 아래 제목 줄 */
+.visual.sub {
+	position: relative;
+	min-height: 0;
+	padding: 0 !important;
+	overflow: visible;
+	background: transparent !important;
+	border: none;
+}
+
+.visual.sub .bg_img {
+	display: block !important;
+	position: relative;
+	z-index: 0;
+	width: 100%;
+	height: 200px;
+	border-top: 3px solid var(--church-forest, #1b4332);
+	border-bottom: 3px solid var(--church-forest, #1b4332);
+	background-size: cover !important;
+	background-position: center center !important;
+	background-repeat: no-repeat;
+}
+
+.visual.sub .mask {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	height: 200px;
+	opacity: 0.12;
+	background: #000;
+	pointer-events: none;
+}
+
+/* 배너 사진과 분리된 소메뉴 제목 줄 — 장식은 church_sub_layout.css */
+.visual.sub .sub_title {
+	display: block !important;
+	position: relative;
+	z-index: 2;
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	box-sizing: border-box;
+	background: var(--church-cream, #fffef9);
+	pointer-events: auto;
+}
+
+@media (max-width: 720px) {
+	.container.fixed_header:has(.visual.sub) .header_wrap {
+		margin-bottom: -12px;
+	}
+
+	.visual.sub .bg_img,
+	.visual.sub .mask {
+		height: 130px;
+	}
+
+	.visual.sub .sub_title {
+		padding: 10px 16px 8px;
+	}
+
+	.visual.sub .sub_title h1 {
+		font-size: 1rem;
+	}
+}
+
+/* GNB 8개 대메뉴 한 줄 유지 (xedition 기본 max-width 742px → 줄바꿈) */
+body .header .gnb {
+	max-width: none;
+}
+body .header .gnb > ul > li > a {
+	padding: 0 11px;
+	font-size: 14px;
+	letter-spacing: -0.02em;
+}
+@media (min-width: 1200px) {
+	body .header .gnb > ul > li > a {
+		padding: 0 14px;
+		font-size: 15px;
+	}
+}
+
+/* 구홈피 로고 */
+.header h1.logo-item a {
+	display: inline-block;
+	width: 158px;
+	height: 55px;
+	line-height: 0;
+}
+.header > h1.logo-item img {
+	display: block !important;
+	width: 158px !important;
+	height: 55px !important;
+	max-height: none !important;
+	object-fit: contain;
+	content: url(/files/church/logo.jpg);
+}
+
+/* ── 서브 상세 레이아웃: 소제목(좌) · LNB(우 sticky) · 본문 상단 밀착 ── */
+:root {
+	--church-sub-lnb-width: 136px;
+	--church-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%232d6a4f' stroke-width='1.1' opacity='0.85'%3E%3Cpath d='M60 16v88M28 40h64M40 28l40 64M80 28L40 92'/%3E%3Ccircle cx='60' cy='60' r='36'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.visual.sub .sub_title {
+	text-align: left;
+	padding: 16px 24px 6px 28px;
+	margin: 0;
+	border-bottom: 1px solid rgba(45, 106, 79, 0.14);
+	background:
+		linear-gradient(105deg, rgba(116, 198, 157, 0.08) 0%, transparent 42%),
+		var(--church-cream, #fffef9);
+	overflow: hidden;
+}
+
+.visual.sub .sub_title::before {
+	content: '';
+	position: absolute;
+	left: -30px;
+	top: -20px;
+	width: 220px;
+	height: 220px;
+	opacity: 0.07;
+	pointer-events: none;
+	background-image: var(--church-watermark);
+	background-size: 120px 120px;
+	background-repeat: no-repeat;
+}
+
+.visual.sub .sub_title::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 10px;
+	bottom: 10px;
+	width: 4px;
+	border-radius: 0 3px 3px 0;
+	background: linear-gradient(180deg, var(--church-forest, #1b4332) 0%, var(--church-mint, #74c69d) 55%, var(--church-accent, #d4a373) 100%);
+}
+
+.visual.sub .sub_title h1 {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0;
+	padding: 4px 0 4px 14px;
+	font-size: clamp(1.45rem, 2.4vw, 1.95rem);
+	font-weight: 800;
+	line-height: 1.25;
+	color: var(--church-forest, #1b4332);
+	letter-spacing: -0.03em;
+}
+
+.visual.sub .sub_title h1::before {
+	content: '';
+	flex: 0 0 auto;
+	width: 10px;
+	height: 10px;
+	background: var(--church-mint, #74c69d);
+	transform: rotate(45deg);
+	box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.35);
+}
+
+.visual.sub .sub_title h1::after {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 0;
+	right: -120px;
+	bottom: -2px;
+	height: 2px;
+	background: linear-gradient(90deg, rgba(45, 106, 79, 0.45) 0%, rgba(116, 198, 157, 0.25) 35%, transparent 72%);
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) var(--church-sub-lnb-width);
+	gap: 0 16px;
+	align-items: start;
+	float: none;
+	width: 100% !important;
+	max-width: 100% !important;
+	margin: 0;
+	padding: 0 20px 40px;
+	box-sizing: border-box;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub.left {
+	grid-template-columns: var(--church-sub-lnb-width) minmax(0, 1fr);
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub.right .content {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub.right .lnb {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub.left .lnb {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub.left .content {
+	grid-column: 2;
+	grid-row: 1;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .content {
+	float: none !important;
+	width: auto !important;
+	min-height: 0 !important;
+	padding: 10px 0 48px !important;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb {
+	float: none !important;
+	width: var(--church-sub-lnb-width) !important;
+	padding: 0 !important;
+	position: sticky;
+	top: 14px;
+	align-self: start;
+	z-index: 5;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb::before {
+	content: '소메뉴';
+	display: block;
+	padding: 11px 14px;
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	color: var(--church-forest, #1b4332);
+	background: transparent;
+	border-bottom: 2px solid rgba(45, 106, 79, 0.18);
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul {
+	margin: 0;
+	padding: 6px;
+	list-style: none;
+	border: 1px solid rgba(45, 106, 79, 0.16);
+	border-radius: 12px;
+	background: linear-gradient(180deg, #ffffff 0%, #f7faf6 100%);
+	box-shadow: 0 6px 18px rgba(27, 67, 50, 0.08);
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li {
+	margin: 0 !important;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li + li {
+	margin-top: 2px !important;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > a,
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > span {
+	display: block;
+	position: relative;
+	margin: 0 !important;
+	padding: 9px 12px 9px 16px !important;
+	border-radius: 8px;
+	font-size: 13px !important;
+	font-weight: 600;
+	line-height: 1.35 !important;
+	color: var(--church-ink, #1a2e28) !important;
+	text-decoration: none;
+	letter-spacing: -0.02em;
+	transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > a::before {
+	content: '';
+	position: absolute;
+	left: 7px;
+	top: 50%;
+	width: 4px;
+	height: 4px;
+	margin-top: -2px;
+	border-radius: 50%;
+	background: var(--church-mint, #74c69d);
+	opacity: 0.6;
+	transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > a:hover,
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > a:focus {
+	background: rgba(116, 198, 157, 0.16) !important;
+	color: var(--church-forest, #1b4332) !important;
+}
+
+/* 서브메뉴 선택 시: 하위 항목만 진한 녹색 */
+.container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul li.on a {
+	background: linear-gradient(100deg, var(--church-forest-mid, #2d6a4f) 0%, var(--church-forest-light, #40916c) 100%) !important;
+	color: #ffffff !important;
+	box-shadow: 0 3px 10px rgba(27, 67, 50, 0.22);
+}
+
+/* 1뎁스 직접 선택(하위 없음): 진한 녹색 */
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li.on:not(:has(ul li.on)) > a {
+	background: linear-gradient(100deg, var(--church-forest-mid, #2d6a4f) 0%, var(--church-forest-light, #40916c) 100%) !important;
+	color: #ffffff !important;
+	box-shadow: 0 3px 10px rgba(27, 67, 50, 0.22);
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li.on:not(:has(ul li.on)) > a::before {
+	background: #ffffff;
+	opacity: 1;
+	transform: scale(1.25);
+}
+
+/* 서브 선택 시 상위 메뉴: 아주 연한 배경 */
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li.on:has(ul li.on) > a {
+	background: rgba(116, 198, 157, 0.1) !important;
+	color: var(--church-muted, #4a5f56) !important;
+	box-shadow: none !important;
+	font-weight: 600;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li.on:has(ul li.on) > a::before {
+	background: var(--church-mint, #74c69d);
+	opacity: 0.45;
+	transform: none;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul {
+	margin: 2px 0 2px 8px;
+	padding: 0;
+	list-style: none;
+	border-left: 2px solid rgba(45, 106, 79, 0.18);
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul a::before {
+	content: '–';
+	position: absolute;
+	left: 4px;
+	top: 50%;
+	margin-top: -0.55em;
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--church-mint, #74c69d);
+	opacity: 0.85;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul a {
+	position: relative;
+	display: block;
+	margin: 1px 0 !important;
+	padding: 7px 10px 7px 18px !important;
+	border-radius: 6px;
+	font-size: 12px !important;
+	font-weight: 500;
+	color: var(--church-muted, #4a5f56) !important;
+	text-decoration: none;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul a:hover,
+.container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul a:focus {
+	background: rgba(116, 198, 157, 0.16) !important;
+	color: var(--church-forest, #1b4332) !important;
+}
+
+@media (max-width: 900px) {
+	.container:has(.visual.sub) .body.fixed-width.sub {
+		grid-template-columns: 1fr;
+		padding: 0 14px 32px;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb {
+		position: static;
+		width: 100% !important;
+		grid-column: 1 !important;
+		grid-row: 2 !important;
+		margin-top: 8px;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .content {
+		grid-column: 1 !important;
+		grid-row: 1 !important;
+		padding-top: 8px !important;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb::before {
+		display: none;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li {
+		flex: 1 1 auto;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li + li {
+		margin-top: 0 !important;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > a {
+		text-align: center;
+		padding-left: 12px !important;
+	}
+
+	.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > a::before {
+		display: none;
+	}
+}
+
+/* 모바일 레이아웃 상단 교회 로고 */
+.xe-mobilelayout .hd .h1 img {
+	max-height: 42px;
+	width: auto;
+	vertical-align: middle;
+}

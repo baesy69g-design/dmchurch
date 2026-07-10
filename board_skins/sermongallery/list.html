@@ -1,0 +1,105 @@
+<include target="_header.html" />
+<load target="church_sermon.css" />
+<load target="church_sermon.js" type="body" />
+<include cond="$oDocument->isExists()" target="_read.html" />
+
+{@ $sermon_thumbs = $sermon_thumbs ?? array(); }
+{@ $sermon_scripts = $sermon_scripts ?? array(); }
+{@ $sermon_dates = $sermon_dates ?? array(); }
+
+<div class="church-sermon" id="board_list" cond="isset($list_config)">
+	<div class="btnArea church-sermon-topbar">
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispBoardWrite', 'category', $category ?? null)}" class="btn">{$lang->cmd_write}</a>
+	</div>
+
+	<p class="church-sermon-empty" cond="!$document_list && !$notice_list">{$lang->no_documents}</p>
+
+	<div class="church-sermon-grid" cond="$document_list || $notice_list">
+		<div class="church-sermon-card-wrap" loop="$notice_list=>$no,$document">
+			{@ $__yid = isset($sermon_thumbs[$document->document_srl]) ? $sermon_thumbs[$document->document_srl] : ''; }
+			<a cond="$grant->manager" class="church-sermon-del" href="{getUrl('','mid',$mid,'act','dispBoardDelete','document_srl',$document->document_srl)}" title="삭제" onclick="return confirm('이 영상을 삭제할까요?');">&times;</a>
+			<a class="church-sermon-card is-notice{@ echo $__yid ? '' : ' no-video'; }" href="{getUrl('document_srl',$document->document_srl, 'listStyle', $listStyle, 'cpage','')}" data-youtube="{$sermon_thumbs[$document->document_srl] ?? ''}" data-title="{escape($document->getTitle())}" data-srl="{$document->document_srl}">
+				<span class="church-sermon-thumb">
+					<img cond="$__yid" src="https://img.youtube.com/vi/{$__yid}/mqdefault.jpg" alt="{$document->getTitle()}" loading="lazy" />
+					<span class="church-sermon-noimg" cond="!$__yid"><span class="church-sermon-noimg-icon"></span><span class="church-sermon-noimg-label">현재 볼 수 없는 영상</span></span>
+					<span class="church-sermon-play" cond="$__yid"></span>
+					<span class="church-sermon-badge">{$lang->notice}</span>
+				</span>
+				<span class="church-sermon-meta">
+					<strong class="church-sermon-title">{$document->getTitle()}</strong>
+					<span class="church-sermon-info">
+						<span class="church-sermon-date">{@ echo isset($sermon_dates[$document->document_srl]) ? date('Y.m.d', strtotime($sermon_dates[$document->document_srl])) : $document->getRegdate('Y.m.d'); }</span>
+						<span class="church-sermon-views"><em></em>{number_format($document->get('readed_count'))}</span>
+					</span>
+				</span>
+			</a>
+		</div>
+
+		<div class="church-sermon-card-wrap" loop="$document_list=>$no,$document">
+			{@ $__yid = isset($sermon_thumbs[$document->document_srl]) ? $sermon_thumbs[$document->document_srl] : ''; }
+			<a cond="$grant->manager" class="church-sermon-del" href="{getUrl('','mid',$mid,'act','dispBoardDelete','document_srl',$document->document_srl)}" title="삭제" onclick="return confirm('이 영상을 삭제할까요?');">&times;</a>
+			<a class="church-sermon-card{@ echo $__yid ? '' : ' no-video'; }" href="{getUrl('document_srl',$document->document_srl, 'listStyle', $listStyle, 'cpage','')}" data-youtube="{$sermon_thumbs[$document->document_srl] ?? ''}" data-title="{escape($document->getTitle())}" data-srl="{$document->document_srl}">
+				<span class="church-sermon-thumb">
+					<img cond="$__yid" src="https://img.youtube.com/vi/{$__yid}/mqdefault.jpg" alt="{$document->getTitle()}" loading="lazy" />
+					<span class="church-sermon-noimg" cond="!$__yid"><span class="church-sermon-noimg-icon"></span><span class="church-sermon-noimg-label">현재 볼 수 없는 영상</span></span>
+					<span class="church-sermon-play" cond="$__yid"></span>
+				</span>
+				<span class="church-sermon-meta">
+					<strong class="church-sermon-title">{$document->getTitle()}</strong>
+					<span class="church-sermon-info">
+						<span class="church-sermon-date">{@ echo isset($sermon_dates[$document->document_srl]) ? date('Y.m.d', strtotime($sermon_dates[$document->document_srl])) : $document->getRegdate('Y.m.d'); }</span>
+						<span class="church-sermon-views"><em></em>{number_format($document->get('readed_count'))}</span>
+					</span>
+				</span>
+			</a>
+		</div>
+	</div>
+
+	<div class="church-sermon-scripts" hidden="hidden">
+		<div class="church-sermon-script-data" loop="$notice_list=>$no,$document" data-srl="{$document->document_srl}">{@ echo isset($sermon_scripts[$document->document_srl]) ? $sermon_scripts[$document->document_srl] : ''; }</div>
+		<div class="church-sermon-script-data" loop="$document_list=>$no,$document" data-srl="{$document->document_srl}">{@ echo isset($sermon_scripts[$document->document_srl]) ? $sermon_scripts[$document->document_srl] : ''; }</div>
+	</div>
+</div>
+
+<div class="church-sermon-modal" id="church-sermon-modal" aria-hidden="true">
+	<div class="church-sermon-modal-backdrop"></div>
+	<div class="church-sermon-modal-box" role="dialog" aria-modal="true" aria-label="설교 영상">
+		<button type="button" class="church-sermon-modal-close" aria-label="닫기">&times;</button>
+		<p class="church-sermon-modal-title"></p>
+		<div class="church-sermon-modal-body">
+			<div class="church-sermon-modal-video">
+				<div class="church-sermon-modal-frame"></div>
+			</div>
+			<div class="church-sermon-modal-script-wrap">
+				<div class="church-sermon-modal-script"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="list_footer">
+	<div class="pagination" cond="$document_list || $notice_list">
+		<a href="{getUrl('page','','document_srl','','division',$division,'last_division',$last_division)}" class="direction prev"><span></span><span></span> {$lang->first_page}</a>
+		<block loop="$page_no=$page_navigation->getNextPage()">
+			<strong cond="$page==$page_no">{$page_no}</strong>
+			<a cond="$page!=$page_no" href="{getUrl('page',$page_no,'document_srl','','division',$division,'last_division',$last_division)}">{$page_no}</a>
+		</block>
+		<a href="{getUrl('page',$page_navigation->last_page,'document_srl','','division',$division,'last_division',$last_division)}" class="direction next">{$lang->last_page} <span></span><span></span></a>
+	</div>
+	<div class="btnArea">
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispBoardWrite', 'category', $category ?? null)}" class="btn">{$lang->cmd_write}</a>
+	</div>
+	<button type="button" class="bsToggle" title="{$lang->cmd_search}">{$lang->cmd_search}</button>
+	<form cond="$grant->view" action="{getUrl()}" method="get" id="board_search" class="board_search" rx-autoform="false">
+		<input type="hidden" name="mid" value="{$mid}" />
+		<input type="hidden" name="category" value="{$category}" />
+		<input type="text" name="search_keyword" value="{escape($search_keyword, false)}" title="{$lang->cmd_search}" class="iText" />
+		<select name="search_target">
+			<option loop="$search_option=>$key,$val" value="{$key}" selected="selected"|cond="$search_target==$key">{$val}</option>
+		</select>
+		<button type="submit" class="btn">{$lang->cmd_search}</button>
+		<a cond="$last_division" href="{getUrl('page',1,'document_srl','','division',$last_division,'last_division','')}" class="btn">{$lang->cmd_search_next}</a>
+	</form>
+	<a href="{getUrl('', 'mid', $mid, 'act', 'dispBoardTagList')}" class="tagSearch" title="{$lang->tag}">{$lang->tag}</a>
+</div>
+<include target="_footer.html" />

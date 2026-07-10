@@ -1,0 +1,24 @@
+# 서버 런타임·업로드 (Git 제외)
+files/
+data/
+vps_backups/
+
+# 대용량 백업·DB 덤프
+*.tar.gz
+*.sql
+*.tsv
+
+# 비밀·환경
+.env
+backup.env
+*.pem
+*_credentials*
+
+# Python / OS
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# PPT 생성 임시
+_pptx_images/

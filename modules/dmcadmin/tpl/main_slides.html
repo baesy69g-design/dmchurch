@@ -1,0 +1,103 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">메인 대표사진</h2>
+<p class="dmc-help">메인페이지 상단 슬라이드(대표사진 영역)에 표시할 이미지 4장을 등록합니다. 디자인 확정 후 메인 레이아웃에 자동 반영됩니다.</p>
+
+<form id="dmc-main-slides-form" method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveMainSlides')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<div class="dmc-slide-grid">
+		<!--@foreach($slide_slots as $slot)-->
+		<div class="dmc-slide-slot">
+			<h3>사진 {$slot->num}</h3>
+			<!--@if($slot->url)-->
+			<div class="dmc-slide-preview" style="background-image:url('{$slot->url}');"></div>
+			<label class="dmc-check"><input type="checkbox" name="remove_slide_{$slot->num}" value="Y" /> 등록 해제</label>
+			<!--@else-->
+			<div class="dmc-slide-preview dmc-slide-empty">미등록</div>
+			<!--@end-->
+			<div class="dmc-field">
+				<label>이미지 파일</label>
+				<input type="file" name="slide_{$slot->num}" accept="image/jpeg,image/png,image/webp,image/gif" />
+			</div>
+			<p class="dmc-help">큰 사진도 자동 축소됩니다. 권장: 가로 1600px 이하, JPG</p>
+		</div>
+		<!--@end-->
+	</div>
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDashboard')}" class="dmc-btn">홈</a>
+	</div>
+</form>
+
+<script>
+(function () {
+	var form = document.getElementById('dmc-main-slides-form');
+	if (!form) { return; }
+
+	function resizeImage(file, maxDim, maxBytes) {
+		return new Promise(function (resolve) {
+			if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+				resolve(file); return;
+			}
+			var url = URL.createObjectURL(file);
+			var img = new Image();
+			img.onload = function () {
+				URL.revokeObjectURL(url);
+				var w = img.naturalWidth, h = img.naturalHeight;
+				if (!w || !h) { resolve(file); return; }
+				var ratio = Math.min(1, maxDim / Math.max(w, h));
+				if (ratio === 1 && file.size <= maxBytes) { resolve(file); return; }
+				var tw = Math.max(1, Math.round(w * ratio));
+				var th = Math.max(1, Math.round(h * ratio));
+				var canvas = document.createElement('canvas');
+				canvas.width = tw; canvas.height = th;
+				var ctx = canvas.getContext('2d');
+				ctx.fillStyle = '#ffffff';
+				ctx.fillRect(0, 0, tw, th);
+				ctx.drawImage(img, 0, 0, tw, th);
+				var q = 0.82;
+				(function attempt() {
+					canvas.toBlob(function (blob) {
+						if (!blob) { resolve(file); return; }
+						if (blob.size <= maxBytes || q <= 0.45) {
+							var name = (file.name || 'slide').replace(/\.(png|webp|bmp|gif|jpeg|jpg)$/i, '') + '.jpg';
+							resolve(new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() }));
+						} else { q -= 0.08; attempt(); }
+					}, 'image/jpeg', q);
+				})();
+			};
+			img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+			img.src = url;
+		});
+	}
+
+	form.addEventListener('submit', function (e) {
+		if (form.dataset.resized === '1') { return; }
+		var fileInputs = Array.prototype.slice.call(form.querySelectorAll('input[type=file]'));
+		var pending = fileInputs.filter(function (inp) { return inp.files && inp.files.length; });
+		if (!pending.length) { return; }
+
+		e.preventDefault();
+		var submitBtn = form.querySelector('button[type=submit]');
+		if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '사진 처리 중...'; }
+
+		var tasks = pending.map(function (inp) {
+			return resizeImage(inp.files[0], 1600, 700 * 1024).then(function (nf) {
+				try {
+					var dt = new DataTransfer();
+					dt.items.add(nf);
+					inp.files = dt.files;
+				} catch (err) { /* 원본 사용 */ }
+			});
+		});
+
+		Promise.all(tasks).then(function () {
+			form.dataset.resized = '1';
+			form.submit();
+		}).catch(function () {
+			form.dataset.resized = '1';
+			form.submit();
+		});
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

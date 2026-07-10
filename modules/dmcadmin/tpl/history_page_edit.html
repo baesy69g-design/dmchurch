@@ -1,0 +1,125 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$page->label} — 연혁 수정</h2>
+<p class="dmc-help">
+	<strong>연대 블록</strong>(연대 · 연대사진 · 내용)을 반복 추가하세요. 사진은 컬러로 올려도 화면에서는 자동 흑백 처리되며, 해당 연대 내용의 세로 가운데에 배치됩니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveHistoryPage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-history-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+	<input type="hidden" name="block_count" id="dmc-block-count" value="{$block_count}" />
+
+	<h3 class="dmc-section-title">연대 블록 <button type="button" class="dmc-btn dmc-btn-sm" id="dmc-add-block">+ 블록 추가</button></h3>
+	<p class="dmc-help">내용은 한 줄에 한 항목씩 입력하세요. 빈 줄은 간격으로 표시됩니다. 빈 블록은 저장 시 제외됩니다.</p>
+
+	<div id="dmc-block-list">
+		<!--@foreach($block_slots as $slot)-->
+		<div class="dmc-guide-section" data-index="{$slot->index}">
+			<div class="dmc-guide-section-head">
+				<strong>블록 {$slot->num}</strong>
+				<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-block">삭제</button>
+			</div>
+			<div class="dmc-field">
+				<label>연대</label>
+				<input type="text" name="block_era_{$slot->index}" value="{$slot->era}" class="dmc-input-wide" placeholder="예: 1972~1979" />
+			</div>
+			<div class="dmc-field">
+				<label>연대 사진</label>
+				<input type="hidden" name="existing_block_photo_{$slot->index}" value="{$slot->photo}" />
+				<!--@if($slot->photo)-->
+				<div class="dmc-info-preview dmc-history-preview" style="background-image:url('{$slot->photo}');"></div>
+				<label class="dmc-check"><input type="checkbox" name="remove_block_photo_{$slot->index}" value="Y" /> 사진 삭제</label>
+				<!--@else-->
+				<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+				<!--@end-->
+				<input type="file" name="block_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+			</div>
+			<div class="dmc-field">
+				<label>내용</label>
+				<textarea name="block_body_{$slot->index}" rows="10" class="dmc-para-input" placeholder="1972.05.14  노충섭목사 인도로 창립예배&#10;05.21  김명섭성도자택으로 예배장소 이전">{$slot->body}</textarea>
+			</div>
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<template id="dmc-block-template">
+	<div class="dmc-guide-section" data-index="__INDEX__">
+		<div class="dmc-guide-section-head">
+			<strong>블록 __NUM__</strong>
+			<button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-block">삭제</button>
+		</div>
+		<div class="dmc-field">
+			<label>연대</label>
+			<input type="text" name="block_era___INDEX__" value="" class="dmc-input-wide" placeholder="예: 1972~1979" />
+		</div>
+		<div class="dmc-field">
+			<label>연대 사진</label>
+			<input type="hidden" name="existing_block_photo___INDEX__" value="" />
+			<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+			<input type="file" name="block_photo___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" />
+		</div>
+		<div class="dmc-field">
+			<label>내용</label>
+			<textarea name="block_body___INDEX__" rows="10" class="dmc-para-input" placeholder="1972.05.14  노충섭목사 인도로 창립예배"></textarea>
+		</div>
+	</div>
+</template>
+
+<script>
+(function () {
+	var list = document.getElementById('dmc-block-list');
+	var countInput = document.getElementById('dmc-block-count');
+	var tpl = document.getElementById('dmc-block-template');
+	var max = 60;
+
+	function reindex() {
+		var blocks = list.querySelectorAll('.dmc-guide-section');
+		blocks.forEach(function (block, i) {
+			block.dataset.index = String(i);
+			block.querySelector('strong').textContent = '블록 ' + (i + 1);
+			block.querySelector('[name^="block_era_"]').name = 'block_era_' + i;
+			block.querySelector('[name^="block_body_"]').name = 'block_body_' + i;
+			block.querySelector('[name^="block_photo_"]').name = 'block_photo_' + i;
+			var existing = block.querySelector('[name^="existing_block_photo_"]');
+			if (existing) { existing.name = 'existing_block_photo_' + i; }
+			var remove = block.querySelector('[name^="remove_block_photo_"]');
+			if (remove) { remove.name = 'remove_block_photo_' + i; }
+		});
+		countInput.value = String(blocks.length);
+	}
+
+	document.getElementById('dmc-add-block').addEventListener('click', function () {
+		if (list.querySelectorAll('.dmc-guide-section').length >= max) {
+			alert('블록은 최대 ' + max + '개까지 추가할 수 있습니다.');
+			return;
+		}
+		var i = list.querySelectorAll('.dmc-guide-section').length;
+		var html = tpl.innerHTML.replace(/__INDEX__/g, String(i)).replace(/__NUM__/g, String(i + 1));
+		list.insertAdjacentHTML('beforeend', html);
+		reindex();
+	});
+
+	list.addEventListener('click', function (e) {
+		if (!e.target.classList.contains('dmc-remove-block')) {
+			return;
+		}
+		var blocks = list.querySelectorAll('.dmc-guide-section');
+		if (blocks.length <= 1) {
+			alert('최소 1개 블록은 남겨 두세요.');
+			return;
+		}
+		e.target.closest('.dmc-guide-section').remove();
+		reindex();
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

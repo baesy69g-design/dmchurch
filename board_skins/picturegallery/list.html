@@ -1,0 +1,75 @@
+<include target="_header.html" />
+<load target="picture_gallery.css" />
+<load target="picture_gallery.js" type="body" />
+<include cond="$oDocument->isExists() && $mid != 'jubo'" target="_read.html" />
+<include cond="$oDocument->isExists() && $mid == 'jubo'" target="_read_clean.html" />
+
+{@ $picture_slides = $picture_slides ?? array(); }
+
+<div class="church-pic" id="board_list" cond="isset($list_config) && !$oDocument->isExists()">
+	<div class="btnArea church-pic-topbar">
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispBoardWrite', 'category', $category ?? null)}" class="btn">{$lang->cmd_write}</a>
+	</div>
+
+	<p class="church-pic-empty" cond="!$document_list && !$notice_list">{$lang->no_documents}</p>
+
+	<div class="church-pic-grid" cond="$document_list || $notice_list">
+		<div class="church-pic-card-wrap" loop="$notice_list=>$no,$document">
+			{@ $__slides = isset($picture_slides[$document->document_srl]) ? $picture_slides[$document->document_srl] : ''; }
+			<a cond="$grant->manager || $church_board_admin == 'Y'" class="church-pic-del" href="#" data-srl="{$document->document_srl}" title="삭제" role="button">&times;</a>
+			<a class="church-pic-card is-notice" href="{getUrl('document_srl',$document->document_srl, 'listStyle', $listStyle, 'cpage','')}">
+				<span class="church-pic-thumb">
+					<span class="church-pic-default" aria-hidden="true"></span>
+					<span class="church-pic-slides">{@ echo $__slides; }</span>
+					<span class="church-pic-badge">{$lang->notice}</span>
+				</span>
+				<span class="church-pic-meta">
+					<strong class="church-pic-title">{$document->getTitle()}</strong>
+					<span class="church-pic-date">{$document->getRegdate('Y.m.d')}</span>
+				</span>
+			</a>
+		</div>
+
+		<div class="church-pic-card-wrap" loop="$document_list=>$no,$document">
+			{@ $__slides = isset($picture_slides[$document->document_srl]) ? $picture_slides[$document->document_srl] : ''; }
+			<a cond="$grant->manager || $church_board_admin == 'Y'" class="church-pic-del" href="#" data-srl="{$document->document_srl}" title="삭제" role="button">&times;</a>
+			<a class="church-pic-card" href="{getUrl('document_srl',$document->document_srl, 'listStyle', $listStyle, 'cpage','')}">
+				<span class="church-pic-thumb">
+					<span class="church-pic-default" aria-hidden="true"></span>
+					<span class="church-pic-slides">{@ echo $__slides; }</span>
+				</span>
+				<span class="church-pic-meta">
+					<strong class="church-pic-title">{$document->getTitle()}</strong>
+					<span class="church-pic-date">{$document->getRegdate('Y.m.d')}</span>
+				</span>
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="list_footer" cond="!$oDocument->isExists()">
+	<div class="pagination" cond="$document_list || $notice_list">
+		<a href="{getUrl('page','','document_srl','','division',$division,'last_division',$last_division)}" class="direction prev"><span></span><span></span> {$lang->first_page}</a>
+		<block loop="$page_no=$page_navigation->getNextPage()">
+			<strong cond="$page==$page_no">{$page_no}</strong>
+			<a cond="$page!=$page_no" href="{getUrl('page',$page_no,'document_srl','','division',$division,'last_division',$last_division)}">{$page_no}</a>
+		</block>
+		<a href="{getUrl('page',$page_navigation->last_page,'document_srl','','division',$division,'last_division',$last_division)}" class="direction next">{$lang->last_page} <span></span><span></span></a>
+	</div>
+	<div class="btnArea">
+		<a href="{getUrl('', 'mid', $mid, 'act', 'dispBoardWrite', 'category', $category ?? null)}" class="btn">{$lang->cmd_write}</a>
+	</div>
+	<button type="button" class="bsToggle" title="{$lang->cmd_search}">{$lang->cmd_search}</button>
+	<form cond="$grant->view" action="{getUrl()}" method="get" id="board_search" class="board_search" rx-autoform="false">
+		<input type="hidden" name="mid" value="{$mid}" />
+		<input type="hidden" name="category" value="{$category}" />
+		<input type="text" name="search_keyword" value="{escape($search_keyword, false)}" title="{$lang->cmd_search}" class="iText" />
+		<select name="search_target">
+			<option loop="$search_option=>$key,$val" value="{$key}" selected="selected"|cond="$search_target==$key">{$val}</option>
+		</select>
+		<button type="submit" class="btn">{$lang->cmd_search}</button>
+		<a cond="$last_division" href="{getUrl('page',1,'document_srl','','division',$last_division,'last_division','')}" class="btn">{$lang->cmd_search_next}</a>
+	</form>
+	<a href="{getUrl('', 'mid', $mid, 'act', 'dispBoardTagList')}" class="tagSearch" title="{$lang->tag}">{$lang->tag}</a>
+</div>
+<include target="_footer.html" />

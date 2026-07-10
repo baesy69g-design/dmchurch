@@ -1,0 +1,60 @@
+<include target="./common_header.html" />
+<load target="filter/openid_login.xml" />
+<load target="js/church_login_onboard.js" />
+<load target="js/church_login_keep.js" />
+<load target="css/church_pw_toggle.css" />
+<load target="js/church_pw_toggle.js" />
+<div class="church-login-guide church-login-guide--modal" id="church_login_guide">
+	<div class="church-login-guide-box">
+		<h2 class="church-login-guide-title">동명교회 새 홈페이지 회원 안내</h2>
+		<p class="church-login-guide-lead">기존 동명교회 홈페이지 회원은 <strong>한 번 로그인</strong>한 뒤 개인 이메일을 확인해 주세요.</p>
+		<ol class="church-login-guide-steps">
+			<li><strong>구 비밀번호를 기억하는 경우</strong> — 아래에서 아이디와 구 비밀번호로 로그인합니다. 로그인 후 개인 이메일을 입력하고 확인 메일 링크를 클릭합니다.</li>
+			<li><strong>구 비밀번호를 잊은 경우</strong> — <a href="{getUrl('','module','church_member','act','dispChurchRecoverAccount')}">비밀번호 재설정</a>에서 아이디와 개인 이메일을 입력합니다. 메일 링크에서 새 비밀번호를 두 번 입력해 저장합니다.</li>
+		</ol>
+	</div>
+</div>
+<div class="signin">
+	<div class="login-header">
+		<h1><i class="icon-user"></i> {$lang->cmd_login}</h1>
+	</div>
+	<div class="login-body">
+		<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/member/skins'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+			<p>{$XE_VALIDATOR_MESSAGE}</p>
+		</div>
+		<form ruleset="@login" action="./" method="post" id="fo_member_login" class="rx_ajax">
+			<input type="hidden" name="success_return_url" value="{$referer_url}" />
+			<input type="hidden" name="act" value="procMemberLogin" />
+			<input type="hidden" name="xe_validator_id" value="modules/member/skins" />
+			<fieldset>
+				<div class="control-group">
+					<input type="text" cond="$identifier != 'email_address'" name="user_id" id="uid" required placeholder="{$lang->user_id}" title="{$lang->user_id}" />
+					<input type="email" cond="$identifier == 'email_address'" name="user_id" id="uid" required placeholder="{$lang->email_address}" title="{$lang->email_address}" />
+					<div class="church-pw-field">
+						<input type="password" name="password" id="upw" required placeholder="{$lang->password}" title="{$lang->password}" autocomplete="current-password" />
+						<button type="button" class="church-pw-toggle" data-target="upw" aria-label="비밀번호 보기" title="비밀번호 보기"><i class="xi-eye" aria-hidden="true"></i></button>
+					</div>
+				</div>
+				<div class="control-group captcha" cond="isset($captcha) && $captcha && $captcha->isTargetAction('login')">
+					{$captcha}
+				</div>
+				<div class="control-group">
+					<label for="keepid_opt">
+						<input type="checkbox" name="keep_signed" id="keepid_opt" value="Y" />
+						{$lang->keep_signed}
+					</label>
+					<div id="warning">
+						<p>{$lang->about_keep_warning}</p>
+					</div>
+					<input type="submit" value="{$lang->cmd_login}" class="submit btn btn-inverse" />
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div class="login-footer">
+		<a href="{getUrl('','module','church_member','act','dispChurchRecoverAccount')}">비밀번호 재설정</a>
+		|
+		<a href="{getUrl('act','dispMemberSignUpForm')}">{$lang->cmd_signup}</a>
+	</div>
+</div>
+<include target="./common_footer.html" />

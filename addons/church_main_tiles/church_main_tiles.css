@@ -1,0 +1,292 @@
+.welcomeXE {
+	display: none !important;
+}
+
+/* 상단 전폭 슬라이드 숨김 — 홈 영역 안쪽 2:1:1 배치 사용 */
+.container .visual.swiper-container {
+	display: none !important;
+}
+
+.church-home-extra {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 20px 0 40px;
+	box-sizing: border-box;
+}
+
+.church-main-hero-row {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr;
+	gap: 10px;
+	margin-bottom: 16px;
+	align-items: stretch;
+}
+
+.church-main-slide-col {
+	position: relative;
+	min-width: 0;
+	min-height: 0;
+}
+
+/* 구홈피 슬라이드 비율 550×309 — 행 높이 기준 */
+.church-main-slide-col::before {
+	content: '';
+	display: block;
+	padding-top: 56.1818%;
+}
+
+.church-main-slide {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	border-radius: var(--church-card-radius, 12px);
+	overflow: hidden;
+	background: #1a3a5c;
+	box-shadow: 0 4px 20px rgba(27, 67, 50, 0.15);
+	border: none;
+	outline: 3px solid var(--church-forest-mid, #2d6a4f);
+	outline-offset: -3px;
+}
+
+.church-main-slide.swiper-container,
+.church-main-slide .swiper-wrapper,
+.church-main-slide .swiper-slide {
+	height: 100% !important;
+}
+
+.church-main-slide--empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #888;
+	font-size: 14px;
+}
+
+.church-main-slide .swiper-slide {
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.church-main-slide .swiper-pagination {
+	bottom: 8px !important;
+}
+
+.church-main-quicklinks {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	min-width: 0;
+	min-height: 0;
+	height: 100%;
+	border-radius: var(--church-card-radius, 12px);
+	overflow: hidden;
+	box-shadow: 0 4px 20px rgba(27, 67, 50, 0.12);
+	outline: 3px solid var(--church-forest, #1b4332);
+	outline-offset: -3px;
+}
+
+.church-main-quicklink {
+	display: flex;
+	flex: 1 1 0;
+	min-height: 0;
+	background: linear-gradient(135deg, #2b6cb0 0%, #1a4f8c 100%);
+	color: #fff !important;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 600;
+	border-radius: 2px;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+	overflow: hidden;
+}
+
+.church-main-quicklink--img {
+	background: none;
+	padding: 0;
+	line-height: 0;
+}
+
+.church-main-quicklink--img:nth-child(1) {
+	flex-grow: 80;
+}
+
+.church-main-quicklink--img:nth-child(2) {
+	flex-grow: 75;
+}
+
+.church-main-quicklink--img:nth-child(3) {
+	flex-grow: 75;
+}
+
+.church-main-quicklink--img:nth-child(4) {
+	flex-grow: 79;
+}
+
+.church-main-quicklink--img img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+}
+
+.church-main-pastor {
+	display: block;
+	height: 100%;
+	min-height: 0;
+	padding: 16px;
+	background: #f3f0e8;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-position: center top;
+	border: none;
+	border-radius: var(--church-card-radius, 12px);
+	color: #1b4332 !important;
+	text-decoration: none;
+	box-sizing: border-box;
+	box-shadow: 0 4px 20px rgba(27, 67, 50, 0.1);
+	outline: 3px solid var(--church-accent, #d4a373);
+	outline-offset: -3px;
+}
+
+.church-main-pastor--img .church-main-pastor-title,
+.church-main-pastor--img .church-main-pastor-sub {
+	display: none;
+}
+
+.church-main-pastor-title {
+	font-size: 15px;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+.church-main-pastor-sub {
+	font-size: 12px;
+	color: #555;
+	line-height: 1.5;
+}
+
+.church-main-tiles-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px;
+}
+
+/* 벤토 타일 — 왼쪽 컬러 액센트 바, 움직임 없이 구홈피와 확연히 다른 정적 디자인 */
+.church-main-tile {
+	--tile-accent: #2d6a4f;
+	position: relative;
+	display: block;
+	height: 190px;
+	border-radius: 0 var(--church-card-radius, 12px) var(--church-card-radius, 12px) 0;
+	overflow: hidden;
+	text-decoration: none;
+	color: var(--church-ink, #1a2e28) !important;
+	background: #fff;
+	border: 1px solid #e0e8e2;
+	border-left: 6px solid var(--tile-accent);
+	box-shadow: 0 2px 12px rgba(27, 67, 50, 0.08);
+}
+
+.church-main-tile-bg {
+	position: absolute;
+	inset: 0;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-color: inherit;
+}
+
+.church-main-tile-label--sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.church-main-tile-label {
+	position: absolute;
+	z-index: 2;
+	left: 0;
+	right: 0;
+	top: 0;
+	padding: 12px 14px;
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: -0.02em;
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+.church-main-tile-label {
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	right: 0;
+	top: 0;
+	padding: 10px 12px 10px 8px;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--church-forest, #1b4332) !important;
+	background: linear-gradient(180deg, rgba(255, 254, 249, 0.96) 0%, transparent 100%);
+}
+
+.church-main-tile:has(.church-main-tile-bg) .church-main-tile-label {
+	background: linear-gradient(180deg, rgba(255, 254, 249, 0.92) 0%, transparent 70%);
+}
+
+.church-main-tile--worship_time { --tile-accent: #2d6a4f; background: #f4f9f6; }
+.church-main-tile--event_photo { --tile-accent: #40916c; background: #e8f5ee; }
+.church-main-tile--rice_share { --tile-accent: #d4a373; background: #faf6f0; }
+.church-main-tile--church_school { --tile-accent: #52b788; background: #f0f8f3; }
+.church-main-tile--pastoral_schedule { --tile-accent: #1b4332; background: #2d3748; }
+.church-main-tile--pastoral_schedule .church-main-tile-label {
+	color: #fff !important;
+	background: linear-gradient(180deg, rgba(27, 67, 50, 0.75) 0%, transparent 100%);
+}
+.church-main-tile--weekly_bulletin { --tile-accent: #74c69d; background: #fff; }
+.church-main-tile--new_family { --tile-accent: #e07a5f; background: #fdf4f2; }
+.church-main-tile--scholarship { --tile-accent: #2a9d8f; background: #f2f8f7; }
+
+@media (max-width: 960px) {
+	.church-main-hero-row {
+		grid-template-columns: 1fr 1fr;
+		min-height: 0;
+	}
+
+	.church-main-slide-col {
+		grid-column: span 2;
+	}
+
+	.church-main-slide-col::before {
+		padding-top: 56.1818%;
+	}
+
+	.church-main-tiles-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 520px) {
+	.church-main-hero-row {
+		grid-template-columns: 1fr;
+	}
+
+	.church-main-slide-col {
+		grid-column: span 1;
+	}
+
+	.church-main-tiles-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.church-main-tile {
+		height: 160px;
+	}
+}

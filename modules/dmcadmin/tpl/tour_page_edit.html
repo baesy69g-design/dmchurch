@@ -1,0 +1,101 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">{$page->label} — 사진 등록</h2>
+<p class="dmc-help">
+	사진을 <strong>최대 {$tour_max}장</strong>까지 등록할 수 있습니다. 등록된 사진만 화면에 표시됩니다.
+	<strong>사진 설명</strong>은 페이지 전체에 공통으로 표시됩니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveTourPage')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-tour-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="{$page->mid}" />
+	<input type="hidden" name="page_title" value="{$page->page_title}" />
+	<input type="hidden" name="photo_count" id="dmc-photo-count" value="{$photo_count}" />
+
+	<div class="dmc-field">
+		<label>사진 설명</label>
+		<textarea name="page_description" rows="8" class="dmc-para-input" placeholder="페이지 전체에 표시할 소개 글을 입력하세요. 빈 줄로 문단을 구분할 수 있습니다.">{$page->description}</textarea>
+	</div>
+
+	<h3 class="dmc-section-title">사진 목록 <button type="button" class="dmc-btn dmc-btn-sm" id="dmc-add-photo">+ 사진 추가</button></h3>
+
+	<div id="dmc-photo-list" class="dmc-person-grid">
+		<!--@foreach($photo_slots as $slot)-->
+		<div class="dmc-field dmc-person-photo dmc-tour-row" data-index="{$slot->index}">
+			<label>사진 <span class="dmc-tour-num">{$slot->num}</span> <button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-photo">삭제</button></label>
+			<input type="hidden" name="existing_tour_photo_{$slot->index}" value="{$slot->photo}" />
+			<!--@if($slot->photo)-->
+			<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->photo}');"></div>
+			<label class="dmc-check"><input type="checkbox" name="remove_tour_photo_{$slot->index}" value="Y" /> 사진 삭제</label>
+			<!--@else-->
+			<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+			<!--@end-->
+			<input type="file" name="tour_photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<template id="dmc-photo-template">
+	<div class="dmc-field dmc-person-photo dmc-tour-row" data-index="__INDEX__">
+		<label>사진 <span class="dmc-tour-num">__NUM__</span> <button type="button" class="dmc-btn dmc-btn-sm dmc-btn-danger dmc-remove-photo">삭제</button></label>
+		<input type="hidden" name="existing_tour_photo___INDEX__" value="" />
+		<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+		<input type="file" name="tour_photo___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" />
+	</div>
+</template>
+
+<script>
+(function () {
+	var list = document.getElementById('dmc-photo-list');
+	var countInput = document.getElementById('dmc-photo-count');
+	var tpl = document.getElementById('dmc-photo-template');
+	var max = {$tour_max};
+
+	function reindex() {
+		var rows = list.querySelectorAll('.dmc-tour-row');
+		rows.forEach(function (row, i) {
+			row.dataset.index = String(i);
+			var num = row.querySelector('.dmc-tour-num');
+			if (num) { num.textContent = String(i + 1); }
+			row.querySelectorAll('[name]').forEach(function (el) {
+				el.name = el.name.replace(/_\d+$/, '_' + i);
+			});
+		});
+		countInput.value = String(rows.length);
+	}
+
+	document.getElementById('dmc-add-photo').addEventListener('click', function () {
+		var rows = list.querySelectorAll('.dmc-tour-row');
+		if (rows.length >= max) {
+			alert('최대 ' + max + '장까지 등록할 수 있습니다.');
+			return;
+		}
+		var i = rows.length;
+		var html = tpl.innerHTML.replace(/__INDEX__/g, String(i)).replace(/__NUM__/g, String(i + 1));
+		list.insertAdjacentHTML('beforeend', html);
+		reindex();
+	});
+
+	list.addEventListener('click', function (e) {
+		if (!e.target.classList.contains('dmc-remove-photo')) {
+			return;
+		}
+		var rows = list.querySelectorAll('.dmc-tour-row');
+		if (rows.length <= 1) {
+			e.target.closest('.dmc-tour-row').querySelector('input[type=file]').value = '';
+			alert('마지막 칸은 비워둘 수 있어요. 저장하면 등록된 사진만 표시됩니다.');
+			return;
+		}
+		e.target.closest('.dmc-tour-row').remove();
+		reindex();
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

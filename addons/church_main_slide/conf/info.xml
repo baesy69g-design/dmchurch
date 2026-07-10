@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+	<title xml:lang="ko">메인 대표사진</title>
+	<description xml:lang="ko">dmcadmin 등록 메인 슬라이드 이미지 반영</description>
+	<version>1.0.0</version>
+	<date>2026-06-13</date>
+	<author link="https://dmchurch.kr">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+	<extra_vars />
+</addon>
