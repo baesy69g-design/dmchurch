@@ -5,8 +5,8 @@
  */
 return [
 	'main_tiles' => [
+		'event_photo' => '행사사진',
 		'worship_time' => '예배시간',
-		'event_photo' => '교회행사사진',
 		'rice_share' => '사랑의 쌀나누기',
 		'church_school' => '교회학교',
 		'dongkeyday' => '동키데이',
@@ -21,8 +21,8 @@ return [
 		'rice_share' => ['mode' => 'title_only', 'title_color' => '#ffffff'],
 		'church_school' => ['mode' => 'title_only', 'title_color' => '#ffffff'],
 		'dongkeyday' => ['mode' => 'title_only', 'title_color' => '#ffffff'],
-		'new_family' => ['mode' => 'title_only', 'title_color' => '#ffffff'],
-		'scholarship' => ['mode' => 'title_only', 'title_color' => '#ffffff'],
+		'new_family' => ['mode' => 'none'],
+		'scholarship' => ['mode' => 'none'],
 	],
 	'main_quick_links' => [
 		['label' => '주일 예배 설교 동영상', 'id' => 'sermon'],

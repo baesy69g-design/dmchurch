@@ -12,7 +12,7 @@ if (!$config)
 }
 
 $tile_keys = [
-    'worship_time', 'event_photo', 'rice_share', 'church_school',
+    'event_photo', 'worship_time', 'rice_share', 'church_school',
     'dongkeyday', 'weekly_bulletin', 'new_family', 'scholarship',
 ];
 $tiles = [];

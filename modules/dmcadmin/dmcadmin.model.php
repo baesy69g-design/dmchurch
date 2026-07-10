@@ -81,8 +81,8 @@ class dmcadminModel extends dmcadmin
 
 	/** @var array<string,array{label:string,target:string,id:string}> */
 	public const MAIN_TILES = [
-		'worship_time' => ['label' => '????', 'target' => 'page', 'id' => '78'],
 		'event_photo' => ['label' => '??????', 'target' => 'mid', 'id' => 'picture'],
+		'worship_time' => ['label' => '????', 'target' => 'page', 'id' => '78'],
 		'rice_share' => ['label' => '??? ????', 'target' => 'page', 'id' => '92'],
 		'church_school' => ['label' => '????', 'target' => 'page', 'id' => '109'],
 		'dongkeyday' => ['label' => '?????', 'target' => 'page', 'id' => '93'],

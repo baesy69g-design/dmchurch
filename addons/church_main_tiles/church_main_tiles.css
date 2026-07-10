@@ -223,15 +223,19 @@
 }
 
 .church-main-tile-label--sr {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	clip-path: inset(50%) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+	background: none !important;
+	text-shadow: none !important;
+	color: transparent !important;
 }
 
 .church-main-tile-label {
@@ -240,39 +244,35 @@
 	left: 0;
 	right: 0;
 	top: 0;
-	padding: 12px 14px;
+	padding: 12px 14px 28px;
 	font-size: 14px;
-	font-weight: 600;
-	letter-spacing: -0.02em;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.5) 100%);
-}
-
-.church-main-tile-label {
-	position: absolute;
-	z-index: 1;
-	left: 0;
-	right: 0;
-	top: 0;
-	padding: 10px 12px 10px 8px;
-	font-size: 13px;
 	font-weight: 700;
 	letter-spacing: -0.02em;
 	color: var(--church-forest, #1b4332) !important;
-	background: linear-gradient(180deg, rgba(255, 254, 249, 0.96) 0%, transparent 100%);
+	background: linear-gradient(180deg, rgba(255, 254, 249, 0.94) 0%, rgba(255, 254, 249, 0.55) 55%, transparent 100%);
+	text-shadow: none;
 }
 
-.church-main-tile:has(.church-main-tile-bg) .church-main-tile-label {
-	background: linear-gradient(180deg, rgba(255, 254, 249, 0.92) 0%, transparent 70%);
+.church-main-tile:has(.church-main-tile-bg) .church-main-tile-label:not(.church-main-tile-label--sr) {
+	color: #fff !important;
+	padding: 11px 14px 34px;
+	background: linear-gradient(
+		180deg,
+		rgba(18, 28, 36, 0.62) 0%,
+		rgba(18, 28, 36, 0.28) 48%,
+		rgba(18, 28, 36, 0) 100%
+	);
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 .church-main-tile--worship_time { --tile-accent: #2d6a4f; background: #f4f9f6; }
-.church-main-tile--event_photo { --tile-accent: #40916c; background: #e8f5ee; }
+.church-main-tile--event_photo { --tile-accent: #e8913a; background: #fff7ef; }
 .church-main-tile--rice_share { --tile-accent: #d4a373; background: #faf6f0; }
 .church-main-tile--church_school { --tile-accent: #52b788; background: #f0f8f3; }
-.church-main-tile--dongkeyday { --tile-accent: #c9956c; background: #faf3e8; }
+.church-main-tile--dongkeyday { --tile-accent: #d4a017; background: #faf3e8; }
 .church-main-tile--weekly_bulletin { --tile-accent: #74c69d; background: #fff; }
-.church-main-tile--new_family { --tile-accent: #e07a5f; background: #fdf4f2; }
-.church-main-tile--scholarship { --tile-accent: #2a9d8f; background: #f2f8f7; }
+.church-main-tile--new_family { --tile-accent: #d4a017; background: #fdf4f2; }
+.church-main-tile--scholarship { --tile-accent: #74c69d; background: #f2f8f7; }
 
 @media (max-width: 960px) {
 	.church-main-hero-row {

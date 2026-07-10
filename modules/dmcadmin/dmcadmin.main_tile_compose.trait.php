@@ -65,7 +65,7 @@ trait dmcadminMainTileComposeTrait
 		imagedestroy($photo);
 		imagedestroy($src);
 
-		self::drawTileTitle($canvas, $title, 12, 16, $w - 24, $fgR, $fgG, $fgB, 14, true, true);
+		self::drawTileTitle($canvas, $title, 12, 14, $w - 24, $fgR, $fgG, $fgB, 14, true, true);
 
 		self::saveGdImageAsJpeg($canvas, $destPath, 88);
 		imagedestroy($canvas);
@@ -169,17 +169,32 @@ trait dmcadminMainTileComposeTrait
 
 		if ($withBackdrop && $lines)
 		{
-			$backdrop = imagecolorallocatealpha($canvas, 0, 0, 0, 90);
-			imagefilledrectangle($canvas, max(0, $x - 6), max(0, $y - 4), min(imagesx($canvas) - 1, $x + $maxW), $y + $textH, $backdrop);
+			self::drawTileTitleScrim($canvas, imagesx($canvas), max(48, $y + $textH + 18));
 		}
 
 		foreach ($lines as $i => $line)
 		{
 			$lineY = $y + $fontSize + ($i * $lineHeight);
-			$shadow = imagecolorallocatealpha($canvas, 0, 0, 0, 60);
+			$shadow = imagecolorallocatealpha($canvas, 0, 0, 0, 45);
 			imagettftext($canvas, $fontSize, 0, $x + 1, $lineY + 1, $shadow, $font, $line);
 			$color = imagecolorallocate($canvas, $r, $g, $b);
 			imagettftext($canvas, $fontSize, 0, $x, $lineY, $color, $font, $line);
+		}
+	}
+
+	/** Soft top scrim: dark → transparent (no hard bar). @param resource|\GdImage $canvas */
+	protected static function drawTileTitleScrim($canvas, int $w, int $bandH): void
+	{
+		$bandH = max(40, min(imagesy($canvas), $bandH));
+		for ($y = 0; $y < $bandH; $y++)
+		{
+			$t = $y / max(1, $bandH - 1);
+			// ease-out: denser near title, soft fade below
+			$fade = 1.0 - ($t * $t * (3.0 - 2.0 * $t));
+			$alpha = (int)round(127 - (72 * $fade));
+			$alpha = max(55, min(127, $alpha));
+			$col = imagecolorallocatealpha($canvas, 16, 24, 32, $alpha);
+			imageline($canvas, 0, $y, $w - 1, $y, $col);
 		}
 	}
 
