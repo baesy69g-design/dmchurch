@@ -19,6 +19,10 @@ git fetch origin "$BRANCH"
 git checkout "$BRANCH"
 git pull --ff-only origin "$BRANCH"
 
+if [[ -f "$REPO_DIR/scripts/vps_pull_deploy.sh" ]]; then
+	install -m 755 "$REPO_DIR/scripts/vps_pull_deploy.sh" "/root/church-web/scripts/vps_pull_deploy.sh"
+fi
+
 sync_dir() {
 	local src="$1"
 	local dst="$2"
