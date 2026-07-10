@@ -47,7 +47,8 @@ git add -A
 git diff --cached --quiet
 if not errorlevel 1 (
   echo [안내] 커밋할 변경 사항이 없습니다.
-  goto :maybe_deploy
+  echo        VPS 반영만 필요하면 pulldeploy.bat 를 실행하세요.
+  goto :done
 )
 
 echo === 커밋: %MSG% ===
@@ -70,12 +71,9 @@ if errorlevel 1 (
 
 echo.
 echo [완료] GitHub 업로드 성공: %REPO%
+echo.
+echo 다음 단계: pulldeploy.bat 실행 → VPS 반영
 
-:maybe_deploy
-set /p DO_DEPLOY=VPS 에도 반영할까요? (Y/N): 
-if /I "%DO_DEPLOY%"=="Y" (
-  call "%~dp0pulldeploy.bat"
-)
-
+:done
 endlocal
 exit /b 0

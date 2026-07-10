@@ -29,6 +29,16 @@ sync_dir() {
 	fi
 }
 
+overlay_dir() {
+	local src="$1"
+	local dst="$2"
+	if [[ -d "$src" ]]; then
+		mkdir -p "$dst"
+		rsync -a "$src/" "$dst/"
+		echo "  overlaid: $src -> $dst"
+	fi
+}
+
 echo "=== 파일 동기화 ==="
 sync_dir "$REPO_DIR/modules/dmcadmin"              "$WEB/modules/dmcadmin"
 sync_dir "$REPO_DIR/modules/church_member"         "$WEB/modules/church_member"
@@ -40,15 +50,15 @@ sync_dir "$REPO_DIR/addons"                        "$WEB/addons"
 sync_dir "$REPO_DIR/board_skins"                   "$WEB/board_skins"
 sync_dir "$REPO_DIR/scripts"                       "$WEB/scripts"
 
-# patches → 실제 Rhymix 경로
+# patches → 기존 Rhymix 파일 위에 덮어쓰기만 (--delete 사용 금지)
 if [[ -d "$REPO_DIR/patches/member/skins/default" ]]; then
-	sync_dir "$REPO_DIR/patches/member/skins/default" "$WEB/modules/member/skins/default"
+	overlay_dir "$REPO_DIR/patches/member/skins/default" "$WEB/modules/member/skins/default"
 fi
 if [[ -d "$REPO_DIR/patches/member/m.skins/default" ]]; then
-	sync_dir "$REPO_DIR/patches/member/m.skins/default" "$WEB/modules/member/m.skins/default"
+	overlay_dir "$REPO_DIR/patches/member/m.skins/default" "$WEB/modules/member/m.skins/default"
 fi
 if [[ -d "$REPO_DIR/patches/layouts/xedition" ]]; then
-	sync_dir "$REPO_DIR/patches/layouts/xedition" "$WEB/layouts/xedition"
+	overlay_dir "$REPO_DIR/patches/layouts/xedition" "$WEB/layouts/xedition"
 fi
 
 echo "=== 캐시 삭제 ==="
