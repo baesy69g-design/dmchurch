@@ -13,7 +13,7 @@ if (!$config)
 
 $tile_keys = [
     'worship_time', 'event_photo', 'rice_share', 'church_school',
-    'pastoral_schedule', 'weekly_bulletin', 'new_family', 'scholarship',
+    'dongkeyday', 'weekly_bulletin', 'new_family', 'scholarship',
 ];
 $tiles = [];
 foreach ($tile_keys as $key)

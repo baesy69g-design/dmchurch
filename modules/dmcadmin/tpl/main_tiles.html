@@ -1,7 +1,7 @@
 <!--#include("_header.html")-->
 <h2 class="dmc-page-title">메인 타일</h2>
 <p class="dmc-help">홈페이지 메인의 타일 그리드(8칸) 이미지와 링크를 관리합니다. 링크를 비우면 기본 게시판·안내 페이지로 연결됩니다.</p>
-<p class="dmc-help"><strong>사진 타일(교회행사사진·교회학교 등)</strong>은 일반 사진만 올려도 타일 제목·배경색·사진 마스크가 자동으로 합성됩니다. <strong>예배시간·금주의 주보</strong>는 안내형 타일이라 편집된 이미지를 그대로 올려 주세요.</p>
+<p class="dmc-help"><strong>사진 타일</strong>은 올린 사진 위에 한글 제목만 자동으로 붙입니다. <strong>예배시간·금주의 주보</strong>는 안내형 타일이라 편집된 이미지를 그대로 올려 주세요.</p>
 
 <form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveMainTiles')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide">
 	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />

@@ -48,7 +48,7 @@ TILE_BANNERS = {
     'maint1': 'worship_time',
     'maint2': 'event_photo',
     'maint3': 'church_school',
-    'maint4': 'pastoral_schedule',
+    'maint4': 'dongkeyday',
     'maint5': 'weekly_bulletin',
     'maint6': 'new_family',
     'main2': 'rice_share',

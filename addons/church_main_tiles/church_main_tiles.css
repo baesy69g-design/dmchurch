@@ -269,11 +269,7 @@
 .church-main-tile--event_photo { --tile-accent: #40916c; background: #e8f5ee; }
 .church-main-tile--rice_share { --tile-accent: #d4a373; background: #faf6f0; }
 .church-main-tile--church_school { --tile-accent: #52b788; background: #f0f8f3; }
-.church-main-tile--pastoral_schedule { --tile-accent: #1b4332; background: #2d3748; }
-.church-main-tile--pastoral_schedule .church-main-tile-label {
-	color: #fff !important;
-	background: linear-gradient(180deg, rgba(27, 67, 50, 0.75) 0%, transparent 100%);
-}
+.church-main-tile--dongkeyday { --tile-accent: #c9956c; background: #faf3e8; }
 .church-main-tile--weekly_bulletin { --tile-accent: #74c69d; background: #fff; }
 .church-main-tile--new_family { --tile-accent: #e07a5f; background: #fdf4f2; }
 .church-main-tile--scholarship { --tile-accent: #2a9d8f; background: #f2f8f7; }

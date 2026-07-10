@@ -58,24 +58,15 @@ trait dmcadminMainTileComposeTrait
 		imagesavealpha($canvas, false);
 
 		$title = self::getMainTileLabel($key);
-		if ($mode === 'split')
-		{
-			self::composeMainTileSplit($canvas, $src, $w, $h, $title, $style);
-		}
-		elseif ($mode === 'fullbleed')
-		{
-			self::composeMainTileFullbleed($canvas, $src, $w, $h, $title, $style);
-		}
-		elseif ($mode === 'photo_banner')
-		{
-			self::composeMainTilePhotoBanner($canvas, $src, $w, $h, $title, $style);
-		}
-		else
-		{
-			self::composeMainTileSplit($canvas, $src, $w, $h, $title, $style);
-		}
+		[$fgR, $fgG, $fgB] = self::parseHexColor((string)($style['title_color'] ?? '#ffffff'));
 
+		$photo = self::coverCropGdImage($src, imagesx($src), imagesy($src), $w, $h);
+		imagecopy($canvas, $photo, 0, 0, 0, 0, $w, $h);
+		imagedestroy($photo);
 		imagedestroy($src);
+
+		self::drawTileTitle($canvas, $title, 12, 16, $w - 24, $fgR, $fgG, $fgB, 14, true, true);
+
 		self::saveGdImageAsJpeg($canvas, $destPath, 88);
 		imagedestroy($canvas);
 		@chmod($destPath, 0644);
@@ -106,72 +97,6 @@ trait dmcadminMainTileComposeTrait
 		@chmod($destPath, 0644);
 	}
 
-	/** @param resource|\GdImage $canvas @param resource|\GdImage $src @param array<string,mixed> $style */
-	protected static function composeMainTileSplit($canvas, $src, int $w, int $h, string $title, array $style): void
-	{
-		[$bgR, $bgG, $bgB] = self::parseHexColor((string)($style['bg'] ?? '#4a90c2'));
-		[$fgR, $fgG, $fgB] = self::parseHexColor((string)($style['title_color'] ?? '#ffffff'));
-		$photoShare = (float)($style['photo_share'] ?? 0.58);
-		$photoShare = max(0.38, min(0.68, $photoShare));
-		$blendW = (int)($style['feather'] ?? 36);
-		$blendW = max(18, min(72, $blendW));
-		$photoSide = (string)($style['photo_side'] ?? 'right');
-
-		$panelW = (int)round($w * (1.0 - $photoShare));
-		$photoW = $w - $panelW + $blendW;
-		$photoX = $photoSide === 'left' ? 0 : $panelW - $blendW;
-		$panelX = $photoSide === 'left' ? $photoW - $blendW : 0;
-
-		$bg = imagecolorallocate($canvas, $bgR, $bgG, $bgB);
-		imagefilledrectangle($canvas, 0, 0, $w - 1, $h - 1, $bg);
-
-		$photo = self::coverCropGdImage($src, imagesx($src), imagesy($src), $photoW, $h);
-		imagecopy($canvas, $photo, $photoX, 0, 0, 0, $photoW, $h);
-		imagedestroy($photo);
-
-		$blendEdge = $photoSide === 'left' ? 'right' : 'left';
-		$blendStart = $blendEdge === 'left'
-			? $photoX + $photoW - $blendW
-			: $photoX;
-		self::applyGradientBlend($canvas, $blendStart, 0, $blendW, $h, $bgR, $bgG, $bgB, $blendEdge);
-
-		self::drawTileTitle($canvas, $title, $panelX + 10, 12, $panelW - 16, $fgR, $fgG, $fgB, 13);
-	}
-
-	/** @param resource|\GdImage $canvas @param resource|\GdImage $src @param array<string,mixed> $style */
-	protected static function composeMainTileFullbleed($canvas, $src, int $w, int $h, string $title, array $style): void
-	{
-		[$fgR, $fgG, $fgB] = self::parseHexColor((string)($style['title_color'] ?? '#ffffff'));
-		$overlay = (float)($style['overlay'] ?? 0.42);
-
-		$photo = self::coverCropGdImage($src, imagesx($src), imagesy($src), $w, $h);
-		imagecopy($canvas, $photo, 0, 0, 0, 0, $w, $h);
-		imagedestroy($photo);
-
-		$shade = imagecolorallocatealpha($canvas, 0, 0, 0, (int)round((1.0 - $overlay) * 127));
-		imagefilledrectangle($canvas, 0, 0, $w - 1, $h - 1, $shade);
-		self::drawTileTitle($canvas, $title, 12, 14, $w - 24, $fgR, $fgG, $fgB, 15);
-	}
-
-	/** @param resource|\GdImage $canvas @param resource|\GdImage $src @param array<string,mixed> $style */
-	protected static function composeMainTilePhotoBanner($canvas, $src, int $w, int $h, string $title, array $style): void
-	{
-		[$fgR, $fgG, $fgB] = self::parseHexColor((string)($style['title_color'] ?? '#ffffff'));
-
-		$photo = self::coverCropGdImage($src, imagesx($src), imagesy($src), $w, $h);
-		imagecopy($canvas, $photo, 0, 0, 0, 0, $w, $h);
-		imagedestroy($photo);
-
-		for ($y = 0; $y < (int)round($h * 0.45); $y++)
-		{
-			$alpha = (int)round(127 * (1.0 - ($y / max(1, $h * 0.45))));
-			$line = imagecolorallocatealpha($canvas, 0, 0, 0, min(127, $alpha));
-			imageline($canvas, 0, $y, $w - 1, $y, $line);
-		}
-
-		self::drawTileTitle($canvas, $title, 12, 14, $w - 24, $fgR, $fgG, $fgB, 15);
-	}
-
 	/** @return resource|\GdImage|false */
 	protected static function loadGdImageFromPath(string $path)
 	{
@@ -194,13 +119,20 @@ trait dmcadminMainTileComposeTrait
 	/** @param resource|\GdImage $src @return resource|\GdImage */
 	protected static function coverCropGdImage($src, int $srcW, int $srcH, int $dstW, int $dstH)
 	{
+		return self::coverCropGdImageFocal($src, $srcW, $srcH, $dstW, $dstH, 0.5);
+	}
+
+	/** @param resource|\GdImage $src @return resource|\GdImage */
+	protected static function coverCropGdImageFocal($src, int $srcW, int $srcH, int $dstW, int $dstH, float $focalX = 0.5)
+	{
 		$dst = imagecreatetruecolor($dstW, $dstH);
 		$scale = max($dstW / max(1, $srcW), $dstH / max(1, $srcH));
 		$nw = max(1, (int)round($srcW * $scale));
 		$nh = max(1, (int)round($srcH * $scale));
 		$resized = imagecreatetruecolor($nw, $nh);
 		imagecopyresampled($resized, $src, 0, 0, 0, 0, $nw, $nh, $srcW, $srcH);
-		$ox = max(0, (int)floor(($nw - $dstW) / 2));
+		$focalX = max(0.0, min(1.0, $focalX));
+		$ox = max(0, min($nw - $dstW, (int)round(($nw - $dstW) * $focalX)));
 		$oy = max(0, (int)floor(($nh - $dstH) / 2));
 		imagecopy($dst, $resized, 0, 0, $ox, $oy, $dstW, $dstH);
 		imagedestroy($resized);
@@ -208,49 +140,7 @@ trait dmcadminMainTileComposeTrait
 	}
 
 	/** @param resource|\GdImage $canvas */
-	protected static function applyGradientBlend($canvas, int $startX, int $y0, int $blendW, int $h, int $bgR, int $bgG, int $bgB, string $edge): void
-	{
-		if ($blendW < 2)
-		{
-			return;
-		}
-
-		for ($row = 0; $row < $h; $row++)
-		{
-			$wave = (int)round(sin($row / 14.0) * 1.5);
-			for ($i = 0; $i < $blendW; $i++)
-			{
-				$t = $i / max(1, $blendW - 1);
-				$mix = $edge === 'left'
-					? self::smoothstep($t)
-					: self::smoothstep(1.0 - $t);
-				$x = $startX + $i + $wave;
-				if ($x < 0 || $x >= imagesx($canvas))
-				{
-					continue;
-				}
-				$y = $y0 + $row;
-				$rgb = imagecolorat($canvas, $x, $y);
-				$pr = ($rgb >> 16) & 0xFF;
-				$pg = ($rgb >> 8) & 0xFF;
-				$pb = $rgb & 0xFF;
-				$nr = (int)round($bgR * (1.0 - $mix) + $pr * $mix);
-				$ng = (int)round($bgG * (1.0 - $mix) + $pg * $mix);
-				$nb = (int)round($bgB * (1.0 - $mix) + $pb * $mix);
-				$col = imagecolorallocate($canvas, $nr, $ng, $nb);
-				imagesetpixel($canvas, $x, $y, $col);
-			}
-		}
-	}
-
-	protected static function smoothstep(float $t): float
-	{
-		$t = max(0.0, min(1.0, $t));
-		return $t * $t * (3.0 - 2.0 * $t);
-	}
-
-	/** @param resource|\GdImage $canvas */
-	protected static function drawTileTitle($canvas, string $title, int $x, int $y, int $maxW, int $r, int $g, int $b, int $fontSize): void
+	protected static function drawTileTitle($canvas, string $title, int $x, int $y, int $maxW, int $r, int $g, int $b, int $fontSize, bool $withBackdrop = false, bool $singleLine = false): void
 	{
 		$font = self::getMainTileComposeFontPath();
 		if ($font === '')
@@ -258,16 +148,69 @@ trait dmcadminMainTileComposeTrait
 			return;
 		}
 
-		$lines = self::wrapTileTitle($title, 6);
-		$lineHeight = $fontSize + 5;
+		$title = trim($title);
+		if ($title === '')
+		{
+			return;
+		}
+
+		if ($singleLine)
+		{
+			$fontSize = self::fitTileFontSize($font, $title, $maxW, $fontSize, 9);
+			$lines = [$title];
+		}
+		else
+		{
+			$lines = self::wrapTileTitle($title, 5);
+		}
+
+		$lineHeight = $fontSize + 6;
+		$textH = count($lines) * $lineHeight + 4;
+
+		if ($withBackdrop && $lines)
+		{
+			$backdrop = imagecolorallocatealpha($canvas, 0, 0, 0, 90);
+			imagefilledrectangle($canvas, max(0, $x - 6), max(0, $y - 4), min(imagesx($canvas) - 1, $x + $maxW), $y + $textH, $backdrop);
+		}
+
 		foreach ($lines as $i => $line)
 		{
 			$lineY = $y + $fontSize + ($i * $lineHeight);
-			$shadow = imagecolorallocatealpha($canvas, 0, 0, 0, 70);
+			$shadow = imagecolorallocatealpha($canvas, 0, 0, 0, 60);
 			imagettftext($canvas, $fontSize, 0, $x + 1, $lineY + 1, $shadow, $font, $line);
 			$color = imagecolorallocate($canvas, $r, $g, $b);
 			imagettftext($canvas, $fontSize, 0, $x, $lineY, $color, $font, $line);
 		}
+	}
+
+	protected static function fitTileFontSize(string $font, string $title, int $maxW, int $maxSize = 14, int $minSize = 9): int
+	{
+		for ($size = $maxSize; $size >= $minSize; $size--)
+		{
+			$box = @imagettfbbox($size, 0, $font, $title);
+			if ($box !== false && ($box[2] - $box[0]) <= $maxW)
+			{
+				return $size;
+			}
+		}
+		return $minSize;
+	}
+
+	/** @return list<string> */
+	protected static function wrapTileTitle(string $title, int $maxChars): array
+	{
+		$title = trim($title);
+		if ($title === '')
+		{
+			return [];
+		}
+		$lines = [];
+		$len = mb_strlen($title, 'UTF-8');
+		for ($i = 0; $i < $len; $i += $maxChars)
+		{
+			$lines[] = mb_substr($title, $i, $maxChars, 'UTF-8');
+		}
+		return $lines;
 	}
 
 	protected static function getMainTileComposeFontPath(): string
@@ -292,23 +235,6 @@ trait dmcadminMainTileComposeTrait
 		return '';
 	}
 
-	/** @return list<string> */
-	protected static function wrapTileTitle(string $title, int $maxChars): array
-	{
-		$title = trim($title);
-		if ($title === '')
-		{
-			return [];
-		}
-		$lines = [];
-		$len = mb_strlen($title, 'UTF-8');
-		for ($i = 0; $i < $len; $i += $maxChars)
-		{
-			$lines[] = mb_substr($title, $i, $maxChars, 'UTF-8');
-		}
-		return $lines;
-	}
-
 	/** @return array{0:int,1:int,2:int} */
 	protected static function parseHexColor(string $hex): array
 	{
@@ -319,7 +245,7 @@ trait dmcadminMainTileComposeTrait
 		}
 		if (!preg_match('/^[0-9a-fA-F]{6}$/', $hex))
 		{
-			return [74, 144, 194];
+			return [255, 255, 255];
 		}
 		return [
 			(int)hexdec(substr($hex, 0, 2)),

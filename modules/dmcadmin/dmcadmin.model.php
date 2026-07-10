@@ -85,7 +85,7 @@ class dmcadminModel extends dmcadmin
 		'event_photo' => ['label' => '??????', 'target' => 'mid', 'id' => 'picture'],
 		'rice_share' => ['label' => '??? ????', 'target' => 'page', 'id' => '92'],
 		'church_school' => ['label' => '????', 'target' => 'page', 'id' => '109'],
-		'pastoral_schedule' => ['label' => '????', 'target' => 'page', 'id' => '84'],
+		'dongkeyday' => ['label' => '?????', 'target' => 'page', 'id' => '93'],
 		'weekly_bulletin' => ['label' => '??? ??', 'target' => 'mid', 'id' => 'jubo'],
 		'new_family' => ['label' => '?????', 'target' => 'mid', 'id' => 'newface'],
 		'scholarship' => ['label' => '?????', 'target' => 'page', 'id' => '146'],
@@ -1363,10 +1363,49 @@ class dmcadminModel extends dmcadmin
 	}
 
 	/** @return array<string,array{image_url:string,link_url:string}> */
+	public static function migrateMainTileKeys(array $stored): array
+	{
+		if (isset($stored['pastoral_schedule']) && !isset($stored['dongkeyday']))
+		{
+			$stored['dongkeyday'] = $stored['pastoral_schedule'];
+		}
+		unset($stored['pastoral_schedule']);
+
+		$dir = self::getMainTileUploadDir();
+		foreach (['jpg', 'png', 'webp', 'gif'] as $ext)
+		{
+			$old = $dir . '/pastoral_schedule.' . $ext;
+			$new = $dir . '/dongkeyday.' . $ext;
+			if (is_file($old) && !is_file($new))
+			{
+				@rename($old, $new);
+			}
+		}
+		foreach ($stored as $key => $row)
+		{
+			if (!is_array($row))
+			{
+				continue;
+			}
+			if (!empty($row['image_url']) && strpos((string)$row['image_url'], 'pastoral_schedule') !== false)
+			{
+				$stored[$key]['image_url'] = str_replace('pastoral_schedule', 'dongkeyday', (string)$row['image_url']);
+			}
+		}
+		return $stored;
+	}
+
+	/** @return array<string,array{image_url:string,link_url:string}> */
 	public static function getMainTileData(): array
 	{
 		$config = self::getChurchConfig();
 		$stored = is_array($config->main_tiles) ? $config->main_tiles : [];
+		$migrated = self::migrateMainTileKeys($stored);
+		if ($migrated !== $stored)
+		{
+			self::saveMainTileData($migrated);
+		}
+		$stored = $migrated;
 		$out = [];
 		foreach (self::MAIN_TILES as $key => $meta)
 		{
