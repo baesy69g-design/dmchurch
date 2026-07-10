@@ -53,10 +53,55 @@
 
 <script>
 (function () {
+	function resizeImage(file, maxDim, maxBytes) {
+		return new Promise(function (resolve, reject) {
+			if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+				resolve(file);
+				return;
+			}
+			var img = new Image();
+			var url = URL.createObjectURL(file);
+			img.onload = function () {
+				URL.revokeObjectURL(url);
+				var w = img.width;
+				var h = img.height;
+				var scale = Math.min(1, maxDim / Math.max(w, h));
+				var tw = Math.max(1, Math.round(w * scale));
+				var th = Math.max(1, Math.round(h * scale));
+				var canvas = document.createElement('canvas');
+				canvas.width = tw;
+				canvas.height = th;
+				var ctx = canvas.getContext('2d');
+				ctx.drawImage(img, 0, 0, tw, th);
+				var quality = 0.88;
+				function tryBlob(q) {
+					canvas.toBlob(function (blob) {
+						if (!blob) {
+							resolve(file);
+							return;
+						}
+						if (blob.size > maxBytes && q > 0.5) {
+							tryBlob(q - 0.08);
+							return;
+						}
+						resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }));
+					}, 'image/jpeg', q);
+				}
+				tryBlob(quality);
+			};
+			img.onerror = function () {
+				URL.revokeObjectURL(url);
+				reject(new Error('이미지를 읽을 수 없습니다.'));
+			};
+			img.src = url;
+		});
+	}
+
 	var list = document.getElementById('dmc-photo-list');
 	var countInput = document.getElementById('dmc-photo-count');
 	var tpl = document.getElementById('dmc-photo-template');
 	var max = {$tour_max};
+	var form = document.getElementById('dmc-tour-form');
 
 	function reindex() {
 		var rows = list.querySelectorAll('.dmc-tour-row');
@@ -96,6 +141,29 @@
 		e.target.closest('.dmc-tour-row').remove();
 		reindex();
 	});
+
+	if (form) {
+		form.addEventListener('submit', function (e) {
+			var inputs = form.querySelectorAll('input[type=file]');
+			var tasks = [];
+			inputs.forEach(function (inp) {
+				if (!inp.files || !inp.files[0]) {
+					return;
+				}
+				tasks.push(resizeImage(inp.files[0], 1600, 900 * 1024).then(function (nf) {
+					var dt = new DataTransfer();
+					dt.items.add(nf);
+					inp.files = dt.files;
+				}));
+			});
+			if (tasks.length) {
+				e.preventDefault();
+				Promise.all(tasks).then(function () { form.submit(); }).catch(function (err) {
+					alert(err && err.message ? err.message : '사진 처리 중 오류가 났습니다.');
+				});
+			}
+		});
+	}
 })();
 </script>
 <!--#include("_footer.html")-->

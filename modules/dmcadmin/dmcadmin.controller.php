@@ -420,22 +420,23 @@ class dmcadminController extends dmcadmin
 		foreach (dmcadminModel::MAIN_TILES as $key => $meta)
 		{
 			$link_field = 'link_url_' . $key;
-			if (Context::isExists($link_field))
-			{
-				$tiles[$key]['link_url'] = trim((string)Context::get($link_field));
-			}
+			$tiles[$key]['link_url'] = trim((string)Context::get($link_field));
 
 			if (Context::get('remove_tile_' . $key) === 'Y')
 			{
 				$this->deleteMainTileFile($tiles[$key]['image_url'] ?? '');
 				$tiles[$key]['image_url'] = '';
-				continue;
 			}
 
 			$field = 'tile_' . $key;
-			if (empty($_FILES[$field]['name']) || !empty($_FILES[$field]['error']))
+			if (empty($_FILES[$field]['name']))
 			{
 				continue;
+			}
+			$upload_err = (int)($_FILES[$field]['error'] ?? UPLOAD_ERR_NO_FILE);
+			if ($upload_err !== UPLOAD_ERR_OK)
+			{
+				return new BaseObject(-1, dmcadminModel::getMainTileLabel($key) . ': ' . $this->describeUploadError($upload_err));
 			}
 
 			try
@@ -491,12 +492,24 @@ class dmcadminController extends dmcadmin
 		$dir = dmcadminModel::getMainTileUploadDir();
 		FileHandler::makeDir($dir);
 
-		$filename = $key . '.' . $ext;
+		$filename = $key . '.jpg';
 		$path = $dir . '/' . $filename;
-		if (!move_uploaded_file($file['tmp_name'], $path))
+		$tmpPath = $path . '.upload';
+		if (!move_uploaded_file($file['tmp_name'], $tmpPath))
 		{
 			throw new Rhymix\Framework\Exception('파일 저장에 실패했습니다.');
 		}
+
+		try
+		{
+			dmcadminModel::composeMainTileImage($key, $tmpPath, $path);
+		}
+		catch (Rhymix\Framework\Exception $e)
+		{
+			@unlink($tmpPath);
+			throw $e;
+		}
+		@unlink($tmpPath);
 
 		@chmod($path, 0644);
 		return './files/church/main_tile/' . $filename . '?t=' . time();
@@ -1231,21 +1244,22 @@ class dmcadminController extends dmcadmin
 	public function procDmcMgrSaveTourPage()
 	{
 		dmcadminModel::requireAuth();
+		$mid = (string)Context::get('page_mid');
+		$return_url = getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrTourPageEdit', 'page_mid', $mid);
 		if (!Rhymix\Framework\Security::checkCSRF())
 		{
-			return new BaseObject(-1, '보안 토큰이 올바르지 않습니다.');
+			$this->redirectAfterProc($return_url . '&msg=' . rawurlencode('보안 토큰이 올바르지 않습니다.'));
 		}
 
-		$mid = (string)Context::get('page_mid');
 		if (!dmcadminModel::isTourPage($mid))
 		{
-			return new BaseObject(-1, '이 페이지는 교회둘러보기 편집 대상이 아닙니다.');
+			$this->redirectAfterProc(getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages') . '&msg=' . rawurlencode('이 페이지는 갤러리 편집 대상이 아닙니다.'));
 		}
 
 		$output = $this->saveTourPageForm($mid);
 		if (!$output->toBool())
 		{
-			return $output;
+			$this->redirectAfterProc($return_url . '&msg=' . rawurlencode($output->getMessage() ?: '저장에 실패했습니다.'));
 		}
 
 		$this->redirectAfterProc(getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrTourPageEdit', 'page_mid', $mid, 'msg', 'info_page_saved'));
@@ -1275,6 +1289,14 @@ class dmcadminController extends dmcadmin
 			}
 
 			$field = 'tour_photo_' . $i;
+			if (!empty($_FILES[$field]['name']))
+			{
+				$upload_err = (int)($_FILES[$field]['error'] ?? UPLOAD_ERR_NO_FILE);
+				if ($upload_err !== UPLOAD_ERR_OK && $upload_err !== UPLOAD_ERR_NO_FILE)
+				{
+					return new BaseObject(-1, ($i + 1) . '번 사진: ' . $this->describeUploadError($upload_err));
+				}
+			}
 			if (!empty($_FILES[$field]['name']) && empty($_FILES[$field]['error']))
 			{
 				try

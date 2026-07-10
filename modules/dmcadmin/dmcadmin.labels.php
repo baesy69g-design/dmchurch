@@ -14,6 +14,44 @@ return [
 		'new_family' => '새가족소개',
 		'scholarship' => '장학사업',
 	],
+	'main_tile_styles' => [
+		'worship_time' => ['mode' => 'none'],
+		'weekly_bulletin' => ['mode' => 'none'],
+		'event_photo' => [
+			'mode' => 'split',
+			'bg' => '#5dade2',
+			'title_color' => '#ffffff',
+			'photo_share' => 0.54,
+			'feather' => 42,
+		],
+		'rice_share' => [
+			'mode' => 'photo_banner',
+			'title_color' => '#ffffff',
+		],
+		'church_school' => [
+			'mode' => 'split',
+			'bg' => '#f7e7a3',
+			'title_color' => '#333333',
+			'photo_share' => 0.52,
+			'feather' => 38,
+		],
+		'pastoral_schedule' => [
+			'mode' => 'fullbleed',
+			'title_color' => '#ffffff',
+			'overlay' => 0.45,
+		],
+		'new_family' => [
+			'mode' => 'split',
+			'bg' => '#e84c8a',
+			'title_color' => '#ffffff',
+			'photo_share' => 0.54,
+			'feather' => 40,
+		],
+		'scholarship' => [
+			'mode' => 'photo_banner',
+			'title_color' => '#ffffff',
+		],
+	],
 	'main_quick_links' => [
 		['label' => '주일 예배 설교 동영상', 'id' => 'sermon'],
 		['label' => '샤론 시온 성가대', 'id' => 'choir'],

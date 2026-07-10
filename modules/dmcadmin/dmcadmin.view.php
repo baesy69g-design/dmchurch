@@ -154,6 +154,7 @@ class dmcadminView extends dmcadmin
 			$o->image_url = $row['image_url'];
 			$o->link_url = $row['link_url'];
 			$o->default_link = dmcadminModel::buildMainTargetUrl($meta['target'], $meta['id']);
+			$o->auto_compose = dmcadminModel::shouldComposeMainTile($key);
 			$slots[] = $o;
 		}
 		Context::set('tile_slots', $slots);

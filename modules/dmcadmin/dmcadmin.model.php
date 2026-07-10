@@ -3,10 +3,12 @@
  * @class  dmcadminModel
  */
 require_once __DIR__ . '/dmcadmin.overseas_mission.trait.php';
+require_once __DIR__ . '/dmcadmin.main_tile_compose.trait.php';
 
 class dmcadminModel extends dmcadmin
 {
 	use dmcadminOverseasMissionTrait;
+	use dmcadminMainTileComposeTrait;
 	public const ADMIN_USER_ID = 'dmc2241';
 	public const SESSION_KEY = 'dmcadmin_authenticated';
 	public const SESSION_TTL = 7200;
