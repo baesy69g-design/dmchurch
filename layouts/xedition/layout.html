@@ -34,6 +34,10 @@
 	<block cond="$layout_info->use_slide === 'Y'">
 		{@ $_enable_slide = true}
 	</block>
+	<!-- 메인 홈은 church-main-slide 사용 — 상단 visual 슬라이드 비활성 -->
+	<block cond="$_is_indexmodule">
+		{@ $_enable_slide = false}
+	</block>
 	<block cond="$layout_info->use_demo === 'Y'">
 		{@ $_sample_slide = true}
 		{@ $_enable_slide = false}
@@ -161,7 +165,7 @@
 <load target="../../common/xeicon/xeicon.min.css" />
 
 <!--// JS -->
-<load cond="$_enable_slide" target="./js/idangerous.swiper.min.js" />
+<load cond="$_enable_slide && !$_is_indexmodule" target="./js/idangerous.swiper.min.js" />
 <load target="./js/layout.js" />
 <load target="../../addons/church_gnb/church_gnb.js" />
 <load target="../../addons/church_theme/church_tour.js" />
@@ -310,7 +314,7 @@
 		</div>
 	</div>
     <!-- Swiper -->
-    <div cond="$layout_info->layout_type === 'main' && $_enable_slide" class="visual swiper-container">
+    <div cond="$layout_info->layout_type === 'main' && $_enable_slide && !$_is_indexmodule" class="visual swiper-container">
 		<!-- 슬라이드 -->
 		<div class="swiper-wrapper">
 		<!--@if($_sample_slide)-->
@@ -466,12 +470,16 @@
 	<load target="./js/church_login_widget.js" />
 </section>
 <!-- /Login widget -->
-<script cond="$_enable_slide">
+<script cond="$_enable_slide && !$_is_indexmodule">
 jQuery(document).ready(function () {
-	var swiper = new Swiper('.swiper-container', {
+	var visual = document.querySelector('.visual.swiper-container');
+	if (!visual) {
+		return;
+	}
+	var swiper = new Swiper(visual, {
 	    autoplay: 6000,
 	    loop: true,
-	    pagination: '.swiper-pagination',
+	    pagination: visual.querySelector('.swiper-pagination'),
 	    paginationClickable: true
 	});
 	jQuery('.swiper-button-next').on('click', function(e){

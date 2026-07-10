@@ -277,7 +277,8 @@ class dmcadminModel extends dmcadmin
 
 		if ($has_any)
 		{
-			$layout_info->use_slide = 'Y';
+			// 메인 대표사진은 church-main-slide 영역만 사용. 상단 visual 슬라이드는 비활성.
+			$layout_info->use_slide = 'N';
 			$layout_info->use_demo = 'N';
 			Context::set('layout_info', $layout_info);
 		}
