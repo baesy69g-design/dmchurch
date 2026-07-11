@@ -192,6 +192,15 @@
 	box-shadow: inset 3px 0 0 var(--church-mint, #74c69d);
 }
 
+/* 상세 하위는 활성 메뉴일 때만 표시 */
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li > ul {
+	display: none;
+}
+
+.container:has(.visual.sub) .body.fixed-width.sub .lnb > ul > li.on > ul {
+	display: block;
+}
+
 /* 3depth (교회안내 등) */
 .container:has(.visual.sub) .body.fixed-width.sub .lnb ul ul {
 	margin: 0;

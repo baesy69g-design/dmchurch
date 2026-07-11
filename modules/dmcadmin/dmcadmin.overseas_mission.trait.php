@@ -449,6 +449,15 @@ trait dmcadminOverseasMissionTrait
 		}
 
 		Rhymix\Framework\Cache::clearGroup('menu');
+		$oMenuAdminController = getController('menu');
+		if (!$oMenuAdminController)
+		{
+			$oMenuAdminController = getAdminController('menu');
+		}
+		if ($oMenuAdminController && method_exists($oMenuAdminController, 'makeXmlFile'))
+		{
+			$oMenuAdminController->makeXmlFile(self::DOMESTIC_MISSION_MAIN_MENU_SRL);
+		}
 		return new BaseObject();
 	}
 

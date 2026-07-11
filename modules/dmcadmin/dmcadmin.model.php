@@ -3678,7 +3678,16 @@ class dmcadminModel extends dmcadmin
 			$html .= '<span class="dkd-intro-star dkd-intro-star--tr" aria-hidden="true">' . htmlspecialchars($ui['star_primary'], ENT_QUOTES, 'UTF-8') . '</span>';
 			$html .= '<span class="dkd-intro-star dkd-intro-star--bl" aria-hidden="true">' . htmlspecialchars($ui['star_secondary'], ENT_QUOTES, 'UTF-8') . '</span>';
 			$html .= '<span class="dkd-intro-star dkd-intro-star--br" aria-hidden="true">' . htmlspecialchars($ui['star_secondary'], ENT_QUOTES, 'UTF-8') . '</span>';
+			$html .= '<div class="dkd-intro-head">';
 			$html .= '<p class="dkd-intro-label">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</p>';
+			if ($form_url !== '')
+			{
+				$safe_url = htmlspecialchars($form_url, ENT_QUOTES, 'UTF-8');
+				$html .= '<div class="dkd-apply dkd-apply--inline">';
+				$html .= '<a class="dkd-apply-btn" href="' . $safe_url . '" target="_blank" rel="noopener noreferrer" title="' . htmlspecialchars($ui['apply_note'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($ui['apply_label'], ENT_QUOTES, 'UTF-8') . '</a>';
+				$html .= '</div>';
+			}
+			$html .= '</div>';
 			$html .= '<div class="dkd-intro-inner">';
 			$html .= nl2br(htmlspecialchars($intro, ENT_QUOTES, 'UTF-8'));
 			$html .= '</div>';
@@ -3701,7 +3710,8 @@ class dmcadminModel extends dmcadmin
 
 		$html .= '</div>';
 
-		if ($form_url !== '')
+		/* intro 없을 때만 하단에 신청 버튼 유지 */
+		if ($intro === '' && $form_url !== '')
 		{
 			$safe_url = htmlspecialchars($form_url, ENT_QUOTES, 'UTF-8');
 			$html .= '<div class="dkd-apply">';
@@ -4190,6 +4200,15 @@ class dmcadminModel extends dmcadmin
 		}
 
 		Rhymix\Framework\Cache::clearGroup('menu');
+		$oMenuAdminController = getController('menu');
+		if (!$oMenuAdminController)
+		{
+			$oMenuAdminController = getAdminController('menu');
+		}
+		if ($oMenuAdminController && method_exists($oMenuAdminController, 'makeXmlFile'))
+		{
+			$oMenuAdminController->makeXmlFile(self::DOMESTIC_MISSION_MAIN_MENU_SRL);
+		}
 		return new BaseObject();
 	}
 
@@ -4255,7 +4274,7 @@ class dmcadminModel extends dmcadmin
 			$html .= '<header class="church-dm-head">';
 			$html .= '<p class="church-dm-kicker">Domestic Mission</p>';
 			$html .= '<h2 class="church-dm-heading">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</h2>';
-			$html .= '<p class="church-dm-count"><em>' . $count . '</em><span>' . ($key === 'church' ? '교회' : '곳') . '</span></p>';
+			$html .= '<p class="church-dm-count"><em>' . $count . '</em><span>' . ($key === 'church' ? '교회' : '기관') . '</span></p>';
 			$html .= '</header>';
 			$html .= '<ul class="church-dm-list church-dm-list--' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . '">';
 			foreach ($list as $item)
