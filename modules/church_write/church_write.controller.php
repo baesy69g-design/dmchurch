@@ -121,6 +121,212 @@ class church_writeController extends church_write
 	}
 
 	/**
+	 * 관리자: 기존 글 수정 (등록 폼과 동일 필드)
+	 */
+	function procChurchWriteUpdateDocument()
+	{
+		Context::setRequestMethod('JSON');
+
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+
+		$logged_info = Context::get('logged_info');
+		if (!church_writeModel::isChurchAdmin($logged_info))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+
+		$document_srl = (int)Context::get('target_srl');
+		if ($document_srl < 1)
+		{
+			$document_srl = (int)Context::get('document_srl');
+		}
+		$module_srl = (int)Context::get('module_srl');
+		$forms = church_writeModel::getBoardForms();
+
+		if ($document_srl < 1 || !isset($forms[$module_srl]))
+		{
+			return new BaseObject(-1, '수정할 글을 찾을 수 없습니다.');
+		}
+
+		$oDocument = DocumentModel::getDocument($document_srl);
+		if (!$oDocument || !$oDocument->isExists() || (int)$oDocument->get('module_srl') !== $module_srl)
+		{
+			return new BaseObject(-1, '수정할 글을 찾을 수 없습니다.');
+		}
+
+		$args = Context::getRequestVars();
+		$form = $forms[$module_srl];
+		$this->validateRequiredFields($form['fields'], $args, $module_srl, true);
+
+		$title = trim((string)($args->title ?? ''));
+		if ($title === '')
+		{
+			return new BaseObject(-1, '제목을 입력해 주세요.');
+		}
+		if (!empty($args->subtitle))
+		{
+			$sub = trim((string)$args->subtitle);
+			if ($sub !== '')
+			{
+				$title = $title . ' / ' . $sub;
+			}
+		}
+
+		$file_urls = $this->processUploads($module_srl, $document_srl, $args);
+
+		if ($module_srl === 114)
+		{
+			$existing = church_writeModel::extractJuboImageUrls((string)$oDocument->getContent(false));
+			$file_urls['jubo'] = array_merge($existing, $file_urls['jubo'] ?? []);
+			if (empty($file_urls['jubo']))
+			{
+				return new BaseObject(-1, '주보 이미지가 없습니다. 이미지를 등록해 주세요.');
+			}
+		}
+		if ($module_srl === 124 && empty($file_urls['photo']))
+		{
+			$prev = church_writeModel::extractEditFields($oDocument);
+			if (!empty($prev['photo_url']))
+			{
+				$file_urls['photo'] = $prev['photo_url'];
+			}
+		}
+
+		$content = $this->buildContent($module_srl, $document_srl, $args, $file_urls);
+
+		$upd = new stdClass;
+		$upd->document_srl = $document_srl;
+		$upd->module_srl = $module_srl;
+		$upd->title = $title;
+		$upd->content = $content;
+		$upd->status = $oDocument->get('status') ?: 'PUBLIC';
+		$upd->commentStatus = 'ALLOW';
+		$upd->lang_code = $oDocument->get('lang_code') ?: Context::getLangType();
+		if (!empty($args->pubdate))
+		{
+			$upd->regdate = church_writeModel::regdateFromDate($args->pubdate);
+			$upd->last_update = $upd->regdate;
+		}
+		elseif (!empty($args->reg_date))
+		{
+			$upd->regdate = church_writeModel::regdateFromDate($args->reg_date);
+			$upd->last_update = $upd->regdate;
+		}
+
+		$oDocumentController = DocumentController::getInstance();
+		$output = $oDocumentController->updateDocument($oDocument, $upd, true);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+
+		// Rhymix 다국어/캐시 이슈 대비: 제목·본문을 DB에 한 번 더 확정
+		$oDB = Rhymix\Framework\DB::getInstance();
+		if (!empty($upd->regdate))
+		{
+			$oDB->query(
+				'UPDATE documents SET title = ?, content = ?, regdate = ?, last_update = ? WHERE document_srl = ?',
+				$title,
+				$content,
+				$upd->regdate,
+				$upd->last_update ?? $upd->regdate,
+				$document_srl
+			);
+		}
+		else
+		{
+			$oDB->query(
+				'UPDATE documents SET title = ?, content = ?, last_update = ? WHERE document_srl = ?',
+				$title,
+				$content,
+				date('YmdHis'),
+				$document_srl
+			);
+		}
+
+		if ($module_srl === 110 && !empty($args->pubdate))
+		{
+			$sermon_date = preg_replace('/\D/', '', $args->pubdate);
+			if (strlen($sermon_date) >= 8)
+			{
+				DocumentController::insertDocumentExtraVar($module_srl, $document_srl, 1, substr($sermon_date, 0, 8), 'sermon_date');
+			}
+		}
+
+		DocumentController::clearDocumentCache($document_srl);
+
+		$verify = DocumentModel::getDocument($document_srl, false, false);
+		$saved_title = $verify && $verify->isExists() ? $verify->getTitleText() : '';
+		if ($saved_title !== $title)
+		{
+			return new BaseObject(-1, '제목 저장에 실패했습니다. 다시 시도해 주세요.');
+		}
+
+		$this->add('document_srl', $document_srl);
+		$this->add('saved', 1);
+		$this->add('title', $saved_title);
+		$this->setMessage('success_updated');
+	}
+	function procChurchWriteGetDocument()
+	{
+		Context::setRequestMethod('JSON');
+
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+
+		$logged_info = Context::get('logged_info');
+		if (!church_writeModel::isChurchAdmin($logged_info))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+
+		// document_srl 은 라우팅에 가로채일 수 있어 target_srl 우선
+		$document_srl = (int)Context::get('target_srl');
+		if ($document_srl < 1)
+		{
+			$document_srl = (int)Context::get('document_srl');
+		}
+		if ($document_srl < 1)
+		{
+			$document_srl = (int)Context::get('srl');
+		}
+		if ($document_srl < 1)
+		{
+			return new BaseObject(-1, '글을 찾을 수 없습니다.');
+		}
+
+		$oDocument = DocumentModel::getDocument($document_srl);
+		if (!$oDocument || !$oDocument->isExists())
+		{
+			return new BaseObject(-1, '글을 찾을 수 없습니다.');
+		}
+
+		$module_srl = (int)$oDocument->get('module_srl');
+		$forms = church_writeModel::getBoardForms();
+		if (!isset($forms[$module_srl]))
+		{
+			return new BaseObject(-1, '이 게시판은 수정 폼이 없습니다.');
+		}
+
+		$this->add('document_srl', $document_srl);
+		$this->add('module_srl', $module_srl);
+		$this->add('fields', church_writeModel::extractEditFields($oDocument));
+	}
+
+	/**
 	 * 설교 영상 팝업이 열릴 때 해당 글의 조회수를 +1 한다.
 	 * (팝업 방식이라 글 읽기 페이지를 거치지 않아 기본 조회수가 오르지 않으므로 별도 처리)
 	 */
@@ -195,7 +401,7 @@ class church_writeController extends church_write
 		$this->add('deleted', $deleted);
 	}
 
-	protected function validateRequiredFields(array $fields, $args, int $module_srl): void
+	protected function validateRequiredFields(array $fields, $args, int $module_srl, bool $is_edit = false): void
 	{
 		foreach ($fields as $field)
 		{
@@ -208,6 +414,12 @@ class church_writeController extends church_write
 				$required = empty(trim($args->video_url ?? ''));
 			}
 			if ($module_srl === 120 && $name === 'video_url')
+			{
+				continue;
+			}
+
+			// 수정 시 파일은 새로 올리지 않으면 기존 유지 → 필수 해제
+			if ($is_edit && $type === 'file')
 			{
 				continue;
 			}

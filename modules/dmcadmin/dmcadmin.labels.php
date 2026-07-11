@@ -66,6 +66,14 @@ return [
 		'p115' => '청소년부',
 		'p118' => '청년부',
 	],
+	'school_page' => [
+		'dept_nav_aria' => '교회학교 부서',
+		'theme_label' => '교육주제',
+		'goal_title' => '교육목표 및 방향',
+		'worship_title' => '예배 안내',
+		'staff_title' => '담당 교역자 및 교사',
+		'photo_alt_suffix' => ' 사진 ',
+	],
 	'dongkeyday_page' => [
 		'mid' => 'p93',
 		'label' => '동키데이',

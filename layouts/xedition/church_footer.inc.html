@@ -1,10 +1,14 @@
 <footer class="footer church-footer">
 	{@ $_church_year = date('Y')}
+	<div class="church-view-switch church-view-switch--bottom church-view-switch--pc">
+		<a href="#" class="js-church-view-pc" role="button">PC 화면</a>
+	</div>
+	<div class="church-view-switch church-view-switch--bottom church-view-switch--mobile">
+		<a href="#" class="js-church-view-mobile" role="button">모바일 화면</a>
+	</div>
 	<div class="church-footer-body">
 		<p class="church-footer-address">
-			주소 : (02598) 서울 동대문구 답십리로 136 | 대표전화 : 02-2241-7191 fax : 02-6499-2241
-			<span class="church-footer-sep">|</span>
-			<a href="/privacy" class="church-footer-privacy">개인정보처리방침</a>
+			<span class="church-footer-addr">주소 : (02598) 서울 동대문구 답십리로 136</span><span class="church-footer-sep"> | </span><span class="church-footer-tel">대표전화 : 02-2241-7191 fax : 02-6499-2241</span>
 		</p>
 		<p class="church-footer-copy">
 			Copyright 1972-{$_church_year} <strong>DongMyeong Presbyterian Church</strong> All rights reserved.

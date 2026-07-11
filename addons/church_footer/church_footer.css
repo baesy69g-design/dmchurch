@@ -25,29 +25,28 @@
 }
 
 .church-footer-address .church-footer-sep {
-	margin: 0 5px;
 	color: #b0bdb5;
 }
 
+/* 개인정보처리방침 링크 제거됨 — 잔여 스타일 숨김 */
 .church-footer-privacy {
-	color: var(--church-forest-mid, #2d6a4f);
-	text-decoration: none;
-	font-weight: 500;
-}
-
-.church-footer-privacy:hover,
-.church-footer-privacy:focus {
-	text-decoration: underline;
-	color: var(--church-forest, #1b4332);
+	display: none !important;
 }
 
 @media (max-width: 640px) {
+	.church-footer-address {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+	}
+
 	.church-footer-address .church-footer-sep {
 		display: none;
 	}
 
-	.church-footer-privacy {
+	.church-footer-tel {
 		display: block;
-		margin-top: 4px;
+		white-space: nowrap;
 	}
 }

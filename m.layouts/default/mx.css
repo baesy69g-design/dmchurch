@@ -1,0 +1,105 @@
+/* Dongmyeong church mobile layout header */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+html, body {
+	margin: 0;
+	background: #ffffff !important;
+	font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+.hd {
+	position: relative !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-height: 64px !important;
+	padding: 10px 52px 10px 14px !important;
+	margin: 0 !important;
+	background: #ffffff !important;
+	background-color: #ffffff !important;
+	border-bottom: 1px solid rgba(27, 67, 50, 0.1);
+	box-sizing: border-box;
+}
+.hd .h1 {
+	float: none !important;
+	display: flex !important;
+	justify-content: center !important;
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	text-align: center !important;
+	line-height: 1 !important;
+}
+.hd .h1 a {
+	display: flex !important;
+	justify-content: center !important;
+	width: 100% !important;
+	margin: 0 auto !important;
+	line-height: 1 !important;
+	text-decoration: none !important;
+	color: inherit !important;
+}
+.hd .h1 > a > img:not(.church-brand-mark) {
+	display: none !important;
+}
+.hd .church-brand {
+	display: inline-flex !important;
+	flex-direction: column !important;
+	align-items: center !important;
+	width: 100% !important;
+	max-width: 420px !important;
+	gap: 2px !important;
+}
+.hd .church-brand-sub {
+	font-size: clamp(11px, 3.1vw, 14px) !important;
+	font-weight: 600;
+	color: #6b7280;
+	letter-spacing: -0.02em;
+	text-align: center;
+}
+.hd .church-brand-main {
+	display: inline-flex !important;
+	align-items: center !important;
+	gap: clamp(6px, 2vw, 12px) !important;
+	font-size: clamp(28px, 8.6vw, 40px) !important;
+	line-height: 1 !important;
+}
+.hd .church-brand-mark {
+	width: auto !important;
+	height: 1.2em !important;
+	max-height: none !important;
+	max-width: none !important;
+	object-fit: contain !important;
+}
+.hd .church-brand-name {
+	font-size: 1em !important;
+	font-weight: 800;
+	letter-spacing: -0.06em;
+	line-height: 1;
+}
+.hd .church-brand-name .dm { color: #1b7a6e; }
+.hd .church-brand-name .ch { color: #3b82c4; }
+.hd .fr,
+.hd .fl {
+	position: absolute !important;
+	top: 50% !important;
+	transform: translateY(-50%) !important;
+	float: none !important;
+	margin: 0 !important;
+	z-index: 2;
+}
+.hd .fr { right: 10px !important; }
+.hd .fl { left: 10px !important; }
+.ft {
+	list-style: none;
+	padding: 12px 14px;
+	margin: 0;
+	overflow: hidden;
+}
+.ft .fl { float: left; }
+.ft .fr { float: right; }
+.cr {
+	padding: 8px 14px 20px;
+	font-size: 12px;
+	color: #666;
+	text-align: center;
+}

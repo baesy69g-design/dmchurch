@@ -2,6 +2,13 @@
 	'use strict';
 
 	$(function () {
+		if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) {
+			return;
+		}
+		if ($('#mobile_menu_btn').length && $('#mobile_menu_btn').is(':visible')) {
+			return;
+		}
+
 		var $gnb = $('.header .gnb.pc-gnb');
 		if (!$gnb.length) {
 			return;

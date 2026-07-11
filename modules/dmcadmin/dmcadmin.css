@@ -93,6 +93,13 @@ body.dmcadmin-page { margin: 0; font-family: "Malgun Gothic", sans-serif; backgr
 
 /* 섬기는 분 편집 */
 .dmc-person-grid { display: grid; grid-template-columns: 180px 1fr; gap: 18px; align-items: start; }
+.dmc-dm-gallery-block { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #c5d4cc; }
+.dmc-dm-gallery-block > label { display: block; margin-bottom: 8px; }
+.dmc-dm-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+.dmc-dm-gal-slot { position: relative; display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; }
+.dmc-dm-gal-num { position: absolute; top: 4px; left: 6px; z-index: 1; width: 18px; height: 18px; border-radius: 50%; background: rgba(27,67,50,.85); color: #fff; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.dmc-dm-gal-preview { min-height: 72px !important; height: 72px; }
+.dmc-muted { color: #6a7a72; font-weight: 500; font-size: 0.88em; }
 .dmc-person-photo .dmc-info-preview { height: 200px; }
 /* 인물 사진 미리보기는 잘리지 않고 전체가 보이도록 contain 처리 */
 .dmc-person-preview { background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #f0f2f5; }

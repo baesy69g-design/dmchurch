@@ -161,7 +161,7 @@
 	min-height: 0;
 	padding: 16px;
 	background: #f3f0e8;
-	background-size: 100% 100%;
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center top;
 	border: none;
@@ -284,6 +284,20 @@
 		grid-column: span 2;
 	}
 
+	.church-main-quicklinks {
+		min-height: 280px;
+	}
+
+	/* 배경이미지만 있으면 높이 0으로 붕괴 — 원본 275x309 비율 유지 */
+	.church-main-pastor {
+		height: auto;
+		min-height: 280px;
+		aspect-ratio: 275 / 309;
+		align-self: stretch;
+		background-size: cover;
+		background-position: center top;
+	}
+
 	.church-main-tiles-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
@@ -296,6 +310,19 @@
 
 	.church-main-slide-col {
 		grid-column: span 1;
+	}
+
+	.church-main-quicklinks {
+		min-height: 240px;
+	}
+
+	.church-main-pastor {
+		width: 100%;
+		min-height: 0;
+		height: auto;
+		aspect-ratio: 275 / 309;
+		background-size: cover;
+		background-position: center top;
 	}
 
 	.church-main-tiles-grid {

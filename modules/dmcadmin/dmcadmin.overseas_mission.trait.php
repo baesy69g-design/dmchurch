@@ -108,6 +108,107 @@ trait dmcadminOverseasMissionTrait
 		return $missionary !== '' ? $missionary : $name;
 	}
 
+	/** 국가명 → ISO 3166-1 alpha-2 (국기 이미지용). Windows 이모지 국기는 영문으로 깨지므로 이미지 사용 */
+	public static function getOverseasMissionCountryCode(string $country): string
+	{
+		$country = trim($country);
+		if ($country === '')
+		{
+			return '';
+		}
+		static $map = [
+			'일본' => 'jp',
+			'필리핀' => 'ph',
+			'캄보디아' => 'kh',
+			'대만' => 'tw',
+			'태국' => 'th',
+			'튀르키예' => 'tr',
+			'터키' => 'tr',
+			'파푸아뉴기니' => 'pg',
+			'중국' => 'cn',
+			'홍콩' => 'hk',
+			'몽골' => 'mn',
+			'베트남' => 'vn',
+			'라오스' => 'la',
+			'미얀마' => 'mm',
+			'말레이시아' => 'my',
+			'싱가포르' => 'sg',
+			'인도네시아' => 'id',
+			'인도' => 'in',
+			'네팔' => 'np',
+			'방글라데시' => 'bd',
+			'스리랑카' => 'lk',
+			'파키스탄' => 'pk',
+			'아프가니스탄' => 'af',
+			'우즈베키스탄' => 'uz',
+			'카자흐스탄' => 'kz',
+			'키르기스스탄' => 'kg',
+			'러시아' => 'ru',
+			'우크라이나' => 'ua',
+			'미국' => 'us',
+			'캐나다' => 'ca',
+			'브라질' => 'br',
+			'아르헨티나' => 'ar',
+			'페루' => 'pe',
+			'칠레' => 'cl',
+			'멕시코' => 'mx',
+			'독일' => 'de',
+			'프랑스' => 'fr',
+			'영국' => 'gb',
+			'이탈리아' => 'it',
+			'스페인' => 'es',
+			'호주' => 'au',
+			'뉴질랜드' => 'nz',
+			'남아프리카공화국' => 'za',
+			'케냐' => 'ke',
+			'에티오피아' => 'et',
+			'이집트' => 'eg',
+			'이스라엘' => 'il',
+			'요르단' => 'jo',
+			'레바논' => 'lb',
+			'시리아' => 'sy',
+			'이라크' => 'iq',
+			'이란' => 'ir',
+			'북한' => 'kp',
+			'한국' => 'kr',
+			'대한민국' => 'kr',
+		];
+		if (isset($map[$country]))
+		{
+			return $map[$country];
+		}
+		foreach ($map as $name => $code)
+		{
+			if (function_exists('mb_strpos'))
+			{
+				if (mb_strpos($country, $name) !== false || mb_strpos($name, $country) !== false)
+				{
+					return $code;
+				}
+			}
+			elseif (strpos($country, $name) !== false || strpos($name, $country) !== false)
+			{
+				return $code;
+			}
+		}
+		return '';
+	}
+
+	public static function getOverseasMissionFlagUrl(string $country): string
+	{
+		$code = self::getOverseasMissionCountryCode($country);
+		if ($code === '')
+		{
+			return '';
+		}
+		$local = \RX_BASEDIR . 'files/church/flags/' . $code . '.svg';
+		if (is_file($local))
+		{
+			return '/files/church/flags/' . $code . '.svg';
+		}
+		return 'https://flagcdn.com/' . $code . '.svg';
+	}
+
 	/** @param array<string,mixed> $item */
 	public static function isOverseasMissionItemEmpty(array $item): bool
 	{
@@ -133,8 +234,34 @@ trait dmcadminOverseasMissionTrait
 			'sub_mid' => trim((string)($item['sub_mid'] ?? '')),
 			'sub_photo' => self::normalizeGuidePhotoUrl((string)($item['sub_photo'] ?? '')),
 			'sub_body' => trim((string)($item['sub_body'] ?? '')),
+			'sub_gallery' => self::normalizeOverseasMissionGallery($item['sub_gallery'] ?? []),
 			'order' => (int)($item['order'] ?? 0),
 		];
+	}
+
+	/** @param mixed $raw @return list<string> */
+	public static function normalizeOverseasMissionGallery($raw): array
+	{
+		if (!is_array($raw))
+		{
+			return [];
+		}
+		$out = [];
+		$max = self::OVERSEAS_MISSION_GALLERY_MAX;
+		foreach ($raw as $url)
+		{
+			$u = self::normalizeGuidePhotoUrl((string)$url);
+			if ($u === '')
+			{
+				continue;
+			}
+			$out[] = $u;
+			if (count($out) >= $max)
+			{
+				break;
+			}
+		}
+		return $out;
 	}
 
 	public static function getOverseasMissionSubTitle(string $mid): ?string
@@ -384,17 +511,27 @@ trait dmcadminOverseasMissionTrait
 			{
 				continue;
 			}
-			$col_class = 'church-dm-col';
+			$count = count($list);
+			$col_class = 'church-dm-col church-dm-col--' . $key;
 			if ($key === 'dispatch')
 			{
 				$col_class .= ' church-dm-col-dispatch';
 			}
-			$html .= '<section class="' . $col_class . '">';
+			$html .= '<section class="' . htmlspecialchars($col_class, ENT_QUOTES, 'UTF-8') . '">';
+			$html .= '<header class="church-dm-head">';
+			$html .= '<p class="church-dm-kicker">Overseas Mission</p>';
 			$html .= '<h2 class="church-dm-heading">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</h2>';
-			$html .= '<ul class="church-dm-list">';
+			$html .= '<p class="church-dm-count"><em>' . $count . '</em><span>교회</span></p>';
+			$html .= '</header>';
+			$list_class = 'church-dm-list church-dm-list--' . $key;
+			if ($key === 'dispatch')
+			{
+				$list_class .= ' church-dm-list--featured';
+			}
+			$html .= '<ul class="' . htmlspecialchars($list_class, ENT_QUOTES, 'UTF-8') . '">';
 			foreach ($list as $item)
 			{
-				$html .= self::renderOverseasMissionListItem($item);
+				$html .= self::renderOverseasMissionListItem($item, $key === 'dispatch');
 			}
 			$html .= '</ul></section>';
 		}
@@ -403,7 +540,7 @@ trait dmcadminOverseasMissionTrait
 	}
 
 	/** @param array<string,mixed> $item */
-	protected static function renderOverseasMissionListItem(array $item): string
+	protected static function renderOverseasMissionListItem(array $item, bool $featured = false): string
 	{
 		$name = trim((string)($item['name'] ?? ''));
 		$missionary = trim((string)($item['missionary_name'] ?? ''));
@@ -420,11 +557,17 @@ trait dmcadminOverseasMissionTrait
 		{
 			$img = trim((string)($item['thumb'] ?? ''));
 		}
+		$flag_url = self::getOverseasMissionFlagUrl($country);
 
-		$html = '<li class="church-dm-item">';
+		$item_class = 'church-dm-item' . ($featured ? ' church-dm-item--featured' : '');
+		$html = '<li class="' . $item_class . '">';
 		if ($img !== '')
 		{
 			$html .= '<figure class="church-dm-item-photo"><img src="' . htmlspecialchars($img, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" loading="lazy" /></figure>';
+		}
+		elseif ($flag_url !== '')
+		{
+			$html .= '<span class="church-dm-flag" title="' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '"><img src="' . htmlspecialchars($flag_url, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '" loading="lazy" width="40" height="30" /></span>';
 		}
 		$html .= '<div class="church-dm-item-body">';
 		if ($country !== '')
@@ -444,6 +587,10 @@ trait dmcadminOverseasMissionTrait
 		{
 			$html .= '<span class="church-dm-missionary">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
 		}
+		elseif ($missionary !== '' && $label !== $missionary)
+		{
+			$html .= '<span class="church-dm-missionary">' . htmlspecialchars($missionary, ENT_QUOTES, 'UTF-8') . '</span>';
+		}
 		$html .= '</div></li>';
 		return $html;
 	}
@@ -461,23 +608,47 @@ trait dmcadminOverseasMissionTrait
 			$photo = trim((string)($item['thumb'] ?? ''));
 		}
 		$body = trim((string)($item['sub_body'] ?? ''));
+		$gallery = self::normalizeOverseasMissionGallery($item['sub_gallery'] ?? []);
 
-		$html = '<div class="church-mission-detail">';
+		$html = '<div class="church-mission-detail' . ($gallery ? ' church-mission-detail--with-gallery' : '') . '">';
 		if ($photo !== '')
 		{
 			$html .= '<figure class="church-mission-detail-photo"><img src="' . htmlspecialchars($photo, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" loading="lazy" /></figure>';
 		}
+		$html .= '<div class="church-mission-detail-compose">';
+		if ($gallery)
+		{
+			$html .= '<div class="church-mission-gallery" aria-label="추가 사진">';
+			foreach ($gallery as $gi => $gurl)
+			{
+				$n = $gi + 1;
+				$html .= '<figure class="church-mission-gal-item church-mission-gal-item--' . $n . '">';
+				$html .= '<img src="' . htmlspecialchars($gurl, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($label . ' 사진 ' . $n, ENT_QUOTES, 'UTF-8') . '" loading="lazy" />';
+				$html .= '</figure>';
+			}
+			$html .= '</div>';
+		}
 		$html .= '<div class="church-mission-detail-body">';
+		$flag_url = self::getOverseasMissionFlagUrl($country);
+		if ($flag_url !== '')
+		{
+			$html .= '<div class="church-mission-detail-flag"><img src="' . htmlspecialchars($flag_url, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '" width="48" height="36" loading="lazy" /></div>';
+		}
 		if ($country !== '')
 		{
-			$html .= '<p class="church-mission-detail-country"><strong>국가</strong> ' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '</p>';
+			$html .= '<p class="church-mission-detail-country"><span class="church-mission-meta-label">국가</span><span class="church-mission-meta-value">' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '</span></p>';
 		}
 		if ($missionary !== '')
 		{
-			$html .= '<p class="church-mission-detail-missionary"><strong>선교사</strong> ' . htmlspecialchars($missionary, ENT_QUOTES, 'UTF-8') . '</p>';
+			$html .= '<p class="church-mission-detail-missionary"><span class="church-mission-meta-label">선교사</span><span class="church-mission-meta-value">' . htmlspecialchars($missionary, ENT_QUOTES, 'UTF-8') . '</span></p>';
+		}
+		if ($name !== '' && $name !== $missionary)
+		{
+			$html .= '<p class="church-mission-detail-place"><span class="church-mission-meta-label">선교지</span><span class="church-mission-meta-value">' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span></p>';
 		}
 		if ($body !== '')
 		{
+			$html .= '<div class="church-mission-greeting">';
 			$lines = preg_split('/\r\n|\r|\n/', $body) ?: [$body];
 			foreach ($lines as $line)
 			{
@@ -490,15 +661,16 @@ trait dmcadminOverseasMissionTrait
 				if (preg_match('#^https?://#i', $line))
 				{
 					$safe = htmlspecialchars($line, ENT_QUOTES, 'UTF-8');
-					$html .= '<p><a href="' . $safe . '" target="_blank" rel="noopener">' . $safe . '</a></p>';
+					$html .= '<p class="church-mission-greeting-line"><a href="' . $safe . '" target="_blank" rel="noopener">' . $safe . '</a></p>';
 				}
 				else
 				{
-					$html .= '<p>' . htmlspecialchars($line, ENT_QUOTES, 'UTF-8') . '</p>';
+					$html .= '<p class="church-mission-greeting-line">' . htmlspecialchars($line, ENT_QUOTES, 'UTF-8') . '</p>';
 				}
 			}
+			$html .= '</div>';
 		}
-		$html .= '</div></div>';
+		$html .= '</div></div></div>';
 		return $html;
 	}
 
@@ -617,6 +789,7 @@ trait dmcadminOverseasMissionTrait
 				$norm['sub_mid'] = '';
 				$norm['sub_photo'] = '';
 				$norm['sub_body'] = '';
+				$norm['sub_gallery'] = [];
 			}
 			else
 			{

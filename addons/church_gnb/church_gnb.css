@@ -6,7 +6,7 @@ body,
 }
 
 .header_wrap {
-	background: transparent;
+	background: var(--church-cream, #fffef9);
 	position: relative;
 	overflow: visible;
 	z-index: 50;
@@ -21,6 +21,9 @@ body,
 .header > h1 {
 	padding: 6px 0 !important;
 	line-height: 55px !important;
+}
+.header > h1.logo-item:has(.church-brand) {
+	line-height: 1.1 !important;
 }
 
 body .header .gnb > ul > li > a {

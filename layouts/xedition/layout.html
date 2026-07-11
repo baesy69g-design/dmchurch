@@ -1,5 +1,6 @@
 <!--// LANG -->
 <load target="./lang" />
+<load target="./js/church_view_pc_boot.js" type="head" />
 <load target="./css/church_welcome.css" />
 
 <!--// 레이아웃을 위한 설정 값들 -->
@@ -158,6 +159,7 @@
 <load target="../../addons/church_footer/church_footer.css" />
 <load target="../../addons/church_sub_top/church_sub_top.css" />
 <load target="../../addons/church_gnb/church_gnb.css" />
+<load target="./css/church_view_pc.css" />
 <load target="./css/idangerous.swiper.css" />
 <load target="./css/welcome.css" />
 <load target="./css/webfont.css" />
@@ -165,6 +167,7 @@
 <load target="../../common/xeicon/xeicon.min.css" />
 
 <!--// JS -->
+<load target="./js/church_view_pc.js" type="head" />
 <load cond="$_enable_slide && !$_is_indexmodule" target="./js/idangerous.swiper.min.js" />
 <load target="./js/layout.js" />
 <load target="../../addons/church_gnb/church_gnb.js" />
@@ -370,7 +373,7 @@
 		<!-- LNB -->
 		<nav cond="isset($_selected_menu['list']) && $_selected_menu['list'] && $layout_info->layout_type === 'sub' && $layout_info->sidebar_position !== 'none'" class="lnb">
 			<ul>
-				<li loop="$_selected_menu['list'] => $key1, $val1">
+				<li loop="$_selected_menu['list'] => $key1, $val1" class="on"|cond="$val1['selected']">
 					<a href="{$val1['href']}" target="_blank"|cond="$val1['open_window'] == 'Y'">{$val1['link']}</a>
 					<ul cond="$val1['list']">
 						<li loop="$val1['list'] => $key2, $val2" class="on"|cond="$val2['selected']">

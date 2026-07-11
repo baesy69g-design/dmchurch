@@ -507,6 +507,16 @@ class dmcadminView extends dmcadmin
 			$o->sub_photo = (string)($item['sub_photo'] ?? '');
 			$o->sub_body = (string)($item['sub_body'] ?? '');
 			$o->order = (int)($item['order'] ?? 0);
+			$gal = dmcadminModel::normalizeOverseasMissionGallery($item['sub_gallery'] ?? []);
+			$o->gallery_slots = [];
+			for ($g = 0; $g < dmcadminModel::OVERSEAS_MISSION_GALLERY_MAX; $g++)
+			{
+				$gs = new stdClass;
+				$gs->g = $g;
+				$gs->num = $g + 1;
+				$gs->url = (string)($gal[$g] ?? '');
+				$o->gallery_slots[] = $gs;
+			}
 			$slots[] = $o;
 		}
 		Context::set('page', $page);

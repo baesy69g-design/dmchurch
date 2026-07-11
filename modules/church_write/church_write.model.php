@@ -269,7 +269,133 @@ class church_writeModel extends church_write
 			'form' => $is_pray ? null : ($forms[$module_srl] ?? null),
 			'csrf_token' => $csrf,
 			'api_url' => getNotEncodedUrl('', 'module', 'church_write', 'act', 'procChurchWriteInsertDocument'),
+			'update_url' => getNotEncodedUrl('', 'module', 'church_write', 'act', 'procChurchWriteUpdateDocument'),
+			'get_url' => getNotEncodedUrl('', 'module', 'church_write', 'act', 'procChurchWriteGetDocument'),
 		];
+	}
+
+	/**
+	 * 기존 글 내용을 등록 폼 필드 값으로 복원한다.
+	 * @return array<string,mixed>
+	 */
+	public static function extractEditFields($oDocument): array
+	{
+		$module_srl = (int)$oDocument->get('module_srl');
+		$title = trim((string)$oDocument->getTitleText());
+		$regdate = (string)$oDocument->get('regdate');
+		$pubdate = '';
+		if (strlen($regdate) >= 8)
+		{
+			$pubdate = substr($regdate, 0, 4) . '-' . substr($regdate, 4, 2) . '-' . substr($regdate, 6, 2);
+		}
+
+		// 설교일 확장변수 우선
+		if ($module_srl === 110)
+		{
+			$extra = $oDocument->getExtraVars();
+			if (is_array($extra))
+			{
+				foreach ($extra as $ev)
+				{
+					$name = is_object($ev) ? ($ev->name ?? '') : '';
+					$val = is_object($ev) ? ($ev->value ?? '') : '';
+					if ($name === 'sermon_date' && preg_match('/^\d{8}/', (string)$val))
+					{
+						$pubdate = substr($val, 0, 4) . '-' . substr($val, 4, 2) . '-' . substr($val, 6, 2);
+						break;
+					}
+				}
+			}
+		}
+
+		$fields = [
+			'title' => $title,
+			'pubdate' => $pubdate,
+			'subtitle' => '',
+			'speaker' => '',
+			'youtube_url' => '',
+			'video_url' => '',
+			'summary' => '',
+			'news_image_url' => '',
+			'front_image_url' => '',
+			'back_image_url' => '',
+			'photo_url' => '',
+		];
+
+		if ($module_srl === 110 && strpos($title, ' / ') !== false)
+		{
+			$parts = explode(' / ', $title, 2);
+			$fields['title'] = trim($parts[0]);
+			$fields['subtitle'] = trim($parts[1] ?? '');
+		}
+
+		$content = (string)$oDocument->getContent(false);
+
+		if (in_array($module_srl, [110, 116, 118, 120], true))
+		{
+			if (preg_match('~<p>\s*<strong>(.*?)</strong>\s*</p>~isu', $content, $m))
+			{
+				$fields['speaker'] = html_entity_decode(strip_tags($m[1]), ENT_QUOTES, 'UTF-8');
+			}
+			if (preg_match('~youtube\.com/embed/([\w-]+)~i', $content, $m))
+			{
+				$fields['youtube_url'] = 'https://www.youtube.com/watch?v=' . $m[1];
+			}
+			elseif (preg_match('~youtu\.be/([\w-]+)~i', $content, $m))
+			{
+				$fields['youtube_url'] = 'https://youtu.be/' . $m[1];
+			}
+			if (preg_match('~<video[^>]+src=["\']([^"\']+)["\']~i', $content, $m))
+			{
+				$fields['video_url'] = html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+			}
+			// speaker·영상 블록 제외한 본문 문단 → summary
+			$tmp = preg_replace('~<div class="broadcast-video">.*?</div>~isu', '', $content);
+			$tmp = preg_replace('~<p>\s*<strong>.*?</strong>\s*</p>~isu', '', $tmp);
+			$tmp = preg_replace('~<br\s*/?>~i', "\n", $tmp);
+			$tmp = html_entity_decode(strip_tags($tmp), ENT_QUOTES, 'UTF-8');
+			$fields['summary'] = trim(preg_replace("/[ \t]+\n/", "\n", $tmp));
+		}
+
+		if ($module_srl === 114)
+		{
+			$jubo = self::extractJuboImageUrls($content);
+			$fields['news_image_url'] = $jubo['news'] ?? '';
+			$fields['front_image_url'] = $jubo['front'] ?? '';
+			$fields['back_image_url'] = $jubo['back'] ?? '';
+		}
+
+		if ($module_srl === 124)
+		{
+			if (preg_match('~<img[^>]+src=["\']([^"\']+)["\']~i', $content, $m))
+			{
+				$fields['photo_url'] = html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+			}
+			$tmp = preg_replace('~<img[^>]*>~i', '', $content);
+			$tmp = preg_replace('~<br\s*/?>~i', "\n", $tmp);
+			$fields['summary'] = trim(html_entity_decode(strip_tags($tmp), ENT_QUOTES, 'UTF-8'));
+		}
+
+		return $fields;
+	}
+
+	/** @return array{news?:string,front?:string,back?:string} */
+	public static function extractJuboImageUrls(string $content): array
+	{
+		$out = [];
+		foreach (['news' => '교회소식', 'front' => '앞면', 'back' => '뒷면'] as $kind => $label)
+		{
+			if (preg_match('~id="[^"]*' . preg_quote($kind, '~') . '"[^>]*>.*?<img[^>]+src=["\']([^"\']+)["\']~isu', $content, $m))
+			{
+				$out[$kind] = html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+				continue;
+			}
+			if (preg_match('~alt=["\']' . preg_quote($label, '~') . '["\'][^>]*src=["\']([^"\']+)["\']|src=["\']([^"\']+)["\'][^>]*alt=["\']' . preg_quote($label, '~') . '["\']~iu', $content, $m))
+			{
+				$out[$kind] = html_entity_decode($m[1] ?: $m[2], ENT_QUOTES, 'UTF-8');
+			}
+		}
+		return $out;
 	}
 
 	public static function buildYoutubeEmbed(string $url): string

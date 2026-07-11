@@ -328,7 +328,7 @@ class dmcadminModel extends dmcadmin
 			return;
 		}
 
-		$title = Context::getSiteTitle() ?: '????';
+		$title = Context::getSiteTitle() ?: '동명교회';
 		$layout_info = Context::get('layout_info');
 		if ($layout_info)
 		{
@@ -338,14 +338,20 @@ class dmcadminModel extends dmcadmin
 			Context::set('layout_info', $layout_info);
 		}
 
-		$safe = htmlspecialchars($logo, ENT_QUOTES, 'UTF-8');
-		$safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+		// 벡터/PNG 마크를 '동명교회' 글자와 같은 줄에 두어 높이 일치
+		$brand = '<span class="church-brand" role="img" aria-label="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '">'
+			. '<span class="church-brand-sub">대한예수교 장로회</span>'
+			. '<span class="church-brand-main">'
+			. '<img class="church-brand-mark" src="/files/church/logo_mark.png?t=1783760700" alt="" width="181" height="256" decoding="async" />'
+			. '<span class="church-brand-name"><span class="dm">동명</span><span class="ch">교회</span></span>'
+			. '</span></span>';
+
 		Context::addHtmlFooter(
-			'<script>(function(){function setLogo(){var src="' . $safe . '",alt="' . $safeTitle . '";'
-			. 'var img=document.querySelector(".header .logo-item img")||document.querySelector(".hd .h1 img");'
-			. 'if(img){img.src=src;img.alt=alt;return;}'
-			. 'var link=document.querySelector(".hd .h1 a");'
-			. 'if(link){link.innerHTML=\'<img src="\'+src+\'" alt="\'+alt+\'" />\';}}'
+			'<script>(function(){function setLogo(){'
+			. 'var html=' . json_encode($brand, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ';'
+			. 'var link=document.querySelector(".header .logo-item a")||document.querySelector(".hd .h1 a");'
+			. 'if(link){link.innerHTML=html;link.setAttribute("aria-label",' . json_encode($title, JSON_UNESCAPED_UNICODE) . ');}'
+			. '}'
 			. 'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",setLogo);}else{setLogo();}})();</script>'
 		);
 	}
@@ -3415,8 +3421,12 @@ class dmcadminModel extends dmcadmin
 		$safe_mid = preg_replace('/[^a-z0-9_]/i', '', $mid);
 		$L = self::uiLabels();
 		$school_mids = (array)($L['school_page_mids'] ?? self::SCHOOL_PAGE_MIDS);
+		$SL = (array)($L['school_page'] ?? []);
 		$dept = (string)($school_mids[$mid] ?? self::SCHOOL_PAGE_MIDS[$mid] ?? '');
 		$dept_safe = htmlspecialchars($dept, ENT_QUOTES, 'UTF-8');
+		$photo_alt_suffix = (string)($SL['photo_alt_suffix'] ?? ' 사진 ');
+		$theme_label = (string)($SL['theme_label'] ?? '교육주제');
+		$dept_nav_aria = (string)($SL['dept_nav_aria'] ?? '교회학교 부서');
 
 		$theme = trim((string)($data['theme'] ?? ''));
 		$verse = trim((string)($data['verse'] ?? ''));
@@ -3438,7 +3448,22 @@ class dmcadminModel extends dmcadmin
 
 		$h = '<div class="church-school church-school--' . $safe_mid . '">';
 
-		// ??? ?? ??? (CSS ??? church-school--{mid} ? ??)
+		$h .= '<nav class="cs-dept-nav" aria-label="' . htmlspecialchars($dept_nav_aria, ENT_QUOTES, 'UTF-8') . '">';
+		foreach ($school_mids as $dmid => $dlabel)
+		{
+			$dmid = (string)$dmid;
+			$dlabel = trim((string)$dlabel);
+			if ($dmid === '' || $dlabel === '')
+			{
+				continue;
+			}
+			$active = ($dmid === $mid) ? ' is-active' : '';
+			$url = htmlspecialchars(getNotEncodedUrl('', 'mid', $dmid), ENT_QUOTES, 'UTF-8');
+			$h .= '<a class="cs-dept-nav-item' . $active . '" href="' . $url . '">'
+				. htmlspecialchars($dlabel, ENT_QUOTES, 'UTF-8') . '</a>';
+		}
+		$h .= '</nav>';
+
 		if ($photos)
 		{
 			$h .= '<div class="cs-photos">';
@@ -3448,7 +3473,9 @@ class dmcadminModel extends dmcadmin
 			foreach ($photos as $i => $p)
 			{
 				$safe = htmlspecialchars($p, ENT_QUOTES, 'UTF-8');
-				$h .= '<figure class="cs-photo cs-photo-' . ($i + 1) . '"><img src="' . $safe . '" alt="' . $dept_safe . ' ?? ' . ($i + 1) . '" loading="lazy" /></figure>';
+				$h .= '<figure class="cs-photo cs-photo-' . ($i + 1) . '"><img src="' . $safe . '" alt="'
+					. $dept_safe . htmlspecialchars($photo_alt_suffix, ENT_QUOTES, 'UTF-8') . ($i + 1)
+					. '" loading="lazy" /></figure>';
 			}
 			$h .= '</div>';
 		}
@@ -3456,7 +3483,8 @@ class dmcadminModel extends dmcadmin
 		$h .= '<div class="cs-info">';
 		if ($theme !== '')
 		{
-			$h .= '<div class="cs-theme"><span class="cs-theme-label">????</span>'
+			$h .= '<div class="cs-theme"><span class="cs-theme-label">'
+				. htmlspecialchars($theme_label, ENT_QUOTES, 'UTF-8') . '</span>'
 				. '<strong class="cs-theme-text">' . nl2br(htmlspecialchars($theme, ENT_QUOTES, 'UTF-8')) . '</strong></div>';
 		}
 		if ($verse !== '')
@@ -3465,9 +3493,9 @@ class dmcadminModel extends dmcadmin
 		}
 
 		$blocks = [
-			['goal', '???? ? ??', trim((string)($data['goal'] ?? ''))],
-			['worship', '?? ??', trim((string)($data['worship'] ?? ''))],
-			['staff', '?? ??? ? ??', trim((string)($data['staff'] ?? ''))],
+			['goal', (string)($SL['goal_title'] ?? '교육목표 및 방향'), trim((string)($data['goal'] ?? ''))],
+			['worship', (string)($SL['worship_title'] ?? '예배 안내'), trim((string)($data['worship'] ?? ''))],
+			['staff', (string)($SL['staff_title'] ?? '담당 교역자 및 교사'), trim((string)($data['staff'] ?? ''))],
 		];
 		foreach ($blocks as $b)
 		{
@@ -3816,6 +3844,7 @@ class dmcadminModel extends dmcadmin
 
 	public const OVERSEAS_MISSION_LIST_MID = 'p26';
 	public const OVERSEAS_MISSION_SUB_FRAME_START = 261;
+	public const OVERSEAS_MISSION_GALLERY_MAX = 7;
 
 	public const OVERSEAS_MISSION_CATEGORIES = [
 		'dispatch' => '???? ?????',
@@ -4221,9 +4250,14 @@ class dmcadminModel extends dmcadmin
 			{
 				continue;
 			}
-			$html .= '<section class="church-dm-col">';
+			$count = count($list);
+			$html .= '<section class="church-dm-col church-dm-col--' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . '">';
+			$html .= '<header class="church-dm-head">';
+			$html .= '<p class="church-dm-kicker">Domestic Mission</p>';
 			$html .= '<h2 class="church-dm-heading">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</h2>';
-			$html .= '<ul class="church-dm-list">';
+			$html .= '<p class="church-dm-count"><em>' . $count . '</em><span>' . ($key === 'church' ? '교회' : '곳') . '</span></p>';
+			$html .= '</header>';
+			$html .= '<ul class="church-dm-list church-dm-list--' . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . '">';
 			foreach ($list as $item)
 			{
 				$html .= self::renderDomesticMissionListItem($item);
@@ -4256,11 +4290,20 @@ class dmcadminModel extends dmcadmin
 		$img = self::getDomesticMissionItemImage($item);
 		$has_sub = !empty($item['has_sub']) && trim((string)($item['sub_mid'] ?? '')) !== '';
 		$sub_mid = trim((string)($item['sub_mid'] ?? ''));
+		$initial = '';
+		if ($name !== '')
+		{
+			$initial = function_exists('mb_substr') ? mb_substr($name, 0, 1, 'UTF-8') : substr($name, 0, 3);
+		}
 
-		$html = '<li class="church-dm-item">';
+		$html = '<li class="church-dm-item"' . ($img === '' && $initial !== '' ? ' data-initial="' . htmlspecialchars($initial, ENT_QUOTES, 'UTF-8') . '"' : '') . '>';
 		if ($img !== '')
 		{
 			$html .= '<figure class="church-dm-item-photo"><img src="' . htmlspecialchars($img, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" loading="lazy" /></figure>';
+		}
+		elseif ($initial !== '')
+		{
+			$html .= '<span class="church-dm-initial" aria-hidden="true">' . htmlspecialchars($initial, ENT_QUOTES, 'UTF-8') . '</span>';
 		}
 		$html .= '<div class="church-dm-item-body">';
 		if ($has_sub)

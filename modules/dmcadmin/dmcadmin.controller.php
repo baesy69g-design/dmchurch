@@ -1927,6 +1927,7 @@ class dmcadminController extends dmcadmin
 			$thumb = '';
 			$sub_photo = '';
 			$sub_body = '';
+			$sub_gallery = [];
 
 			if ($has_sub)
 			{
@@ -1956,6 +1957,37 @@ class dmcadminController extends dmcadmin
 					{
 						$this->deleteGuidePhotoFile($sub_photo);
 						$sub_photo = $new_url;
+					}
+				}
+				$max_gal = dmcadminModel::OVERSEAS_MISSION_GALLERY_MAX;
+				for ($g = 0; $g < $max_gal; $g++)
+				{
+					$url = trim((string)Context::get('existing_item_gallery' . $g . '_' . $i));
+					if (Context::get('remove_item_gallery' . $g . '_' . $i) === 'Y')
+					{
+						$this->deleteGuidePhotoFile($url);
+						$url = '';
+					}
+					$gfield = 'item_gallery' . $g . '_' . $i;
+					if (!empty($_FILES[$gfield]['name']) && empty($_FILES[$gfield]['error']))
+					{
+						try
+						{
+							$new_url = $this->uploadOverseasMissionPhoto('p26', 'gal' . $i . 'g' . $g, $_FILES[$gfield]);
+						}
+						catch (Rhymix\Framework\Exception $e)
+						{
+							return new BaseObject(-1, ($i + 1) . '번 추가사진' . ($g + 1) . ': ' . $e->getMessage());
+						}
+						if ($new_url)
+						{
+							$this->deleteGuidePhotoFile($url);
+							$url = $new_url;
+						}
+					}
+					if ($url !== '')
+					{
+						$sub_gallery[] = $url;
 					}
 				}
 			}
@@ -1997,6 +2029,7 @@ class dmcadminController extends dmcadmin
 				'sub_mid' => (string)Context::get('item_sub_mid_' . $i),
 				'sub_photo' => $sub_photo,
 				'sub_body' => $sub_body,
+				'sub_gallery' => $sub_gallery,
 				'order' => $order,
 			];
 		}

@@ -8,7 +8,7 @@
 
 	상세 페이지가 <strong>없는</strong> 항목은 <strong>선교 이미지</strong>를 올리면 목록에 표시됩니다.
 
-	상세 페이지가 <strong>있는</strong> 항목은 <strong>사진</strong>과 <strong>사진설명</strong>(필수)을 입력합니다.
+	상세 페이지가 <strong>있는</strong> 항목은 <strong>사진</strong>·<strong>사진설명</strong>(필수)과 필요 시 <strong>추가 사진</strong>(최대 7장)을 올립니다.
 
 	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
 
@@ -184,6 +184,42 @@
 
 						<!--@end-->
 
+						<div class="dmc-dm-gallery-block">
+
+							<label>추가 사진 <span class="dmc-muted">(최대 7장 · 인삿글 주변에 배치)</span></label>
+
+							<div class="dmc-dm-gallery-grid">
+
+								<!--@foreach($slot->gallery_slots as $gs)-->
+
+								<div class="dmc-dm-gal-slot">
+
+									<span class="dmc-dm-gal-num">{$gs->num}</span>
+
+									<input type="hidden" name="existing_item_gallery{$gs->g}_{$slot->index}" value="{$gs->url}" />
+
+									<!--@if($gs->url)-->
+
+									<div class="dmc-info-preview dmc-person-preview dmc-dm-gal-preview" style="background-image:url('{$gs->url}');"></div>
+
+									<label class="dmc-check"><input type="checkbox" name="remove_item_gallery{$gs->g}_{$slot->index}" value="Y" /> 삭제</label>
+
+									<!--@else-->
+
+									<div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div>
+
+									<!--@end-->
+
+									<input type="file" name="item_gallery{$gs->g}_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+
+								</div>
+
+								<!--@end-->
+
+							</div>
+
+						</div>
+
 					</div>
 
 				</div>
@@ -313,6 +349,30 @@
 					<label>사진설명 <span class="dmc-req">*</span></label>
 
 					<textarea name="item_sub_body___INDEX__" rows="6" class="dmc-para-input dmc-dm-sub-body" placeholder="소개 글을 입력하세요."></textarea>
+
+					<div class="dmc-dm-gallery-block">
+
+						<label>추가 사진 <span class="dmc-muted">(최대 7장)</span></label>
+
+						<div class="dmc-dm-gallery-grid">
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">1</span><input type="hidden" name="existing_item_gallery0___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery0___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">2</span><input type="hidden" name="existing_item_gallery1___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery1___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">3</span><input type="hidden" name="existing_item_gallery2___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery2___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">4</span><input type="hidden" name="existing_item_gallery3___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery3___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">5</span><input type="hidden" name="existing_item_gallery4___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery4___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">6</span><input type="hidden" name="existing_item_gallery5___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery5___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+							<div class="dmc-dm-gal-slot"><span class="dmc-dm-gal-num">7</span><input type="hidden" name="existing_item_gallery6___INDEX__" value="" /><div class="dmc-info-preview dmc-slide-empty dmc-dm-gal-preview">비움</div><input type="file" name="item_gallery6___INDEX__" accept="image/jpeg,image/png,image/webp,image/gif" /></div>
+
+						</div>
+
+					</div>
 
 				</div>
 

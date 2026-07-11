@@ -1,0 +1,74 @@
+/* PC / 모바일 화면 전환 링크 */
+.church-view-switch {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 8px 14px;
+	box-sizing: border-box;
+}
+
+.church-view-switch a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 34px;
+	padding: 6px 14px;
+	border-radius: 999px;
+	border: 1px solid rgba(45, 106, 79, 0.22);
+	background: rgba(255, 254, 249, 0.95);
+	color: var(--church-forest, #1b4332);
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	text-decoration: none;
+	box-shadow: 0 2px 8px rgba(27, 67, 50, 0.06);
+}
+
+.church-view-switch a:hover,
+.church-view-switch a:focus {
+	background: #1b4332;
+	border-color: #1b4332;
+	color: #fffef9;
+}
+
+.church-view-switch--bottom {
+	border-top: none;
+	background: transparent;
+	margin: 4px 0 10px;
+	padding: 4px 14px 8px;
+}
+
+/* 좁은 화면에서만 PC 화면 링크 표시 */
+@media (max-width: 900px) {
+	.church-view-switch--pc {
+		display: flex;
+	}
+}
+
+/* PC 강제 보기 중에는 모바일로 돌아가기 링크만 */
+html.church-view-pc .church-view-switch--pc {
+	display: none !important;
+}
+
+html.church-view-pc .church-view-switch--mobile {
+	display: flex !important;
+}
+
+.church-view-switch--mobile {
+	display: none;
+}
+
+html.church-view-pc .church-view-switch--bottom {
+	position: sticky;
+	bottom: 0;
+	z-index: 200;
+	background: rgba(27, 67, 50, 0.94);
+	padding: 10px 14px;
+}
+
+html.church-view-pc .church-view-switch a {
+	background: #fffef9;
+	border-color: transparent;
+	color: #1b4332;
+}
