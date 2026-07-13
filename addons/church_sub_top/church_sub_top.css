@@ -118,35 +118,49 @@ body .header .gnb > ul > li > a {
 	}
 }
 
-/* 브랜드 로고 — PNG 마크 + 텍스트 (확대해도 깨지지 않음) */
+/* 브랜드 로고 — PNG 마크 + 텍스트 (확대해도 깨지지 않음)
+ * 윗줄(대한예수교 장로회)은 마크를 제외한 '동명교회' 폭에 시작·끝 맞춤 */
 .church-brand {
-	display: inline-flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 2px;
+	display: inline-grid;
+	grid-template-columns: auto auto;
+	column-gap: 8px;
+	row-gap: 0;
+	align-items: end;
 	max-width: 100%;
-	line-height: 1.05;
+	font-size: 26px;
+	line-height: 1;
 	vertical-align: middle;
 	color: inherit;
 	text-decoration: none;
 }
 .church-brand-sub {
-	display: block;
-	font-size: 11px;
+	grid-column: 2;
+	grid-row: 1;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-end;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0 0 -0.36em;
+	padding: 0;
+	font-size: 0.42em;
 	font-weight: 600;
-	letter-spacing: -0.02em;
+	letter-spacing: 0;
 	color: #6b7280;
-	line-height: 1.2;
-	padding-left: 2px;
+	line-height: 0.95;
+	white-space: nowrap;
+}
+.church-brand-sub-ch {
+	display: inline-block;
+	flex: 0 0 auto;
+	line-height: 0.95;
 }
 .church-brand-main {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	font-size: 26px;
-	line-height: 1;
+	display: contents;
 }
 .church-brand-mark {
+	grid-column: 1;
+	grid-row: 2;
 	display: block;
 	flex: 0 0 auto;
 	width: auto !important;
@@ -154,13 +168,18 @@ body .header .gnb > ul > li > a {
 	max-height: none !important;
 	max-width: none !important;
 	object-fit: contain;
+	align-self: center;
 }
 .church-brand-name {
+	grid-column: 2;
+	grid-row: 2;
 	display: block;
 	font-size: 1em;
 	font-weight: 800;
 	letter-spacing: -0.06em;
-	line-height: 1;
+	line-height: 0.95;
+	margin-top: 0;
+	white-space: nowrap;
 }
 .church-brand-name .dm { color: #1b7a6e; }
 .church-brand-name .ch { color: #3b82c4; }
@@ -181,6 +200,9 @@ body .header .gnb > ul > li > a {
 		object-fit: contain;
 	}
 	.header .church-brand-main {
+		display: contents;
+	}
+	.header .church-brand {
 		font-size: 26px;
 	}
 }
@@ -742,29 +764,40 @@ body .header .gnb > ul > li > a {
 	}
 
 	.header .church-brand {
-		display: inline-flex !important;
-		flex-direction: column !important;
-		align-items: center !important;
-		width: 100% !important;
-		max-width: 420px !important;
+		display: inline-grid !important;
+		grid-template-columns: auto auto !important;
+		column-gap: clamp(6px, 2vw, 12px) !important;
+		row-gap: 0 !important;
+		align-items: end !important;
 		justify-content: center !important;
-		gap: 2px !important;
+		width: auto !important;
+		max-width: 100% !important;
+		margin: 0 auto !important;
+		font-size: clamp(28px, 8.6vw, 40px) !important;
 	}
 	.header .church-brand-sub {
-		font-size: clamp(11px, 3.1vw, 14px) !important;
-		text-align: center !important;
-		padding-left: 0 !important;
+		grid-column: 2 !important;
+		grid-row: 1 !important;
+		display: flex !important;
+		justify-content: space-between !important;
+		align-items: flex-end !important;
+		width: 100% !important;
+		margin: 0 0 -0.36em !important;
+		padding: 0 !important;
+		font-size: 0.42em !important;
+		line-height: 0.95 !important;
+		letter-spacing: 0 !important;
+		text-align: left !important;
+		white-space: nowrap !important;
 	}
 	.header .church-brand-main {
-		display: inline-flex !important;
-		align-items: center !important;
-		gap: clamp(6px, 2vw, 12px) !important;
-		font-size: clamp(28px, 8.6vw, 40px) !important;
-		line-height: 1 !important;
+		display: contents !important;
 	}
 	.header .church-brand-mark,
 	.header > h1 img.church-brand-mark,
 	.header > h1.logo-item img.church-brand-mark {
+		grid-column: 1 !important;
+		grid-row: 2 !important;
 		width: auto !important;
 		height: 1.2em !important;
 		max-height: none !important;
@@ -772,8 +805,12 @@ body .header .gnb > ul > li > a {
 		align-self: center !important;
 	}
 	.header .church-brand-name {
+		grid-column: 2 !important;
+		grid-row: 2 !important;
 		font-size: 1em !important;
-		line-height: 1 !important;
+		line-height: 0.95 !important;
+		margin-top: 0 !important;
+		white-space: nowrap !important;
 	}
 
 	.header > .side {
@@ -966,31 +1003,41 @@ html.xe-mobilelayout .hd .h1 > a > img:not(.church-brand-mark),
 
 html.xe-mobilelayout .hd .church-brand,
 .xe-mobilelayout .hd .church-brand {
-	display: inline-flex !important;
-	flex-direction: column !important;
-	align-items: center !important;
-	width: 100% !important;
-	max-width: 420px !important;
-	justify-content: center !important;
-	gap: 2px !important;
+	display: inline-grid !important;
+	grid-template-columns: auto auto !important;
+	column-gap: clamp(6px, 2vw, 12px) !important;
+	row-gap: 0 !important;
+	align-items: end !important;
+	width: auto !important;
+	max-width: 100% !important;
+	margin: 0 auto !important;
+	font-size: clamp(28px, 8.6vw, 40px) !important;
 }
 html.xe-mobilelayout .hd .church-brand-sub,
 .xe-mobilelayout .hd .church-brand-sub {
-	font-size: clamp(11px, 3.1vw, 14px) !important;
-	text-align: center !important;
-	padding-left: 0 !important;
+	grid-column: 2 !important;
+	grid-row: 1 !important;
+	display: flex !important;
+	justify-content: space-between !important;
+	align-items: flex-end !important;
+	width: 100% !important;
+	margin: 0 0 -0.36em !important;
+	padding: 0 !important;
+	font-size: 0.42em !important;
+	line-height: 0.95 !important;
+	letter-spacing: 0 !important;
+	text-align: left !important;
+	white-space: nowrap !important;
 }
 html.xe-mobilelayout .hd .church-brand-main,
 .xe-mobilelayout .hd .church-brand-main {
-	display: inline-flex !important;
-	align-items: center !important;
-	gap: clamp(6px, 2vw, 12px) !important;
-	font-size: clamp(28px, 8.6vw, 40px) !important;
-	line-height: 1 !important;
+	display: contents !important;
 }
 html.xe-mobilelayout .hd .church-brand-mark,
 .xe-mobilelayout .hd .church-brand-mark,
 html.xe-mobilelayout .hd img.church-brand-mark {
+	grid-column: 1 !important;
+	grid-row: 2 !important;
 	width: auto !important;
 	height: 1.2em !important;
 	max-height: none !important;
@@ -998,8 +1045,12 @@ html.xe-mobilelayout .hd img.church-brand-mark {
 }
 html.xe-mobilelayout .hd .church-brand-name,
 .xe-mobilelayout .hd .church-brand-name {
+	grid-column: 2 !important;
+	grid-row: 2 !important;
 	font-size: 1em !important;
-	line-height: 1 !important;
+	line-height: 0.95 !important;
+	margin-top: 0 !important;
+	white-space: nowrap !important;
 }
 
 html.xe-mobilelayout .hd .fr,

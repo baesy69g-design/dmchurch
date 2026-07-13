@@ -339,8 +339,13 @@ class dmcadminModel extends dmcadmin
 		}
 
 		// 벡터/PNG 마크를 '동명교회' 글자와 같은 줄에 두어 높이 일치
+		$sub_chars = '';
+		foreach (preg_split('//u', '대한예수교장로회', -1, PREG_SPLIT_NO_EMPTY) as $ch)
+		{
+			$sub_chars .= '<span class="church-brand-sub-ch">' . htmlspecialchars($ch, ENT_QUOTES, 'UTF-8') . '</span>';
+		}
 		$brand = '<span class="church-brand" role="img" aria-label="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '">'
-			. '<span class="church-brand-sub">대한예수교 장로회</span>'
+			. '<span class="church-brand-sub" aria-hidden="true">' . $sub_chars . '</span>'
 			. '<span class="church-brand-main">'
 			. '<img class="church-brand-mark" src="/files/church/logo_mark.png?t=1783760700" alt="" width="181" height="256" decoding="async" />'
 			. '<span class="church-brand-name"><span class="dm">동명</span><span class="ch">교회</span></span>'
