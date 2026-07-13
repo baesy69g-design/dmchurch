@@ -618,11 +618,17 @@ trait dmcadminOverseasMissionTrait
 		}
 		$body = trim((string)($item['sub_body'] ?? ''));
 		$gallery = self::normalizeOverseasMissionGallery($item['sub_gallery'] ?? []);
+		$sub_mid = trim((string)($item['sub_mid'] ?? ''));
+		$frame = self::getOverseasMissionFrameStyle($sub_mid);
 
-		$html = '<div class="church-mission-detail' . ($gallery ? ' church-mission-detail--with-gallery' : '') . '">';
+		$html = '<div class="church-mission-detail church-mission-detail--frame-' . $frame
+			. ($gallery ? ' church-mission-detail--with-gallery' : '') . '">';
 		if ($photo !== '')
 		{
-			$html .= '<figure class="church-mission-detail-photo"><img src="' . htmlspecialchars($photo, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" loading="lazy" /></figure>';
+			$html .= '<figure class="church-mission-detail-photo church-mission-frame church-mission-frame--' . $frame . '">';
+			$html .= '<span class="church-mission-frame-mat" aria-hidden="true"></span>';
+			$html .= '<img src="' . htmlspecialchars($photo, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" loading="lazy" />';
+			$html .= '</figure>';
 		}
 		$html .= '<div class="church-mission-detail-compose">';
 		if ($gallery)
@@ -681,6 +687,29 @@ trait dmcadminOverseasMissionTrait
 		}
 		$html .= '</div></div></div>';
 		return $html;
+	}
+
+	/** @return int 1..6 */
+	public static function getOverseasMissionFrameStyle(string $sub_mid): int
+	{
+		$sub_mid = strtolower(trim($sub_mid));
+		$map = [
+			'p264' => 1,
+			'p261' => 2,
+			'p262' => 3,
+			'p263' => 4,
+			'p266' => 5,
+			'p265' => 6,
+		];
+		if (isset($map[$sub_mid]))
+		{
+			return $map[$sub_mid];
+		}
+		if ($sub_mid === '')
+		{
+			return 1;
+		}
+		return (abs(crc32($sub_mid)) % 6) + 1;
 	}
 
 	public static function publishOverseasMissionAll(): BaseObject

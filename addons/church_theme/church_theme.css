@@ -1374,15 +1374,98 @@ body .header .gnb > ul > li > a {
 }
 
 .church-mission-detail-photo {
-	margin: 0 0 28px;
+	margin: 0 auto 32px;
+	max-width: min(68%, 560px);
 	text-align: center;
 }
 
 .church-mission-detail-photo img {
+	display: block;
+	width: 100%;
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+	border-radius: 2px;
+	box-shadow: none;
+}
+
+/* 대표사진 액자 — 선교사별 톤만 다르고 크기는 절제 */
+.church-mission-frame {
+	position: relative;
+	padding: 10px;
+	background: #f7f3ea;
+	border-radius: 4px;
+	box-shadow:
+		0 1px 0 rgba(255, 255, 255, 0.65) inset,
+		0 8px 22px rgba(27, 67, 50, 0.1);
+}
+
+.church-mission-frame-mat {
+	display: block;
+	position: absolute;
+	inset: 6px;
+	pointer-events: none;
+	border: 1px solid rgba(27, 67, 50, 0.1);
+	border-radius: 2px;
+	z-index: 1;
+}
+
+.church-mission-frame img {
+	position: relative;
+	z-index: 0;
+}
+
+.church-mission-frame--1 {
+	background: linear-gradient(160deg, #f3ebe0, #e8dccb);
+	box-shadow:
+		0 0 0 1px rgba(120, 90, 55, 0.28),
+		0 0 0 5px #d7c4a8,
+		0 0 0 6px rgba(90, 64, 36, 0.35),
+		0 10px 24px rgba(90, 64, 36, 0.14);
+}
+
+.church-mission-frame--2 {
+	background: linear-gradient(165deg, #eef6f1, #dfece4);
+	box-shadow:
+		0 0 0 1px rgba(45, 106, 79, 0.28),
+		0 0 0 4px #c5dbcd,
+		0 0 0 5px rgba(27, 67, 50, 0.4),
+		0 10px 24px rgba(27, 67, 50, 0.12);
+}
+
+.church-mission-frame--3 {
+	background: linear-gradient(165deg, #f8f4ec, #efe6d6);
+	box-shadow:
+		0 0 0 1px rgba(184, 148, 90, 0.35),
+		0 0 0 4px #ead9b8,
+		0 0 0 5px rgba(150, 110, 50, 0.45),
+		0 10px 22px rgba(120, 90, 40, 0.12);
+}
+
+.church-mission-frame--4 {
+	background: linear-gradient(165deg, #eef2f6, #dde5ee);
+	box-shadow:
+		0 0 0 1px rgba(70, 95, 120, 0.3),
+		0 0 0 4px #c9d5e2,
+		0 0 0 5px rgba(55, 75, 100, 0.4),
+		0 10px 22px rgba(40, 60, 85, 0.12);
+}
+
+.church-mission-frame--5 {
+	background: linear-gradient(165deg, #f6f1ee, #ebe2dc);
+	box-shadow:
+		0 0 0 1px rgba(130, 95, 80, 0.28),
+		0 0 0 4px #dfcfc4,
+		0 0 0 5px rgba(100, 70, 55, 0.38),
+		0 10px 22px rgba(80, 55, 40, 0.12);
+}
+
+.church-mission-frame--6 {
+	background: linear-gradient(165deg, #f4f4f2, #e5e5e1);
+	box-shadow:
+		0 0 0 1px rgba(80, 80, 75, 0.28),
+		0 0 0 4px #d4d4ce,
+		0 0 0 5px rgba(55, 55, 50, 0.4),
+		0 10px 22px rgba(40, 40, 35, 0.12);
 }
 
 .church-mission-detail-compose {
@@ -1393,7 +1476,7 @@ body .header .gnb > ul > li > a {
 }
 
 .church-mission-detail--with-gallery .church-mission-detail-compose {
-	padding: 40px 128px 56px;
+	padding: 48px 158px 96px;
 	border-radius: 18px;
 	background:
 		radial-gradient(ellipse 70% 55% at 50% 45%, rgba(255, 254, 249, 0.88) 0%, rgba(255, 254, 249, 0.35) 55%, transparent 75%),
@@ -1432,14 +1515,14 @@ body .header .gnb > ul > li > a {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	z-index: 2;
+	z-index: 1;
 }
 
 .church-mission-gal-item {
 	position: absolute;
 	margin: 0;
-	width: 112px;
-	padding: 7px 7px 16px;
+	width: 140px;
+	padding: 9px 9px 20px;
 	background:
 		linear-gradient(180deg, #fffefb 0%, #f7f3ea 100%);
 	border-radius: 3px;
@@ -1458,7 +1541,7 @@ body .header .gnb > ul > li > a {
 		box-shadow 0.35s ease;
 	animation: church-mission-gal-float 5.5s ease-in-out infinite;
 	will-change: transform;
-	z-index: 2;
+	z-index: 1;
 }
 
 .church-mission-gal-item::before {
@@ -1489,7 +1572,7 @@ body .header .gnb > ul > li > a {
 .church-mission-gal-item img {
 	display: block;
 	width: 100%;
-	height: 90px;
+	height: 113px;
 	object-fit: cover;
 	border-radius: 2px;
 	pointer-events: none;
@@ -1512,13 +1595,13 @@ body .header .gnb > ul > li > a {
 	opacity: 0.35;
 }
 
-.church-mission-gal-item--1 { top: 2%; left: 0; --gal-rot: -8deg; animation-delay: 0s; }
-.church-mission-gal-item--2 { top: 4%; right: 0; --gal-rot: 7deg; animation-delay: 0.6s; }
-.church-mission-gal-item--3 { top: 38%; left: -4px; --gal-rot: 5deg; animation-delay: 1.1s; }
-.church-mission-gal-item--4 { top: 36%; right: -4px; --gal-rot: -6deg; animation-delay: 1.7s; }
-.church-mission-gal-item--5 { bottom: 6%; left: 4%; --gal-rot: -4deg; animation-delay: 0.3s; }
-.church-mission-gal-item--6 { bottom: 4%; right: 4%; --gal-rot: 6deg; animation-delay: 1.4s; }
-.church-mission-gal-item--7 { bottom: -2%; left: calc(50% - 56px); --gal-rot: -2deg; animation-delay: 2s; }
+.church-mission-gal-item--1 { top: 0; left: -8px; --gal-rot: -8deg; animation-delay: 0s; }
+.church-mission-gal-item--2 { top: 2%; right: -8px; --gal-rot: 7deg; animation-delay: 0.6s; }
+.church-mission-gal-item--3 { top: 42%; left: -18px; --gal-rot: 5deg; animation-delay: 1.1s; }
+.church-mission-gal-item--4 { top: 40%; right: -18px; --gal-rot: -6deg; animation-delay: 1.7s; }
+.church-mission-gal-item--5 { bottom: -36px; left: 0; --gal-rot: -4deg; animation-delay: 0.3s; }
+.church-mission-gal-item--6 { bottom: -40px; right: 0; --gal-rot: 6deg; animation-delay: 1.4s; }
+.church-mission-gal-item--7 { bottom: -52px; left: calc(50% - 70px); --gal-rot: -2deg; animation-delay: 2s; }
 
 @keyframes church-mission-gal-float {
 	0%, 100% { transform: rotate(var(--gal-rot)) translateY(0); }
@@ -1527,7 +1610,7 @@ body .header .gnb > ul > li > a {
 
 .church-mission-detail-body {
 	position: relative;
-	z-index: 1;
+	z-index: 5;
 	max-width: 34em;
 	margin: 0 auto;
 	padding: 22px 26px 26px;
@@ -1676,8 +1759,16 @@ body .header .gnb > ul > li > a {
 		left: auto !important;
 		right: auto !important;
 		bottom: auto !important;
-		width: 96px;
+		width: 120px;
 		animation: church-mission-gal-float 5s ease-in-out infinite;
+	}
+
+	.church-mission-gal-item img {
+		height: 100px;
+	}
+
+	.church-mission-detail-photo {
+		max-width: min(82%, 420px);
 	}
 
 	.church-mission-gal-item:hover,

@@ -1559,6 +1559,7 @@ class dmcadminModel extends dmcadmin
 		$pastor_url = self::buildMainTargetUrl('page', '8');
 		$pastor_img = $hero['pastor'] ?? '';
 		$pastor_path = self::urlToLocalPath($pastor_img);
+		$html .= '<div class="church-main-pastor-col">';
 		$html .= '<a class="church-main-pastor' . ($pastor_path && is_file($pastor_path) ? ' church-main-pastor--img' : '') . '" href="'
 			. htmlspecialchars($pastor_url, ENT_QUOTES, 'UTF-8') . '"';
 		if ($pastor_path && is_file($pastor_path))
@@ -1567,6 +1568,7 @@ class dmcadminModel extends dmcadmin
 		}
 		$html .= '><span class="church-main-pastor-title">???? ?? ? ????</span>'
 			. '<span class="church-main-pastor-sub">????? ?????.</span></a>';
+		$html .= '</div>';
 		$html .= '</div>';
 		$html .= '<div class="church-main-tiles-grid">';
 		foreach (self::MAIN_TILES as $key => $meta)
