@@ -1036,13 +1036,15 @@ body .header .gnb > ul > li > a {
 
 .church-dm-item:has(.church-dm-item-name a):hover .church-dm-item-photo img,
 .church-dm-item:has(.church-dm-item-name a):hover .church-dm-initial,
-.church-dm-item:has(.church-dm-item-name a):hover .church-dm-flag {
+.church-dm-item:has(.church-dm-item-name a):hover .church-dm-flag,
+.church-dm-item:has(.church-dm-item-name a):hover .church-dm-name-flag img {
 	transform: scale(1.08);
 }
 
 .church-dm-item-photo img,
 .church-dm-initial,
-.church-dm-flag {
+.church-dm-flag,
+.church-dm-name-flag img {
 	transition: transform 0.4s cubic-bezier(0.22, 1.55, 0.36, 1);
 }
 
@@ -1132,6 +1134,40 @@ body .header .gnb > ul > li > a {
 	letter-spacing: -0.025em;
 }
 
+.church-dm-item-name-row {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 8px;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+.church-dm-name-flag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: 30px;
+	height: 22px;
+	padding: 2px;
+	background: rgba(255, 255, 255, 0.85);
+	border: 1px solid rgba(45, 106, 79, 0.14);
+	border-radius: 4px;
+	box-sizing: border-box;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.church-dm-name-flag img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: 2px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 .church-dm-item-name a {
 	color: var(--church-green, #1b4332);
 	text-decoration: none;
@@ -1191,6 +1227,27 @@ body .header .gnb > ul > li > a {
 .church-overseas-mission .church-dm-list--featured {
 	justify-content: center;
 	padding: 8px 0 4px;
+}
+
+.church-overseas-mission .church-dm-col:not(.church-dm-col-dispatch) .church-dm-item {
+	justify-content: center;
+	gap: 14px;
+}
+
+.church-overseas-mission .church-dm-col:not(.church-dm-col-dispatch) .church-dm-item-body {
+	flex: 0 1 auto;
+	min-width: 0;
+	text-align: center;
+}
+
+.church-overseas-mission .church-dm-col:not(.church-dm-col-dispatch) .church-dm-country {
+	display: block;
+	margin: 0 auto 3px;
+	width: fit-content;
+}
+
+.church-overseas-mission .church-dm-col:not(.church-dm-col-dispatch) .church-dm-item-name-row {
+	justify-content: center;
 }
 
 .church-dm-item--featured {

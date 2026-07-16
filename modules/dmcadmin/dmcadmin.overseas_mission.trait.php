@@ -586,7 +586,16 @@ trait dmcadminOverseasMissionTrait
 		if ($has_sub)
 		{
 			$url = htmlspecialchars(getNotEncodedUrl('', 'mid', $sub_mid), ENT_QUOTES, 'UTF-8');
-			$html .= '<strong class="church-dm-item-name"><a href="' . $url . '">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a></strong>';
+			$html .= '<strong class="church-dm-item-name">';
+			$html .= '<span class="church-dm-item-name-row">';
+			$html .= '<a href="' . $url . '">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a>';
+			if ($flag_url !== '')
+			{
+				$html .= '<span class="church-dm-name-flag" title="' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '" aria-hidden="true">';
+				$html .= '<img src="' . htmlspecialchars($flag_url, ENT_QUOTES, 'UTF-8') . '" alt="" loading="lazy" width="28" height="21" />';
+				$html .= '</span>';
+			}
+			$html .= '</span></strong>';
 		}
 		else
 		{
