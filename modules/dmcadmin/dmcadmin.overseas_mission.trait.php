@@ -376,7 +376,13 @@ trait dmcadminOverseasMissionTrait
 		);
 
 		$wanted = [];
-		$order = 1;
+		/* 파송선교(p27) — 해외선교 소메뉴 맨 앞: 박미경 선교사 */
+		$dispatch_mid = self::DISPATCH_MISSION_PAGE_MID;
+		$dispatch_name = method_exists(__CLASS__, 'getDispatchMissionMenuLabel')
+			? self::getDispatchMissionMenuLabel()
+			: '박미경 선교사';
+		$wanted[$dispatch_mid] = ['name' => $dispatch_name, 'order' => 1];
+		$order = 2;
 		foreach ($items as $item)
 		{
 			if (empty($item['has_sub']))
@@ -385,7 +391,7 @@ trait dmcadminOverseasMissionTrait
 			}
 			$sub_mid = trim((string)($item['sub_mid'] ?? ''));
 			$name = self::getOverseasMissionItemLabel($item);
-			if ($sub_mid === '' || $name === '')
+			if ($sub_mid === '' || $name === '' || $sub_mid === $dispatch_mid)
 			{
 				continue;
 			}
@@ -401,7 +407,7 @@ trait dmcadminOverseasMissionTrait
 		foreach ($existing as $row)
 		{
 			$url = trim((string)$row->url);
-			if ($url === '' || isset($wanted[$url]))
+			if ($url === '' || isset($wanted[$url]) || $url === $dispatch_mid)
 			{
 				continue;
 			}
@@ -557,6 +563,16 @@ trait dmcadminOverseasMissionTrait
 		$label = self::getOverseasMissionItemLabel($item);
 		$has_sub = !empty($item['has_sub']) && trim((string)($item['sub_mid'] ?? '')) !== '';
 		$sub_mid = trim((string)($item['sub_mid'] ?? ''));
+		/* 파송 카드는 전용 페이지(p27)로 연결 */
+		$link_mid = '';
+		if ($featured)
+		{
+			$link_mid = self::DISPATCH_MISSION_PAGE_MID;
+		}
+		elseif ($has_sub)
+		{
+			$link_mid = $sub_mid;
+		}
 		$img = '';
 		if ($has_sub)
 		{
@@ -583,9 +599,9 @@ trait dmcadminOverseasMissionTrait
 		{
 			$html .= '<span class="church-dm-country">' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '</span>';
 		}
-		if ($has_sub)
+		if ($link_mid !== '')
 		{
-			$url = htmlspecialchars(getNotEncodedUrl('', 'mid', $sub_mid), ENT_QUOTES, 'UTF-8');
+			$url = htmlspecialchars(getNotEncodedUrl('', 'mid', $link_mid), ENT_QUOTES, 'UTF-8');
 			$html .= '<strong class="church-dm-item-name">';
 			$html .= '<span class="church-dm-item-name-row">';
 			$html .= '<a href="' . $url . '">' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a>';

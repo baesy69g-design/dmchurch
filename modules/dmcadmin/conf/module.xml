@@ -22,6 +22,7 @@
 		<action name="dispDmcMgrDomesticMissionListEdit" type="view" standalone="true" />
 		<action name="dispDmcMgrDomesticMissionSubEdit" type="view" standalone="true" />
 		<action name="dispDmcMgrOverseasMissionListEdit" type="view" standalone="true" />
+		<action name="dispDmcMgrDispatchMissionEdit" type="view" standalone="true" />
 		<action name="dispDmcMgrMemberForm" type="view" standalone="true" />
 		<action name="procDmcMgrLogin" type="controller" standalone="true" method="POST" />
 		<action name="procDmcMgrLogout" type="controller" standalone="true" method="POST|GET" />
@@ -41,6 +42,8 @@
 		<action name="procDmcMgrSaveDomesticMissionList" type="controller" standalone="true" method="POST" />
 		<action name="procDmcMgrSaveDomesticMissionSub" type="controller" standalone="true" method="POST" />
 		<action name="procDmcMgrSaveOverseasMissionList" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrSaveDispatchMission" type="controller" standalone="true" method="POST" />
+		<action name="procDmcMgrDeleteDispatchCheer" type="controller" standalone="true" method="POST" />
 		<action name="procDmcMgrSaveMember" type="controller" standalone="true" method="POST" />
 	</actions>
 </module>

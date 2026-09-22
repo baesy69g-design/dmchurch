@@ -1,0 +1,171 @@
+<!--#include("_header.html")-->
+<h2 class="dmc-page-title">파송선교 — 전용 페이지</h2>
+<p class="dmc-help">
+	상단 소개·기도·사진 콜라주만 여기서 관리합니다.
+	<strong>선교편지·치앙라이 동영상</strong>은 홈페이지(파송선교 페이지)에서 dmc2241·선교페이지관리자가 직접 등록합니다.
+	성도 응원은 홈페이지에서 남기며, 아래 목록에서 삭제할 수 있습니다.
+	<a href="{$page->view_url}" target="_blank" rel="noopener">미리보기 ↗</a>
+</p>
+
+<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveDispatchMission')}" enctype="multipart/form-data" class="dmc-form dmc-form-wide" id="dmc-dispatch-form">
+	<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+	<input type="hidden" name="page_mid" value="p27" />
+
+	<h3 class="dmc-section-title">상단 소개</h3>
+	<div class="dmc-field">
+		<label for="dmc-cd-title">페이지 제목</label>
+		<input type="text" id="dmc-cd-title" name="page_title" value="{$page->page_title}" class="dmc-input-wide" />
+	</div>
+	<div class="dmc-field-row">
+		<div class="dmc-field">
+			<label for="dmc-cd-country">국가</label>
+			<input type="text" id="dmc-cd-country" name="country" value="{$page->country}" placeholder="예: 태국" />
+		</div>
+		<div class="dmc-field">
+			<label for="dmc-cd-missionary">선교사</label>
+			<input type="text" id="dmc-cd-missionary" name="missionary_name" value="{$page->missionary_name}" placeholder="예: 박미경 선교사" />
+		</div>
+		<div class="dmc-field">
+			<label for="dmc-cd-place">선교지</label>
+			<input type="text" id="dmc-cd-place" name="place_name" value="{$page->place_name}" placeholder="예: 치앙라이 기치교회" />
+		</div>
+	</div>
+	<div class="dmc-field">
+		<label for="dmc-cd-intro">한 줄 소개</label>
+		<input type="text" id="dmc-cd-intro" name="intro" value="{$page->intro}" class="dmc-input-wide" maxlength="120" placeholder="짧은 소개 한 줄" />
+	</div>
+	<div class="dmc-field">
+		<label for="dmc-cd-prayer">이번 달 기도</label>
+		<input type="text" id="dmc-cd-prayer" name="prayer_line" value="{$page->prayer_line}" class="dmc-input-wide" maxlength="160" placeholder="성도가 바로 볼 수 있는 기도 제목" />
+		<p class="dmc-help">선교페이지관리자는 홈페이지에서도 연필 아이콘으로 수정할 수 있습니다.</p>
+	</div>
+	<div class="dmc-field">
+		<label for="dmc-cd-photo-desc">사진 옆 설명</label>
+		<textarea id="dmc-cd-photo-desc" name="photo_desc" rows="8" class="dmc-para-input" placeholder="해외선교 상세페이지의 본문처럼, 사진 옆에 보일 소개·사역 설명을 입력하세요. 줄바꿈으로 문단을 나눌 수 있습니다.">{$page->photo_desc}</textarea>
+		<p class="dmc-help">사진 오른쪽 카드에 국기·선교사·선교지 정보와 함께 표시됩니다.</p>
+	</div>
+
+	<h3 class="dmc-section-title">대표 사진 콜라주 (최대 {$photo_max}장)</h3>
+	<p class="dmc-help">등록한 장수에 맞춰 화면에 섞여 배치됩니다. 비운 칸은 건너뜁니다.</p>
+	<div class="dmc-person-grid">
+		<!--@foreach($photo_slots as $slot)-->
+		<div class="dmc-field dmc-person-photo">
+			<label>사진 {$slot->num}</label>
+			<input type="hidden" name="existing_photo_{$slot->index}" value="{$slot->photo}" />
+			<!--@if($slot->photo)-->
+			<div class="dmc-info-preview dmc-person-preview" style="background-image:url('{$slot->photo}');"></div>
+			<label class="dmc-check"><input type="checkbox" name="remove_photo_{$slot->index}" value="Y" /> 삭제</label>
+			<!--@else-->
+			<div class="dmc-info-preview dmc-slide-empty">미등록</div>
+			<!--@end-->
+			<input type="file" name="photo_{$slot->index}" accept="image/jpeg,image/png,image/webp,image/gif" />
+		</div>
+		<!--@end-->
+	</div>
+
+	<div class="dmc-form-actions">
+		<button type="submit" class="dmc-btn dmc-btn-primary">저장 · 홈페이지 반영</button>
+		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrInfoPages')}" class="dmc-btn">목록</a>
+		<a href="{$page->view_url}" target="_blank" rel="noopener" class="dmc-btn">미리보기</a>
+	</div>
+</form>
+
+<section class="dmc-dispatch-boards-hint">
+	<h3 class="dmc-section-title">편지·동영상 등록 안내</h3>
+	<p class="dmc-help">
+		선교편지: <a href="{$page->letter_board_url}" target="_blank" rel="noopener">게시판 바로가기</a>
+		· 또는 파송선교 페이지 「선교편지」 탭의 <strong>등록</strong> 버튼<br />
+		치앙라이 동영상: <a href="{$page->video_board_url}" target="_blank" rel="noopener">게시판 바로가기</a>
+		· 또는 「치앙라이 동영상」 탭의 <strong>등록</strong> 버튼
+	</p>
+</section>
+
+<section class="dmc-dispatch-cheer-mod">
+	<h3 class="dmc-section-title">성도 응원 관리 ({$cheer_count}건)</h3>
+	<!--@if(!$cheer_items)-->
+	<p class="dmc-help">등록된 응원이 없습니다.</p>
+	<!--@else-->
+	<ul class="dmc-cheer-admin-list">
+		<!--@foreach($cheer_items as $c)-->
+		<li>
+			<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrDeleteDispatchCheer')}" class="dmc-inline-form" onsubmit="return confirm('이 응원을 삭제할까요?');">
+				<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+				<input type="hidden" name="comment_id" value="{$c->id}" />
+				<strong>{$c->nick_name}</strong>
+				<time>{$c->created}</time>
+				<p>{$c->body}</p>
+				<!--@if($c->reply_body)-->
+				<p class="dmc-cheer-reply-preview">↳ 선교사: {$c->reply_body}</p>
+				<!--@end-->
+				<button type="submit" class="dmc-btn">삭제</button>
+			</form>
+		</li>
+		<!--@end-->
+	</ul>
+	<!--@end-->
+</section>
+
+<style>
+.dmc-field-row { display:flex; flex-wrap:wrap; gap:12px; }
+.dmc-field-row .dmc-field { flex:1; min-width:160px; }
+.dmc-cheer-admin-list { list-style:none; margin:0; padding:0; }
+.dmc-cheer-admin-list li { border-top:1px solid #eee; padding:12px 0; }
+.dmc-cheer-admin-list time { margin-left:8px; color:#888; font-size:13px; }
+.dmc-cheer-reply-preview { color:#5a6b4a; margin:6px 0; }
+.dmc-inline-form .dmc-btn { margin-top:6px; }
+.dmc-dispatch-boards-hint { margin-top:28px; padding-top:8px; }
+</style>
+<script>
+(function () {
+	var form = document.getElementById('dmc-dispatch-form');
+	if (!form) return;
+	function resizeImage(file, maxDim, maxBytes) {
+		return new Promise(function (resolve) {
+			if (!file || !file.type || file.type.indexOf('image/') !== 0) { resolve(file); return; }
+			var url = URL.createObjectURL(file);
+			var img = new Image();
+			img.onload = function () {
+				URL.revokeObjectURL(url);
+				var w = img.naturalWidth, h = img.naturalHeight;
+				if (!w || !h) { resolve(file); return; }
+				var ratio = Math.min(1, maxDim / Math.max(w, h));
+				if (ratio === 1 && file.size <= maxBytes) { resolve(file); return; }
+				var tw = Math.max(1, Math.round(w * ratio));
+				var th = Math.max(1, Math.round(h * ratio));
+				var canvas = document.createElement('canvas');
+				canvas.width = tw; canvas.height = th;
+				var ctx = canvas.getContext('2d');
+				ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, tw, th); ctx.drawImage(img, 0, 0, tw, th);
+				var q = 0.82;
+				(function attempt() {
+					canvas.toBlob(function (blob) {
+						if (!blob) { resolve(file); return; }
+						if (blob.size <= maxBytes || q <= 0.45) {
+							var name = (file.name || 'photo').replace(/\.(png|webp|bmp|gif|jpeg|jpg)$/i, '') + '.jpg';
+							resolve(new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() }));
+						} else { q -= 0.08; attempt(); }
+					}, 'image/jpeg', q);
+				})();
+			};
+			img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+			img.src = url;
+		});
+	}
+	form.addEventListener('submit', function (e) {
+		if (form.dataset.resized === '1') return;
+		var pending = Array.prototype.slice.call(form.querySelectorAll('input[type=file]')).filter(function (inp) {
+			return inp.files && inp.files.length;
+		});
+		if (!pending.length) return;
+		e.preventDefault();
+		var btn = form.querySelector('button[type=submit]');
+		if (btn) { btn.disabled = true; btn.textContent = '사진 처리 중...'; }
+		Promise.all(pending.map(function (inp) {
+			return resizeImage(inp.files[0], 1400, 700 * 1024).then(function (nf) {
+				try { var dt = new DataTransfer(); dt.items.add(nf); inp.files = dt.files; } catch (err) {}
+			});
+		})).then(function () { form.dataset.resized = '1'; form.submit(); });
+	});
+})();
+</script>
+<!--#include("_footer.html")-->

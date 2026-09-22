@@ -47,6 +47,7 @@ class dmcadminView extends dmcadmin
 		Context::set('member_count', count($members));
 		Context::set('prayer_notify_email', $config->prayer_notify_email);
 		Context::set('prayer_reader_count', count((array)$config->prayer_reader_srls));
+		Context::set('mission_page_admin_count', count((array)($config->mission_page_admin_srls ?? [])));
 		$slides = dmcadminModel::getMainSlideUrls();
 		Context::set('main_slide_set_count', count(array_filter($slides)));
 		$sub_tops = dmcadminModel::getSubTopBannerUrls();
@@ -74,9 +75,25 @@ class dmcadminView extends dmcadmin
 				break;
 			}
 		}
+		$mission_ids = ['', ''];
+		$j = 0;
+		foreach ((array)($config->mission_page_admin_srls ?? []) as $srl)
+		{
+			$m = MemberModel::getMemberInfoByMemberSrl((int)$srl);
+			if ($m)
+			{
+				$mission_ids[$j++] = $m->user_id;
+			}
+			if ($j >= dmcadminModel::MAX_MISSION_PAGE_ADMINS)
+			{
+				break;
+			}
+		}
 		Context::set('prayer_notify_email', $config->prayer_notify_email);
 		Context::set('prayer_reader_1', $reader_ids[0]);
 		Context::set('prayer_reader_2', $reader_ids[1]);
+		Context::set('mission_page_admin_1', $mission_ids[0]);
+		Context::set('mission_page_admin_2', $mission_ids[1]);
 		$this->initLayout('settings', '설정');
 	}
 
@@ -525,5 +542,49 @@ class dmcadminView extends dmcadmin
 		Context::set('categories', dmcadminModel::getOverseasMissionCategories());
 		Context::set('sub_options', dmcadminModel::getOverseasMissionSubOptions());
 		$this->initLayout('overseas_mission_list_edit', '해외선교 — 목록');
+	}
+
+	public function dispDmcMgrDispatchMissionEdit()
+	{
+		dmcadminModel::requireAuth();
+		$page = dmcadminModel::getDispatchMissionPageForEdit();
+		if (!$page)
+		{
+			return new BaseObject(-1, '파송선교 페이지를 찾을 수 없습니다. setup_dispatch_mission_page.php를 먼저 실행하세요.');
+		}
+
+		$slots = [];
+		for ($i = 0; $i < dmcadminModel::DISPATCH_MISSION_PHOTO_COUNT; $i++)
+		{
+			$o = new stdClass;
+			$o->index = $i;
+			$o->num = $i + 1;
+			$o->photo = (string)($page->photos[$i] ?? '');
+			$slots[] = $o;
+		}
+
+		$cheer = dmcadminModel::getDispatchCheerData();
+		$cheer_items = [];
+		foreach (array_reverse((array)$cheer['comments']) as $c)
+		{
+			if (!is_array($c))
+			{
+				continue;
+			}
+			$o = new stdClass;
+			$o->id = (string)($c['id'] ?? '');
+			$o->nick_name = dmcadminModel::cheerMemberDisplayName((int)($c['member_srl'] ?? 0), (string)($c['nick_name'] ?? ''));
+			$o->created = (string)($c['created'] ?? '');
+			$o->body = (string)($c['body'] ?? '');
+			$o->reply_body = (string)($c['reply']['body'] ?? '');
+			$cheer_items[] = $o;
+		}
+
+		Context::set('page', $page);
+		Context::set('photo_slots', $slots);
+		Context::set('photo_max', dmcadminModel::DISPATCH_MISSION_PHOTO_COUNT);
+		Context::set('cheer_items', $cheer_items);
+		Context::set('cheer_count', count($cheer_items));
+		$this->initLayout('dispatch_mission_edit', '파송선교');
 	}
 }

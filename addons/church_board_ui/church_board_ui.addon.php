@@ -43,15 +43,33 @@ $mid_map = [
 	'pray' => 126,
 ];
 
-if (!isset($mid_map[$mid]))
+/* 파송선교 페이지: 보드 UI 스크립트만 로드 (등록 팝업용) */
+if ($mid === 'p27' && $called_position === 'after_module_proc' && Context::getResponseMethod() === 'HTML')
+{
+	Context::loadFile('./addons/church_board_ui/church_board_ui.css');
+	Context::loadFile(['./addons/church_board_ui/church_board_ui.js', 'body', '', null], true);
+	return;
+}
+
+$is_mission_mid = church_writeModel::isMissionBoard(0, (string)$mid);
+if (!isset($mid_map[$mid]) && !$is_mission_mid)
 {
 	return;
 }
 
 $module_srl = (int)Context::get('module_srl');
-if (!$module_srl)
+if (!$module_srl && isset($mid_map[$mid]))
 {
 	$module_srl = $mid_map[$mid];
+}
+if (!$module_srl && $is_mission_mid)
+{
+	$info = ModuleModel::getModuleInfoByMid($mid);
+	$module_srl = $info ? (int)$info->module_srl : 0;
+}
+if ($module_srl < 1)
+{
+	return;
 }
 
 $is_pray = church_writeModel::isPrayBoard($module_srl, $mid);
@@ -225,7 +243,9 @@ if (in_array($mid, ['picture', 'newface', 'jubo'], true))
 }
 
 $logged_info = Context::get('logged_info');
-Context::set('church_board_admin', church_writeModel::isChurchAdmin($logged_info) ? 'Y' : 'N');
+$is_board_admin = church_writeModel::isChurchAdmin($logged_info)
+	|| church_writeModel::canWriteMissionBoard($logged_info, $module_srl, $mid);
+Context::set('church_board_admin', $is_board_admin ? 'Y' : 'N');
 $config = church_writeModel::getClientConfig($module_srl, $logged_info, $mid);
 if (!$config)
 {

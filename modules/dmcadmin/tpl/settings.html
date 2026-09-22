@@ -13,18 +13,31 @@
 </section>
 
 <section class="dmc-section">
-	<h3>2. 기도요청 수신 메일</h3>
-	<p class="dmc-help">기도요청 등록 시 발송할 메일 주소 (발송 기능은 추후 구현)</p>
+	<h3>2. 상세페이지 지정</h3>
+	<p class="dmc-help">기도요청·파송선교 관련 권한을 회원 아이디로 지정합니다.</p>
 	<form method="post" action="{getUrl('', 'mid', 'dmcadmin', 'act', 'procDmcMgrSaveSettings')}" class="dmc-form">
 		<input type="hidden" name="_rx_csrf_token" value="{$csrf_token}" />
+
+		<h4 class="dmc-subhead">기도요청 수신 메일</h4>
+		<p class="dmc-help">기도요청 등록 시 발송할 메일 주소 (발송 기능은 추후 구현)</p>
 		<div class="dmc-field">
 			<label>수신 메일</label>
 			<input type="email" name="prayer_notify_email" value="{$prayer_notify_email}" placeholder="admin@example.com" />
 		</div>
-		<h3>3. 기도요청 조회 ID (최대 2명)</h3>
+
+		<h4 class="dmc-subhead">기도요청 조회 ID (최대 2명)</h4>
 		<p class="dmc-help">등록된 회원 아이디만 입력. dmc2241은 등록 불가. 본인 글 외 전체 열람 가능.</p>
-		<div class="dmc-field"><label>조회자 1</label><input type="text" name="prayer_reader_1" value="{$prayer_reader_1}" placeholder="회원 아이디" /></div>
-		<div class="dmc-field"><label>조회자 2</label><input type="text" name="prayer_reader_2" value="{$prayer_reader_2}" placeholder="회원 아이디" /></div>
+		<div class="dmc-field"><label>조회자 1</label><input type="text" name="prayer_reader_1" value="{$prayer_reader_1}" placeholder="회원 아이디" autocomplete="off" /></div>
+		<div class="dmc-field"><label>조회자 2</label><input type="text" name="prayer_reader_2" value="{$prayer_reader_2}" placeholder="회원 아이디" autocomplete="off" /></div>
+
+		<h4 class="dmc-subhead">선교페이지관리자 (최대 2명)</h4>
+		<p class="dmc-help">
+			파송선교 전용 페이지의 선교편지·영상편지 등 관련 게시판에 글을 쓸 수 있는 회원 아이디입니다.
+			dmc2241은 등록 불가(이미 전체 관리자).
+		</p>
+		<div class="dmc-field"><label>선교페이지관리자 1</label><input type="text" name="mission_page_admin_1" value="{$mission_page_admin_1}" placeholder="회원 아이디" autocomplete="off" /></div>
+		<div class="dmc-field"><label>선교페이지관리자 2</label><input type="text" name="mission_page_admin_2" value="{$mission_page_admin_2}" placeholder="회원 아이디" autocomplete="off" /></div>
+
 		<button type="submit" class="dmc-btn dmc-btn-primary">설정 저장</button>
 	</form>
 </section>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon version="0.2">
+	<title xml:lang="ko">파송선교 성도 응원</title>
+	<description xml:lang="ko">파송선교(p27) 페이지 응원 탭 스크립트 보조 로드</description>
+	<version>1.0.0</version>
+	<date>2026-03-22</date>
+	<author link="https://dmchurch.kr">
+		<name xml:lang="ko">동명교회</name>
+	</author>
+	<extra_vars />
+</addon>

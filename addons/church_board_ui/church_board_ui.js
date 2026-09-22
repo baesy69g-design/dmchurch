@@ -409,4 +409,9 @@
 		bindEditButtons(cfg);
 		bindSermonDeleteButtons(cfg);
 	});
+
+	window.ChurchBoardUI = {
+		openModal: openModal,
+		fetchEditData: fetchEditData
+	};
 })();

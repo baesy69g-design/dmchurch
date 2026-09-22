@@ -141,9 +141,30 @@ class dmcadminController extends dmcadmin
 			$readers[] = (int)$m->member_srl;
 		}
 
+		$mission_admins = [];
+		for ($i = 1; $i <= dmcadminModel::MAX_MISSION_PAGE_ADMINS; $i++)
+		{
+			$uid = trim((string)Context::get('mission_page_admin_' . $i));
+			if (!$uid)
+			{
+				continue;
+			}
+			$m = MemberModel::getMemberInfoByUserID($uid);
+			if (!$m)
+			{
+				return new BaseObject(-1, '존재하지 않는 선교페이지관리자 ID: ' . $uid);
+			}
+			if ($m->user_id === dmcadminModel::ADMIN_USER_ID)
+			{
+				return new BaseObject(-1, '동명지킴이(dmc2241)는 선교페이지관리자로 등록할 수 없습니다.');
+			}
+			$mission_admins[] = (int)$m->member_srl;
+		}
+
 		$output = dmcadminModel::saveChurchConfig([
 			'prayer_notify_email' => $email,
 			'prayer_reader_srls' => $readers,
+			'mission_page_admin_srls' => $mission_admins,
 		]);
 		if (!$output->toBool())
 		{
@@ -2077,5 +2098,126 @@ class dmcadminController extends dmcadmin
 		$this->resizeImageFile($path, 1200, 700 * 1024);
 		$safe = preg_replace('/[^a-z0-9_]/i', '', $scope);
 		return './files/church/overseas/' . $safe . '/' . $filename . '?t=' . time();
+	}
+
+	/* ===================== 파송선교 페이지 저장 ===================== */
+
+	public function procDmcMgrSaveDispatchMission()
+	{
+		dmcadminModel::requireAuth();
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			return new BaseObject(-1, '보안 토큰이 올바르지 않습니다.');
+		}
+		$output = $this->saveDispatchMissionForm();
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->redirectAfterProc(getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDispatchMissionEdit', 'msg', 'info_page_saved'));
+	}
+
+	public function procDmcMgrDeleteDispatchCheer()
+	{
+		dmcadminModel::requireAuth();
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			return new BaseObject(-1, '보안 토큰이 올바르지 않습니다.');
+		}
+		$comment_id = trim((string)Context::get('comment_id'));
+		$data = dmcadminModel::getDispatchCheerData();
+		$next = [];
+		foreach ((array)$data['comments'] as $c)
+		{
+			if (!is_array($c) || (string)($c['id'] ?? '') === $comment_id)
+			{
+				continue;
+			}
+			$next[] = $c;
+		}
+		$data['comments'] = $next;
+		$output = dmcadminModel::saveDispatchCheerData($data);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->redirectAfterProc(getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDispatchMissionEdit', 'msg', 'info_page_saved'));
+	}
+
+	protected function saveDispatchMissionForm(): BaseObject
+	{
+		$photos = [];
+		for ($i = 0; $i < dmcadminModel::DISPATCH_MISSION_PHOTO_COUNT; $i++)
+		{
+			$photo = trim((string)Context::get('existing_photo_' . $i));
+			if (Context::get('remove_photo_' . $i) === 'Y')
+			{
+				$this->deleteGuidePhotoFile($photo);
+				$photo = '';
+			}
+			$field = 'photo_' . $i;
+			if (!empty($_FILES[$field]['name']) && empty($_FILES[$field]['error']))
+			{
+				try
+				{
+					$new_url = $this->uploadDispatchMissionFile('hero' . $i, $_FILES[$field], false);
+				}
+				catch (Rhymix\Framework\Exception $e)
+				{
+					return new BaseObject(-1, '사진 ' . ($i + 1) . ': ' . $e->getMessage());
+				}
+				if ($new_url)
+				{
+					$this->deleteGuidePhotoFile($photo);
+					$photo = $new_url;
+				}
+			}
+			$photos[$i] = $photo;
+		}
+
+		$data = [
+			'page_title' => trim((string)Context::get('page_title')),
+			'country' => trim((string)Context::get('country')),
+			'missionary_name' => trim((string)Context::get('missionary_name')),
+			'place_name' => trim((string)Context::get('place_name')),
+			'intro' => trim((string)Context::get('intro')),
+			'prayer_line' => trim((string)Context::get('prayer_line')),
+			'photo_desc' => trim((string)Context::get('photo_desc')),
+			'photos' => $photos,
+		];
+		return dmcadminModel::publishDispatchMissionPage($data);
+	}
+
+	/**
+	 * @param array{name?:string,tmp_name?:string,error?:int,size?:int,type?:string} $file
+	 */
+	protected function uploadDispatchMissionFile(string $prefix, array $file, bool $allow_pdf = false): string
+	{
+		if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name']))
+		{
+			throw new Rhymix\Framework\Exception('업로드 파일이 올바르지 않습니다.');
+		}
+		$orig = (string)($file['name'] ?? '');
+		$ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+		$allowed_img = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+		$allowed = $allow_pdf ? array_merge($allowed_img, ['pdf']) : $allowed_img;
+		if (!in_array($ext, $allowed, true))
+		{
+			throw new Rhymix\Framework\Exception('허용되지 않는 파일 형식입니다. (JPG/PNG/WEBP/GIF' . ($allow_pdf ? '/PDF' : '') . ')');
+		}
+		$dir = dmcadminModel::getDispatchMissionUploadDir();
+		FileHandler::makeDir($dir);
+		$filename = preg_replace('/[^a-z0-9_]/i', '', $prefix) . '_' . date('YmdHis') . mt_rand(100, 999) . '.' . $ext;
+		$path = $dir . '/' . $filename;
+		if (!move_uploaded_file($file['tmp_name'], $path))
+		{
+			throw new Rhymix\Framework\Exception('파일 저장에 실패했습니다.');
+		}
+		@chmod($path, 0644);
+		if ($ext !== 'pdf')
+		{
+			$this->resizeImageFile($path, 1600, 1200 * 1024);
+		}
+		return './files/church/dispatch_mission/' . $filename . '?t=' . time();
 	}
 }

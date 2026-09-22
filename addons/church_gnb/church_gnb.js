@@ -119,7 +119,7 @@
 				if (n === 25 || (n >= 251 && n < 261)) {
 					return 'domestic';
 				}
-				if (n === 26 || (n >= 261 && n < 271)) {
+				if (n === 26 || n === 27 || (n >= 261 && n < 271)) {
 					return 'overseas';
 				}
 				return null;

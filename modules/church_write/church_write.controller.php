@@ -25,7 +25,8 @@ class church_writeController extends church_write
 		}
 
 		$is_public = in_array($module_srl, church_writeModel::publicWriteModuleSrls(), true);
-		if (!$is_public && !church_writeModel::isChurchAdmin($logged_info))
+		$mid = (string)($forms[$module_srl]['mid'] ?? Context::get('mid') ?? '');
+		if (!$is_public && !church_writeModel::isChurchAdmin($logged_info) && !church_writeModel::canWriteMissionBoard($logged_info, $module_srl, $mid))
 		{
 			throw new Rhymix\Framework\Exceptions\NotPermitted;
 		}
@@ -118,6 +119,10 @@ class church_writeController extends church_write
 		}
 
 		$this->setRedirectUrl(getNotEncodedUrl('', 'mid', $module_info->mid, 'document_srl', $document_srl));
+		if (church_writeModel::isMissionBoard($module_srl, (string)($module_info->mid ?? '')))
+		{
+			$this->setRedirectUrl(getNotEncodedUrl('', 'mid', 'p27'));
+		}
 	}
 
 	/**
@@ -137,11 +142,6 @@ class church_writeController extends church_write
 		}
 
 		$logged_info = Context::get('logged_info');
-		if (!church_writeModel::isChurchAdmin($logged_info))
-		{
-			throw new Rhymix\Framework\Exceptions\NotPermitted;
-		}
-
 		$document_srl = (int)Context::get('target_srl');
 		if ($document_srl < 1)
 		{
@@ -153,6 +153,12 @@ class church_writeController extends church_write
 		if ($document_srl < 1 || !isset($forms[$module_srl]))
 		{
 			return new BaseObject(-1, '수정할 글을 찾을 수 없습니다.');
+		}
+
+		$mid = (string)($forms[$module_srl]['mid'] ?? '');
+		if (!church_writeModel::isChurchAdmin($logged_info) && !church_writeModel::canWriteMissionBoard($logged_info, $module_srl, $mid))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
 		}
 
 		$oDocument = DocumentModel::getDocument($document_srl);
@@ -181,6 +187,7 @@ class church_writeController extends church_write
 
 		$file_urls = $this->processUploads($module_srl, $document_srl, $args);
 
+		$board_mid = strtolower(trim((string)(ModuleModel::getModuleInfoByModuleSrl($module_srl)->mid ?? '')));
 		if ($module_srl === 114)
 		{
 			$existing = church_writeModel::extractJuboImageUrls((string)$oDocument->getContent(false));
@@ -188,6 +195,15 @@ class church_writeController extends church_write
 			if (empty($file_urls['jubo']))
 			{
 				return new BaseObject(-1, '주보 이미지가 없습니다. 이미지를 등록해 주세요.');
+			}
+		}
+		if ($board_mid === 'dispatch_letter')
+		{
+			$existing = church_writeModel::extractDispatchLetterImageUrls((string)$oDocument->getContent(false));
+			$file_urls['letter'] = array_merge($existing, $file_urls['letter'] ?? []);
+			if (empty($file_urls['letter']['page1']) && empty($file_urls['letter']))
+			{
+				return new BaseObject(-1, '선교편지 이미지가 없습니다. 1페이지를 등록해 주세요.');
 			}
 		}
 		if ($module_srl === 124 && empty($file_urls['photo']))
@@ -288,10 +304,6 @@ class church_writeController extends church_write
 		}
 
 		$logged_info = Context::get('logged_info');
-		if (!church_writeModel::isChurchAdmin($logged_info))
-		{
-			throw new Rhymix\Framework\Exceptions\NotPermitted;
-		}
 
 		// document_srl 은 라우팅에 가로채일 수 있어 target_srl 우선
 		$document_srl = (int)Context::get('target_srl');
@@ -321,6 +333,12 @@ class church_writeController extends church_write
 			return new BaseObject(-1, '이 게시판은 수정 폼이 없습니다.');
 		}
 
+		$mid = (string)($forms[$module_srl]['mid'] ?? '');
+		if (!church_writeModel::isChurchAdmin($logged_info) && !church_writeModel::canWriteMissionBoard($logged_info, $module_srl, $mid))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+
 		$this->add('document_srl', $document_srl);
 		$this->add('module_srl', $module_srl);
 		$this->add('fields', church_writeModel::extractEditFields($oDocument));
@@ -345,8 +363,17 @@ class church_writeController extends church_write
 			return new BaseObject(-1, 'msg_invalid_request');
 		}
 
-		// 갤러리형 영상 게시판(설교110/성가대116/브니엘118/교회행사120) 글만 허용
-		if (!in_array((int)$oDocument->get('module_srl'), [110, 116, 118, 120], true))
+		// 갤러리형 영상·파송선교 편지/영상 글만 허용
+		$module_srl = (int)$oDocument->get('module_srl');
+		$mid = '';
+		$mi = ModuleModel::getModuleInfoByModuleSrl($module_srl);
+		if ($mi && !empty($mi->mid))
+		{
+			$mid = strtolower(trim((string)$mi->mid));
+		}
+		$allowed_srls = [110, 116, 118, 120];
+		$allowed_mids = ['dispatch_letter', 'dispatch_video'];
+		if (!in_array($module_srl, $allowed_srls, true) && !in_array($mid, $allowed_mids, true))
 		{
 			return new BaseObject(-1, 'msg_invalid_request');
 		}
@@ -375,16 +402,24 @@ class church_writeController extends church_write
 		}
 
 		$logged_info = Context::get('logged_info');
-		if (!church_writeModel::isChurchAdmin($logged_info))
-		{
-			throw new Rhymix\Framework\Exceptions\NotPermitted;
-		}
-
 		$srls_raw = (string)Context::get('srls');
 		$srls = array_values(array_unique(array_filter(array_map('intval', explode(',', $srls_raw)))));
 		if (!$srls)
 		{
 			return new BaseObject(-1, 'msg_invalid_request');
+		}
+
+		if (!church_writeModel::isChurchAdmin($logged_info))
+		{
+			foreach ($srls as $srl)
+			{
+				$doc = DocumentModel::getDocument($srl);
+				$module_srl = $doc && $doc->isExists() ? (int)$doc->get('module_srl') : 0;
+				if (!$module_srl || !church_writeModel::canWriteMissionBoard($logged_info, $module_srl))
+				{
+					throw new Rhymix\Framework\Exceptions\NotPermitted;
+				}
+			}
 		}
 
 		$oDocumentController = DocumentController::getInstance();
@@ -462,6 +497,7 @@ class church_writeController extends church_write
 		$result = [
 			'images' => [],
 			'jubo' => [],
+			'letter' => [],
 			'photo' => '',
 		];
 
@@ -469,6 +505,9 @@ class church_writeController extends church_write
 			'news_image' => 'news',
 			'front_image' => 'front',
 			'back_image' => 'back',
+			'page1_image' => 'page1',
+			'page2_image' => 'page2',
+			'page3_image' => 'page3',
 		];
 
 		foreach ($map as $input => $kind)
@@ -480,7 +519,14 @@ class church_writeController extends church_write
 			$url = $this->uploadOne($module_srl, $document_srl, $_FILES[$input], $this->labelFilename($kind));
 			if ($url)
 			{
-				$result['jubo'][$kind] = $url;
+				if (strpos($kind, 'page') === 0)
+				{
+					$result['letter'][$kind] = $url;
+				}
+				else
+				{
+					$result['jubo'][$kind] = $url;
+				}
 			}
 		}
 
@@ -522,7 +568,14 @@ class church_writeController extends church_write
 
 	protected function labelFilename(string $kind): string
 	{
-		$labels = ['news' => '교회소식.jpg', 'front' => '앞면.jpg', 'back' => '뒷면.jpg'];
+		$labels = [
+			'news' => '교회소식.jpg',
+			'front' => '앞면.jpg',
+			'back' => '뒷면.jpg',
+			'page1' => '편지1.jpg',
+			'page2' => '편지2.jpg',
+			'page3' => '편지3.jpg',
+		];
 		return $labels[$kind] ?? 'image.jpg';
 	}
 
@@ -533,8 +586,10 @@ class church_writeController extends church_write
 			return '';
 		}
 
-		// 주보(114)/행사사진(122)/새가족소개(124): 업로드 사진을 약 2MB(가로/세로 1600px)로 자동 리사이즈
-		if (in_array($module_srl, [114, 122, 124], true))
+		// 주보(114)/행사사진(122)/새가족소개(124)/선교편지: 업로드 사진을 약 2MB(가로/세로 1600px)로 자동 리사이즈
+		$info = ModuleModel::getModuleInfoByModuleSrl($module_srl);
+		$mid = strtolower(trim((string)($info->mid ?? '')));
+		if (in_array($module_srl, [114, 122, 124], true) || $mid === 'dispatch_letter')
 		{
 			$this->resizeUploadedImage($file);
 		}
@@ -655,6 +710,37 @@ class church_writeController extends church_write
 
 	protected function buildContent(int $module_srl, int $document_srl, $args, array $file_urls): string
 	{
+		$info = ModuleModel::getModuleInfoByModuleSrl($module_srl);
+		$mid = strtolower(trim((string)($info->mid ?? '')));
+
+		if ($mid === 'dispatch_letter')
+		{
+			return church_writeModel::buildDispatchLetterContent($document_srl, $file_urls['letter'] ?? []);
+		}
+		if ($mid === 'dispatch_video')
+		{
+			$summary = trim((string)($args->summary ?? ''));
+			if (function_exists('mb_substr'))
+			{
+				$summary = mb_substr($summary, 0, 100);
+			}
+			else
+			{
+				$summary = substr($summary, 0, 100);
+			}
+			$body = church_writeModel::buildVideoContent([
+				'speaker' => '',
+				'youtube_url' => $args->youtube_url ?? '',
+				'video_url' => '',
+				'summary' => '',
+			]);
+			if ($summary !== '')
+			{
+				$body .= '<p class="cd-doc-summary">' . htmlspecialchars($summary, ENT_QUOTES, 'UTF-8') . '</p>';
+			}
+			return $body;
+		}
+
 		switch ($module_srl)
 		{
 			case 110:
@@ -685,5 +771,439 @@ class church_writeController extends church_write
 			default:
 				return '<p></p>';
 		}
+	}
+
+	/* ===================== 파송선교 성도 응원 ===================== */
+
+	protected function cheerCanModerate($logged_info): bool
+	{
+		return church_writeModel::isChurchAdmin($logged_info)
+			|| church_writeModel::isMissionPageAdmin($logged_info);
+	}
+
+	function procChurchWriteCheerConfig()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		$logged = Context::get('logged_info');
+		$is_logged = (bool)Context::get('is_logged');
+		$can_reply = false;
+		$member_srl = 0;
+		$nick = '';
+		if ($is_logged && $logged)
+		{
+			$member_srl = (int)($logged->member_srl ?? 0);
+			$nick = trim((string)($logged->user_name ?? ''));
+			if ($nick === '')
+			{
+				$nick = (string)($logged->nick_name ?? '');
+			}
+			$can_reply = church_writeModel::isChurchAdmin($logged)
+				|| church_writeModel::isMissionPageAdmin($logged);
+		}
+		$this->add('isLogged', $is_logged);
+		$this->add('memberSrl', $member_srl);
+		$this->add('nickName', $nick);
+		$this->add('canReply', $can_reply);
+		$this->add('canEditPrayer', $can_reply);
+		$this->add('canWriteBoards', $can_reply);
+		$this->add('csrf', $is_logged ? Rhymix\Framework\Session::createToken('') : '');
+		$this->add('prayerLine', (string)(dmcadminModel::getDispatchMissionPageData()['prayer_line'] ?? ''));
+
+		$write = [];
+		foreach (['dispatch_letter', 'dispatch_video'] as $board_mid)
+		{
+			$srl = dmcadminModel::getModuleSrlByMid($board_mid);
+			if ($srl < 1)
+			{
+				continue;
+			}
+			$cfg = church_writeModel::getClientConfig($srl, $logged, $board_mid);
+			if ($cfg)
+			{
+				$write[$board_mid] = $cfg;
+			}
+		}
+		$this->add('writeConfigs', $write);
+	}
+
+	function procChurchWriteDispatchFeed()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		$logged = Context::get('logged_info');
+		$can_write = church_writeModel::isChurchAdmin($logged) || church_writeModel::isMissionPageAdmin($logged);
+		$letters = [];
+		foreach (dmcadminModel::listDispatchBoardDocuments('dispatch_letter', 36) as $row)
+		{
+			$letters[] = [
+				'document_srl' => $row['document_srl'],
+				'title' => $row['title'],
+				'date' => $row['date'],
+				'images' => $row['images'],
+				'views' => (int)($row['readed_count'] ?? 0),
+				'can_edit' => $can_write,
+			];
+		}
+		$videos = [];
+		foreach (dmcadminModel::listDispatchBoardDocuments('dispatch_video', 48) as $row)
+		{
+			$videos[] = [
+				'document_srl' => $row['document_srl'],
+				'title' => $row['title'],
+				'date' => $row['date'],
+				'youtube_id' => $row['youtube_id'],
+				'summary' => $row['summary'],
+				'views' => (int)($row['readed_count'] ?? 0),
+				'can_edit' => $can_write,
+			];
+		}
+		$this->add('letters', $letters);
+		$this->add('videos', $videos);
+	}
+
+	function procChurchWriteDispatchPrayerSave()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+		$logged = Context::get('logged_info');
+		if (!church_writeModel::isChurchAdmin($logged) && !church_writeModel::isMissionPageAdmin($logged))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		$prayer = trim((string)Context::get('prayer_line'));
+		if (function_exists('mb_strlen') ? mb_strlen($prayer) > 160 : strlen($prayer) > 480)
+		{
+			return new BaseObject(-1, '기도 제목은 160자 이내로 작성해 주세요.');
+		}
+		$output = dmcadminModel::updateDispatchPrayerLine($prayer);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->add('prayer_line', $prayer);
+		$this->add('message', '저장되었습니다.');
+	}
+
+	function procChurchWriteCheerList()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		$logged = Context::get('logged_info');
+		$viewer = (int)($logged->member_srl ?? 0);
+		$can_mod = $this->cheerCanModerate($logged);
+		$data = dmcadminModel::getDispatchCheerData();
+		$out = [];
+		foreach (array_reverse((array)$data['comments']) as $c)
+		{
+			if (!is_array($c))
+			{
+				continue;
+			}
+			$out[] = dmcadminModel::formatCheerCommentForClient($c, $viewer, $can_mod);
+		}
+		$this->add('comments', $out);
+	}
+
+	function procChurchWriteCheerAdd()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+		$logged = Context::get('logged_info');
+		$body = trim((string)Context::get('body'));
+		if ($body === '')
+		{
+			return new BaseObject(-1, '응원 내용을 입력해 주세요.');
+		}
+		if (function_exists('mb_strlen') ? mb_strlen($body) > 300 : strlen($body) > 900)
+		{
+			return new BaseObject(-1, '응원은 300자 이내로 작성해 주세요.');
+		}
+
+		$data = dmcadminModel::getDispatchCheerData();
+		$member_srl = (int)$logged->member_srl;
+		$today = date('Y-m-d');
+		$today_count = 0;
+		foreach ((array)$data['comments'] as $c)
+		{
+			if ((int)($c['member_srl'] ?? 0) === $member_srl && strncmp((string)($c['created'] ?? ''), $today, 10) === 0)
+			{
+				$today_count++;
+			}
+		}
+		if ($today_count >= 10 && !church_writeModel::isChurchAdmin($logged))
+		{
+			return new BaseObject(-1, '하루 응원 작성 횟수(10회)를 초과했습니다.');
+		}
+
+		$reactions = [];
+		foreach (dmcadminModel::cheerReactionKeys() as $k)
+		{
+			$reactions[$k] = [];
+		}
+		$display_name = trim((string)($logged->user_name ?? ''));
+		if ($display_name === '')
+		{
+			$display_name = trim((string)($logged->nick_name ?? ''));
+		}
+		if ($display_name === '')
+		{
+			$display_name = '성도';
+		}
+		$data['comments'][] = [
+			'id' => 'C' . date('YmdHis') . substr((string)mt_rand(1000, 9999), 0, 4),
+			'member_srl' => $member_srl,
+			'nick_name' => $display_name,
+			'body' => $body,
+			'created' => date('Y-m-d H:i'),
+			'reactions' => $reactions,
+			'reply' => null,
+		];
+		$output = dmcadminModel::saveDispatchCheerData($data);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->add('message', '응원이 등록되었습니다.');
+	}
+
+	function procChurchWriteCheerReply()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+		$logged = Context::get('logged_info');
+		if (!$this->cheerCanModerate($logged))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		$comment_id = trim((string)Context::get('comment_id'));
+		$body = trim((string)Context::get('body'));
+		if ($comment_id === '' || $body === '')
+		{
+			return new BaseObject(-1, '답글 내용을 입력해 주세요.');
+		}
+		if (function_exists('mb_strlen') ? mb_strlen($body) > 500 : strlen($body) > 1500)
+		{
+			return new BaseObject(-1, '답글은 500자 이내로 작성해 주세요.');
+		}
+
+		$data = dmcadminModel::getDispatchCheerData();
+		$found = false;
+		foreach ($data['comments'] as &$c)
+		{
+			if ((string)($c['id'] ?? '') !== $comment_id)
+			{
+				continue;
+			}
+			$reactions = [];
+			foreach (dmcadminModel::cheerReactionKeys() as $k)
+			{
+				$reactions[$k] = [];
+			}
+			if (!empty($c['reply']['reactions']) && is_array($c['reply']['reactions']))
+			{
+				$reactions = $c['reply']['reactions'];
+			}
+			$reply_name = trim((string)($logged->user_name ?? ''));
+			if ($reply_name === '')
+			{
+				$reply_name = trim((string)($logged->nick_name ?? ''));
+			}
+			if ($reply_name === '')
+			{
+				$reply_name = '선교사';
+			}
+			$c['reply'] = [
+				'member_srl' => (int)$logged->member_srl,
+				'nick_name' => $reply_name,
+				'body' => $body,
+				'created' => date('Y-m-d H:i'),
+				'is_missionary' => true,
+				'reactions' => $reactions,
+			];
+			$found = true;
+			break;
+		}
+		unset($c);
+		if (!$found)
+		{
+			return new BaseObject(-1, '응원을 찾을 수 없습니다.');
+		}
+		$output = dmcadminModel::saveDispatchCheerData($data);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->add('message', '답글이 등록되었습니다.');
+	}
+
+	function procChurchWriteCheerReact()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+		$logged = Context::get('logged_info');
+		$member_srl = (int)$logged->member_srl;
+		$comment_id = trim((string)Context::get('comment_id'));
+		$target = trim((string)Context::get('target'));
+		$reaction = trim((string)Context::get('reaction'));
+		if ($comment_id === '' || !in_array($target, ['comment', 'reply'], true) || !in_array($reaction, dmcadminModel::cheerReactionKeys(), true))
+		{
+			return new BaseObject(-1, '잘못된 요청입니다.');
+		}
+
+		$data = dmcadminModel::getDispatchCheerData();
+		$found = false;
+		foreach ($data['comments'] as &$c)
+		{
+			if ((string)($c['id'] ?? '') !== $comment_id)
+			{
+				continue;
+			}
+			if ($target === 'reply')
+			{
+				if (empty($c['reply']) || !is_array($c['reply']))
+				{
+					return new BaseObject(-1, '답글이 없습니다.');
+				}
+				if (!isset($c['reply']['reactions']) || !is_array($c['reply']['reactions']))
+				{
+					$c['reply']['reactions'] = [];
+				}
+				$bucket = &$c['reply']['reactions'];
+			}
+			else
+			{
+				if (!isset($c['reactions']) || !is_array($c['reactions']))
+				{
+					$c['reactions'] = [];
+				}
+				$bucket = &$c['reactions'];
+			}
+
+			$had_same = in_array($member_srl, array_map('intval', (array)($bucket[$reaction] ?? [])), true);
+			foreach (dmcadminModel::cheerReactionKeys() as $k)
+			{
+				$list = array_values(array_unique(array_map('intval', (array)($bucket[$k] ?? []))));
+				$list = array_values(array_filter($list, static function ($s) use ($member_srl) {
+					return $s !== $member_srl;
+				}));
+				$bucket[$k] = $list;
+			}
+			if (!$had_same)
+			{
+				$bucket[$reaction][] = $member_srl;
+				$bucket[$reaction] = array_values(array_unique(array_map('intval', $bucket[$reaction])));
+			}
+			$found = true;
+			break;
+		}
+		unset($c);
+
+		if (!$found)
+		{
+			return new BaseObject(-1, '응원을 찾을 수 없습니다.');
+		}
+		$output = dmcadminModel::saveDispatchCheerData($data);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->add('message', 'ok');
+	}
+
+	function procChurchWriteCheerDelete()
+	{
+		Context::setResponseMethod('JSON');
+		getModel('dmcadmin');
+		if (!Context::get('is_logged'))
+		{
+			throw new Rhymix\Framework\Exceptions\NotPermitted;
+		}
+		if (!Rhymix\Framework\Security::checkCSRF())
+		{
+			throw new Rhymix\Framework\Exception('msg_security_violation');
+		}
+		$logged = Context::get('logged_info');
+		$comment_id = trim((string)Context::get('comment_id'));
+		$mode = trim((string)Context::get('mode'));
+		if ($comment_id === '')
+		{
+			return new BaseObject(-1, '잘못된 요청입니다.');
+		}
+		$can_mod = $this->cheerCanModerate($logged);
+		$member_srl = (int)$logged->member_srl;
+
+		$data = dmcadminModel::getDispatchCheerData();
+		$found = false;
+		$next = [];
+		foreach ((array)$data['comments'] as $c)
+		{
+			if (!is_array($c) || (string)($c['id'] ?? '') !== $comment_id)
+			{
+				$next[] = $c;
+				continue;
+			}
+			$found = true;
+			if ($mode === 'reply')
+			{
+				if (!$can_mod && (int)($c['reply']['member_srl'] ?? 0) !== $member_srl)
+				{
+					throw new Rhymix\Framework\Exceptions\NotPermitted;
+				}
+				$c['reply'] = null;
+				$next[] = $c;
+			}
+			else
+			{
+				if (!$can_mod && (int)($c['member_srl'] ?? 0) !== $member_srl)
+				{
+					throw new Rhymix\Framework\Exceptions\NotPermitted;
+				}
+				/* 삭제: 목록에서 제외 */
+			}
+		}
+		if (!$found)
+		{
+			return new BaseObject(-1, '응원을 찾을 수 없습니다.');
+		}
+		$data['comments'] = $next;
+		$output = dmcadminModel::saveDispatchCheerData($data);
+		if (!$output->toBool())
+		{
+			return $output;
+		}
+		$this->add('message', '삭제되었습니다.');
 	}
 }

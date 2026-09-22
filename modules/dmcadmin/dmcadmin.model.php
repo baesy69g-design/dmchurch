@@ -3,20 +3,27 @@
  * @class  dmcadminModel
  */
 require_once __DIR__ . '/dmcadmin.overseas_mission.trait.php';
+require_once __DIR__ . '/dmcadmin.dispatch_mission.trait.php';
 require_once __DIR__ . '/dmcadmin.main_tile_compose.trait.php';
 
 class dmcadminModel extends dmcadmin
 {
 	use dmcadminOverseasMissionTrait;
+	use dmcadminDispatchMissionTrait;
 	use dmcadminMainTileComposeTrait;
 	public const ADMIN_USER_ID = 'dmc2241';
 	public const SESSION_KEY = 'dmcadmin_authenticated';
 	public const SESSION_TTL = 7200;
 	public const MAX_PRAYER_READERS = 2;
+	public const MAX_MISSION_PAGE_ADMINS = 2;
 	public const MAIN_SLIDE_COUNT = 4;
 	public const SUB_TOP_BANNER_WIDTH = 1900;
 	public const SUB_TOP_BANNER_HEIGHT = 220;
 	public const SUB_TOP_STITCH_MAX = 4;
+
+	/* 파송선교 전용 페이지 */
+	public const DISPATCH_MISSION_PAGE_MID = 'p27';
+	public const DISPATCH_MISSION_PHOTO_COUNT = 6;
 
 	/** @var array<string,mixed>|null */
 	private static ?array $uiLabels = null;
@@ -122,6 +129,7 @@ class dmcadminModel extends dmcadmin
 		'p84' => 'news',
 		'p25' => 'mission',
 		'p26' => 'mission',
+		'p27' => 'mission',
 		'p91' => 'mission',
 		'p92' => 'mission',
 		'p93' => 'mission',
@@ -219,6 +227,14 @@ class dmcadminModel extends dmcadmin
 		if (empty($config->prayer_notify_email))
 		{
 			$config->prayer_notify_email = '';
+		}
+		if (empty($config->mission_page_admin_srls))
+		{
+			$config->mission_page_admin_srls = [];
+		}
+		elseif (is_string($config->mission_page_admin_srls))
+		{
+			$config->mission_page_admin_srls = array_values(array_filter(array_map('intval', preg_split('/[\s,]+/', $config->mission_page_admin_srls))));
 		}
 		if (empty($config->main_slide_urls))
 		{
@@ -965,6 +981,10 @@ class dmcadminModel extends dmcadmin
 		{
 			return self::getDongkeydayPageLabel($mid);
 		}
+		if (self::isDispatchMissionPage($mid))
+		{
+			return self::getDispatchMissionPageLabel($mid);
+		}
 		if (isset(self::SCHOOL_PAGE_MIDS[$mid]))
 		{
 			$L = self::uiLabels();
@@ -1021,13 +1041,39 @@ class dmcadminModel extends dmcadmin
 			$readers = array_values(array_unique(array_filter(array_map('intval', $data['prayer_reader_srls']))));
 			if (count($readers) > self::MAX_PRAYER_READERS)
 			{
-				return new BaseObject(-1, '??? ID? ?? ' . self::MAX_PRAYER_READERS . '??? ??? ? ????.');
+				return new BaseObject(-1, '기도요청 조회 ID는 최대 ' . self::MAX_PRAYER_READERS . '명까지 등록할 수 있습니다.');
 			}
 			$config->prayer_reader_srls = $readers;
+		}
+		if (isset($data['mission_page_admin_srls']))
+		{
+			$admins = array_values(array_unique(array_filter(array_map('intval', $data['mission_page_admin_srls']))));
+			if (count($admins) > self::MAX_MISSION_PAGE_ADMINS)
+			{
+				return new BaseObject(-1, '선교페이지관리자는 최대 ' . self::MAX_MISSION_PAGE_ADMINS . '명까지 등록할 수 있습니다.');
+			}
+			$config->mission_page_admin_srls = $admins;
 		}
 
 		$oModuleController = getController('module');
 		return $oModuleController->insertModuleConfig('church_write', $config);
+	}
+
+	/** @return int[] */
+	public static function getMissionPageAdminSrls(): array
+	{
+		$config = self::getChurchConfig();
+		return array_values(array_filter(array_map('intval', (array)($config->mission_page_admin_srls ?? []))));
+	}
+
+	public static function isMissionPageAdmin($logged_info): bool
+	{
+		if (!$logged_info || empty($logged_info->member_srl))
+		{
+			return false;
+		}
+		$srl = (int)$logged_info->member_srl;
+		return in_array($srl, self::getMissionPageAdminSrls(), true);
 	}
 
 	public static function mysqlOldPassword(string $password): string
@@ -1960,6 +2006,14 @@ class dmcadminModel extends dmcadmin
 		$o->kind = (string)($kinds['overseas'] ?? '????? (????????? + ?? sub)');
 		$o->view_url = getNotEncodedUrl('', 'mid', self::OVERSEAS_MISSION_LIST_MID);
 		$o->edit_url = getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrOverseasMissionListEdit');
+		$out[] = $o;
+		$dm_mid = self::DISPATCH_MISSION_PAGE_MID;
+		$o = new stdClass;
+		$o->mid = $dm_mid;
+		$o->label = self::getDispatchMissionPageLabel($dm_mid);
+		$o->kind = (string)($kinds['dispatch'] ?? '파송선교형 (소개·편지·영상·응원)');
+		$o->view_url = getNotEncodedUrl('', 'mid', $dm_mid);
+		$o->edit_url = getNotEncodedUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrDispatchMissionEdit');
 		$out[] = $o;
 		return $out;
 	}

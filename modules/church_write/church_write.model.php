@@ -18,6 +18,45 @@ class church_writeModel extends church_write
 		return ['community', 'pray'];
 	}
 
+	/** 파송선교 관련 게시판 mid (권한 게이트용 — 편지/영상은 dmcadmin JSON 관리) */
+	public static function missionBoardMids(): array
+	{
+		$config = ModuleModel::getModuleConfig('church_write');
+		$from_config = [];
+		if ($config && !empty($config->mission_board_mids))
+		{
+			if (is_string($config->mission_board_mids))
+			{
+				$from_config = preg_split('/[\s,]+/', $config->mission_board_mids) ?: [];
+			}
+			elseif (is_array($config->mission_board_mids))
+			{
+				$from_config = $config->mission_board_mids;
+			}
+		}
+		$defaults = ['dispatch_letter', 'dispatch_video', 'mission_letter', 'mission_video'];
+		$mids = array_merge($defaults, $from_config);
+		return array_values(array_unique(array_filter(array_map(static function ($m) {
+			return strtolower(trim((string)$m));
+		}, $mids))));
+	}
+
+	public static function isMissionBoard(int $module_srl = 0, string $mid = ''): bool
+	{
+		$mid = strtolower(trim($mid));
+		if ($mid !== '' && in_array($mid, self::missionBoardMids(), true))
+		{
+			return true;
+		}
+		if ($module_srl < 1)
+		{
+			return false;
+		}
+		$info = ModuleModel::getModuleInfoByModuleSrl($module_srl);
+		$board_mid = strtolower(trim((string)($info->mid ?? '')));
+		return $board_mid !== '' && in_array($board_mid, self::missionBoardMids(), true);
+	}
+
 	public static function targetModuleSrls(): array
 	{
 		return [110, 112, 114, 116, 118, 120, 122, 124, self::PRAY_MODULE_SRL];
@@ -53,6 +92,55 @@ class church_writeModel extends church_write
 
 		$cache = array_values(array_unique(array_filter($list)));
 		return $cache;
+	}
+
+	/** @return int[] dmcadmin에 등록된 선교페이지관리자 member_srl (최대 2명) */
+	public static function getMissionPageAdminSrls(): array
+	{
+		static $cache = null;
+		if ($cache !== null)
+		{
+			return $cache;
+		}
+
+		$config = ModuleModel::getModuleConfig('church_write');
+		$list = [];
+		if ($config && !empty($config->mission_page_admin_srls))
+		{
+			if (is_string($config->mission_page_admin_srls))
+			{
+				$list = array_filter(array_map('intval', preg_split('/[\s,]+/', $config->mission_page_admin_srls)));
+			}
+			elseif (is_array($config->mission_page_admin_srls))
+			{
+				$list = array_map('intval', $config->mission_page_admin_srls);
+			}
+		}
+
+		$cache = array_values(array_unique(array_filter($list)));
+		return $cache;
+	}
+
+	public static function isMissionPageAdmin($logged_info): bool
+	{
+		if (!$logged_info || empty($logged_info->member_srl))
+		{
+			return false;
+		}
+		return in_array((int)$logged_info->member_srl, self::getMissionPageAdminSrls(), true);
+	}
+
+	public static function canWriteMissionBoard($logged_info, int $module_srl = 0, string $mid = ''): bool
+	{
+		if (self::isChurchAdmin($logged_info))
+		{
+			return true;
+		}
+		if (!self::isMissionPageAdmin($logged_info))
+		{
+			return false;
+		}
+		return self::isMissionBoard($module_srl, $mid);
 	}
 
 	public static function setPrayerReaderSrls(array $member_srls): BaseObject
@@ -159,7 +247,7 @@ class church_writeModel extends church_write
 
 	public static function getBoardForms(): array
 	{
-		return [
+		$forms = [
 			110 => [
 				'mid' => 'sermon',
 				'title' => '주일대예배설교 등록',
@@ -238,11 +326,52 @@ class church_writeModel extends church_write
 				],
 			],
 		];
+
+		foreach (self::getMissionBoardFormDefs() as $mid => $form)
+		{
+			$info = ModuleModel::getModuleInfoByMid($mid);
+			if (!$info || empty($info->module_srl))
+			{
+				continue;
+			}
+			$form['mid'] = $mid;
+			$forms[(int)$info->module_srl] = $form;
+		}
+		return $forms;
+	}
+
+	/** @return array<string,array<string,mixed>> */
+	public static function getMissionBoardFormDefs(): array
+	{
+		return [
+			'dispatch_letter' => [
+				'title' => '선교편지 등록',
+				'kind' => 'dispatch_letter',
+				'fields' => [
+					['name' => 'title', 'label' => '제목', 'type' => 'text', 'required' => true, 'placeholder' => '예: 2026년 3월 선교편지'],
+					['name' => 'pubdate', 'label' => '날짜', 'type' => 'date', 'required' => true],
+					['name' => 'page1_image', 'label' => '1페이지 (표지)', 'type' => 'file', 'accept' => 'image/*', 'required' => true, 'help' => 'JPG/PNG. 큰 사진은 자동 축소됩니다.'],
+					['name' => 'page2_image', 'label' => '2페이지', 'type' => 'file', 'accept' => 'image/*'],
+					['name' => 'page3_image', 'label' => '3페이지', 'type' => 'file', 'accept' => 'image/*'],
+				],
+			],
+			'dispatch_video' => [
+				'title' => 'Youtube 소식 등록',
+				'kind' => 'dispatch_video',
+				'fields' => [
+					['name' => 'title', 'label' => '제목', 'type' => 'text', 'required' => true],
+					['name' => 'pubdate', 'label' => '날짜', 'type' => 'date', 'required' => true],
+					['name' => 'youtube_url', 'label' => '유튜브 URL', 'type' => 'url', 'required' => true],
+					['name' => 'summary', 'label' => '설명 (100자)', 'type' => 'text', 'placeholder' => '짧은 설명'],
+				],
+			],
+		];
 	}
 
 	public static function getClientConfig(int $module_srl, $logged_info, string $mid = ''): ?array
 	{
-		if (!in_array($module_srl, self::targetModuleSrls(), true) && !self::isPrayBoard($module_srl, $mid))
+		$is_mission = self::isMissionBoard($module_srl, $mid);
+		if (!in_array($module_srl, self::targetModuleSrls(), true) && !self::isPrayBoard($module_srl, $mid) && !$is_mission)
 		{
 			return null;
 		}
@@ -252,6 +381,7 @@ class church_writeModel extends church_write
 		$is_public = in_array($module_srl, self::publicWriteModuleSrls(), true)
 			|| in_array($mid, self::publicWriteMids(), true);
 		$is_admin = self::isChurchAdmin($logged_info);
+		$can_mission_write = self::canWriteMissionBoard($logged_info, $module_srl, $mid);
 		$csrf = '';
 		if (Context::get('is_logged'))
 		{
@@ -261,11 +391,13 @@ class church_writeModel extends church_write
 		return [
 			'module_srl' => $module_srl,
 			'mid' => $mid,
-			'isChurchAdmin' => $is_admin,
+			'isChurchAdmin' => $is_admin || ($is_mission && $can_mission_write),
+			'isMissionPageAdmin' => self::isMissionPageAdmin($logged_info),
+			'isMissionBoard' => $is_mission,
 			'isPublicWrite' => $is_public,
 			'isPrayBoard' => $is_pray,
-			'usePopup' => !$is_public && $is_admin,
-			'canStandardWrite' => $is_public && $logged_info,
+			'usePopup' => (!$is_public && ($is_admin || ($is_mission && $can_mission_write))),
+			'canStandardWrite' => ($is_public && $logged_info) || ($is_mission && $can_mission_write),
 			'form' => $is_pray ? null : ($forms[$module_srl] ?? null),
 			'csrf_token' => $csrf,
 			'api_url' => getNotEncodedUrl('', 'module', 'church_write', 'act', 'procChurchWriteInsertDocument'),
@@ -376,6 +508,72 @@ class church_writeModel extends church_write
 			$fields['summary'] = trim(html_entity_decode(strip_tags($tmp), ENT_QUOTES, 'UTF-8'));
 		}
 
+		/* 파송선교 게시판(dispatch_letter / dispatch_video) — mid/kind 기준 복원 */
+		$mid = '';
+		$forms = self::getBoardForms();
+		if (isset($forms[$module_srl]['mid']))
+		{
+			$mid = strtolower(trim((string)$forms[$module_srl]['mid']));
+		}
+		if ($mid === '')
+		{
+			$mi = ModuleModel::getModuleInfoByModuleSrl($module_srl);
+			if ($mi && !empty($mi->mid))
+			{
+				$mid = strtolower(trim((string)$mi->mid));
+			}
+		}
+		$kind = (string)($forms[$module_srl]['kind'] ?? $mid);
+		if ($mid === 'dispatch_video' || $kind === 'dispatch_video')
+		{
+			if (preg_match('~youtube(?:-nocookie)?\.com/embed/([\w-]+)~i', $content, $m))
+			{
+				$fields['youtube_url'] = 'https://www.youtube.com/watch?v=' . $m[1];
+			}
+			elseif (preg_match('~youtu\.be/([\w-]+)~i', $content, $m))
+			{
+				$fields['youtube_url'] = 'https://youtu.be/' . $m[1];
+			}
+			elseif (preg_match('~youtube\.com/watch\?v=([\w-]+)~i', $content, $m))
+			{
+				$fields['youtube_url'] = 'https://www.youtube.com/watch?v=' . $m[1];
+			}
+			if (preg_match('@<p class="cd-doc-summary">(.*?)</p>@is', $content, $sm))
+			{
+				$fields['summary'] = trim(html_entity_decode(strip_tags($sm[1]), ENT_QUOTES, 'UTF-8'));
+			}
+			elseif ($fields['summary'] === '')
+			{
+				$tmp = preg_replace('~<div class="broadcast-video">.*?</div>~isu', '', $content);
+				$tmp = preg_replace('~<iframe\b[^>]*>.*?</iframe>~isu', '', $tmp);
+				$tmp = preg_replace('~<br\s*/?>~i', "\n", $tmp);
+				$fields['summary'] = trim(html_entity_decode(strip_tags($tmp), ENT_QUOTES, 'UTF-8'));
+				if ($fields['summary'] === '' && preg_match_all('@<p\b[^>]*>(.*?)</p>@is', $content, $pms))
+				{
+					foreach ($pms[1] as $phtml)
+					{
+						$text = trim(html_entity_decode(strip_tags($phtml), ENT_QUOTES, 'UTF-8'));
+						if ($text !== '')
+						{
+							$fields['summary'] = $text;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if ($mid === 'dispatch_letter' || $kind === 'dispatch_letter')
+		{
+			$pages = self::extractDispatchLetterImageUrls($content);
+			foreach (['page1', 'page2', 'page3'] as $pk)
+			{
+				if (!empty($pages[$pk]))
+				{
+					$fields[$pk . '_image_url'] = $pages[$pk];
+				}
+			}
+		}
+
 		return $fields;
 	}
 
@@ -396,6 +594,47 @@ class church_writeModel extends church_write
 			}
 		}
 		return $out;
+	}
+
+	/** @return array{page1?:string,page2?:string,page3?:string} */
+	public static function extractDispatchLetterImageUrls(string $content): array
+	{
+		$out = [];
+		if (!preg_match_all('@<img[^>]+src=["\']([^"\']+)["\']@i', $content, $ms))
+		{
+			return $out;
+		}
+		$keys = ['page1', 'page2', 'page3'];
+		foreach ($ms[1] as $i => $src)
+		{
+			if ($i > 2)
+			{
+				break;
+			}
+			$out[$keys[$i]] = html_entity_decode($src, ENT_QUOTES, 'UTF-8');
+		}
+		return $out;
+	}
+
+	public static function buildDispatchLetterContent(int $document_srl, array $file_urls): string
+	{
+		$html = '<div class="cd-letter-doc" data-document-srl="' . (int)$document_srl . '">';
+		$order = ['page1', 'page2', 'page3'];
+		$i = 0;
+		foreach ($order as $key)
+		{
+			$url = trim((string)($file_urls[$key] ?? ''));
+			if ($url === '')
+			{
+				continue;
+			}
+			$i++;
+			$html .= '<figure class="cd-letter-doc-page"><img src="' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '" alt="선교편지 ' . $i . '" /></figure>';
+		}
+		$html .= '</div>';
+		return $html !== '<div class="cd-letter-doc" data-document-srl="' . (int)$document_srl . '"></div>'
+			? $html
+			: '<p></p>';
 	}
 
 	public static function buildYoutubeEmbed(string $url): string

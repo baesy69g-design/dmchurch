@@ -7,13 +7,9 @@
 		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrMembers')}" class="dmc-link">회원 관리 →</a>
 	</div>
 	<div class="dmc-card">
-		<h3>기도요청 수신 메일</h3>
-		<p class="dmc-stat-sm">{$prayer_notify_email ?: '(미설정)'}</p>
-		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSettings')}" class="dmc-link">설정 →</a>
-	</div>
-	<div class="dmc-card">
-		<h3>기도요청 조회자</h3>
-		<p class="dmc-stat">{$prayer_reader_count}<span>/2명</span></p>
+		<h3>상세페이지 지정</h3>
+		<p class="dmc-stat-sm">기도요청 메일·조회자 / 선교페이지관리자</p>
+		<p class="dmc-stat-sm">조회자 {$prayer_reader_count}/2 · 선교관리자 {$mission_page_admin_count}/2</p>
 		<a href="{getUrl('', 'mid', 'dmcadmin', 'act', 'dispDmcMgrSettings')}" class="dmc-link">설정 →</a>
 	</div>
 	<div class="dmc-card">
